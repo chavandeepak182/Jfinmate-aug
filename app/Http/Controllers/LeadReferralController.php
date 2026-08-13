@@ -113,7 +113,7 @@ DB::table('lead_referral')->insert([
     'gender'           => $request->gender,
     'address'          => $request->address,
     'pin_code'         => $request->pin_code,
-    'loan_category_id' => $request->loan_category_id,
+   'loan_type' => $request->loan_category_id,
     'loan_amount'      => $request->loan_amount,
     'monthly_income'   => $request->monthly_income,
     'remarks'          => $request->remarks,
@@ -129,18 +129,51 @@ DB::table('lead_referral')->insert([
 public function list()
 {
     $leads = DB::table('lead_referral')
-        ->leftJoin('loan_category', 'lead_referral.loan_type', '=', 'loan_category.loan_category_id')
+        ->leftJoin(
+            'loan_category',
+            'lead_referral.loan_type',
+            '=',
+            'loan_category.loan_category_id'
+        )
+        ->where('lead_referral.referral_id', auth()->id())
         ->select(
             'lead_referral.*',
             'loan_category.category_name'
         )
-        ->where('referral_id', auth()->id())
         ->latest('lead_referral.id')
         ->get();
 
-    return view('leadreferral.index', compact('leads'));
+    return view(
+        'leadreferral.index',
+        compact('leads')
+    );
 }
+public function view($id)
+{
+    $lead = DB::table('lead_referral')
+        ->leftJoin(
+            'loan_category',
+            'lead_referral.loan_type',
+            '=',
+            'loan_category.loan_category_id'
+        )
+        ->where('lead_referral.id', $id)
+        ->where('lead_referral.referral_id', auth()->id())
+        ->select(
+            'lead_referral.*',
+            'loan_category.category_name'
+        )
+        ->first();
 
+    if (!$lead) {
+        abort(404);
+    }
+
+    return view(
+        'leadreferral.view',
+        compact('lead')
+    );
+}
 public function edit($id)
 {
     $lead = DB::table('lead_referral')
@@ -170,35 +203,101 @@ public function destroy($id)
             ->with('success','Lead Deleted Successfully');
 }
 
-public function update(Request $request,$id)
+public function update(Request $request, $id)
 {
     $request->validate([
-        'customer_name'=>'required',
-        'mobile_no'=>'required|digits:10',
-        'email'=>'required|email',
-        'loan_amount'=>'required|numeric',
+
+        'customer_name' => 'required|max:150',
+
+        'mobile_no' => 'required|digits:10',
+
+        'email' => 'required|email',
+
+        'gender' => 'required|in:Male,Female,Other',
+
+        'address' => 'required',
+
+        'pin_code' => 'required|digits:6',
+
+        'loan_category_id' =>
+            'required|exists:loan_category,loan_category_id',
+
+        'loan_amount' =>
+            'required|numeric|min:0',
+
+        'monthly_income' =>
+            'nullable|numeric|min:0',
+
+        'remarks' =>
+            'nullable|max:500',
+
+        'documents.*' =>
+            'nullable|mimes:jpg,jpeg,png,pdf|max:5120',
     ]);
 
-    $data=[
 
-        'customer_name'=>$request->customer_name,
-        'mobile_no'=>$request->mobile_no,
-        'email'=>$request->email,
-        'loan_type'=>$request->loan_category_id,
-        'loan_amount'=>$request->loan_amount,
-        'remarks'=>$request->remarks,
-        'updated_at'=>now()
+    $lead = DB::table('lead_referral')
+        ->where('id', $id)
+        ->where('referral_id', auth()->id())
+        ->first();
 
+    if (!$lead) {
+        abort(404);
+    }
+
+
+    $data = [
+
+        'customer_name' => $request->customer_name,
+
+        'mobile_no' => $request->mobile_no,
+
+        'email' => $request->email,
+
+        'gender' => $request->gender,
+
+        'address' => $request->address,
+
+        'pin_code' => $request->pin_code,
+
+        'loan_type' => $request->loan_category_id,
+
+        'loan_amount' => $request->loan_amount,
+
+        'monthly_income' => $request->monthly_income,
+
+        'remarks' => $request->remarks,
+
+        'updated_at' => now(),
     ];
 
+
+    // Upload new documents if selected
+    if ($request->hasFile('documents')) {
+
+        $documents = [];
+
+        foreach ($request->file('documents') as $file) {
+
+            $documents[] = $file->store(
+                'lead-referral-documents',
+                'public'
+            );
+        }
+
+        $data['documents'] = json_encode($documents);
+    }
+
+
     DB::table('lead_referral')
-        ->where('id',$id)
-        ->where('referral_id',auth()->id())
+        ->where('id', $id)
+        ->where('referral_id', auth()->id())
         ->update($data);
 
+
     return redirect()
-            ->route('referraldsa.list')
-            ->with('success','Lead Updated Successfully');
+        ->route('referraldsa.list')
+        ->with('success', 'Lead Updated Successfully');
 }
 public function addLead()
 {

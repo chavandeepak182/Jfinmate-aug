@@ -47,6 +47,8 @@ use App\Http\Controllers\MasterController;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\LeadReferralController;
 use App\Http\Controllers\AdminLeadReferralController;
+use App\Http\Controllers\CalculatorController;
+
 
 
 
@@ -115,6 +117,18 @@ Route::middleware(['auth', 'leadreferral'])
         Route::post('/logout', [LeadReferralController::class, 'logout'])
             ->name('logout');
     });
+    Route::post(
+    '/lead-referral/change-lead-status',
+    [AdminLeadReferralController::class, 'changeLeadStatus']
+)->name('admin.lead-referral.change-lead-status');
+Route::post(
+    '/lead-referral/approved-amount',
+    [AdminLeadReferralController::class, 'approvedLoanAmount']
+)->name('admin.lead-referral.approved-amount');
+Route::get(
+    '/lead-referral/view/{id}',
+    [LeadReferralController::class, 'view']
+)->name('referraldsa.view');
 
 
 
@@ -991,6 +1005,21 @@ Route::post('/check-duplicate', [App\Http\Controllers\DsaController::class, 'che
 
     Route::get('/standalone-salaried', [EligibilityCriteriaController::class, 'showStandaloneSalariedForm'])
     ->name('standalone.salaried');  
+});
+// Calculator Routes
+Route::prefix('calculator')->name('calculator.')->group(function () {
+    Route::get('/', [CalculatorController::class, 'index'])->name('index');
+    Route::post('/calculate', [CalculatorController::class, 'calculate'])->name('calculate');
+    Route::get('/reset', [CalculatorController::class, 'reset'])->name('reset'); // Add this line
+    Route::get('/result', [CalculatorController::class, 'result'])->name('result');
+    Route::get('/pdf/{id}', [CalculatorController::class, 'pdf'])->name('pdf');
+    Route::get('/download/{id?}', [CalculatorController::class, 'downloadReport'])->name('download'); // Add this for report download
+    Route::get(
+    '/calculator/library',
+    function () {
+        return view('calculator.library');
+    }
+)->name('calculator.library');
 });
 
 //admin user profile

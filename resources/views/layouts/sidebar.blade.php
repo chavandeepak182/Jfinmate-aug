@@ -11,27 +11,50 @@
     $role_id = session()->get('role_id');
 @endphp
 <style>
+    <style>
 .sidebar {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow: hidden; /* Prevents double scrollbars */
 }
 
 .sidebar-nav {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-bottom: 20px;
+    min-height: 0; /* Important for flex children to scroll properly */
 }
 
+/* Custom scrollbar styling */
 .sidebar-nav::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
+    height: 6px;
 }
 
-.sidebar-nav::-webkit-scrollbar-thumb {
-    background: #bdbdbd;
+.sidebar-nav::-webkit-scrollbar-track {
+    background: #f1f1f1;
     border-radius: 10px;
 }
 
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Firefox scrollbar */
+.sidebar-nav {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
 
 /* ===== SIDEBAR NAV ===== */
 .sidebar-nav .nav-item {
@@ -44,6 +67,7 @@
     font-weight: 500;
     text-decoration: none;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 /* Hover */
@@ -61,7 +85,32 @@
 /* Icons */
 .sidebar-nav .nav-item i {
     font-size: 16px;
+    min-width: 20px;
 }
+
+/* Sidebar footer - keep it at bottom */
+.sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid #e5e7eb;
+    padding: 16px 16px 20px;
+    flex-shrink: 0;
+    background: white;
+}
+
+/* Sidebar header - keep at top */
+.sidebar-header {
+    flex-shrink: 0;
+    padding: 16px 0;
+    border-bottom: 1px solid #e5e7eb;
+    background: white;
+}
+
+/* Adjust logo */
+.sidebar-header .logo img {
+    height: 31px;
+    margin-left: 147px;
+}
+</style>
 </style>
 <aside class="sidebar">
 
@@ -196,14 +245,14 @@
             @if($role_id == 4)
 <a href="{{ route('payout-configs.index') }}" class="nav-item">
     <i class="fas fa-money-bill-wave"></i>
-    <span>DSA Payout</span>
+    <span>DSA Master</span>
 </a>
 @endif
 
 @if($role_id == 4)
 <a href="{{ route('dsa.payout.index') }}" class="nav-item">
     <i class="fas fa-user-cog"></i>
-    <span>DSA Master</span>
+    <span>DSA Payout</span>
 </a>
 @endif
 
@@ -279,17 +328,19 @@
                 <span>MLM</span>
             </a>
         @endif
-        @if($role_id == 4)
+        <!-- @if($role_id == 4)
 
 <a href="{{ route('admin.tree.show') }}" class="nav-item">
     <i class="fas fa-project-diagram"></i>
     <span>MLM Tree</span>
-</a>
+</a> -->
 
-<a href="{{ route('referral_earnings') }}" class="nav-item">
-    <i class="fas fa-users"></i>
-    <span>Referral Earnings</span>
-</a>
+@if($role_id == 4)
+    <a href="{{ route('calculator.index') }}" class="nav-item">
+        <i class="fas fa-calculator"></i>
+        <span>EMI Calculator</span>
+    </a>
+@endif
 
 <a href="{{ route('admin.withdrawal.requests') }}" class="nav-item">
     <i class="fas fa-wallet"></i>

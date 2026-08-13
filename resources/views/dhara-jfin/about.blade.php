@@ -212,7 +212,7 @@
                 </div>
 
                 <!-- Team Member 3 -->
-                <div class="about-page-team-card">
+                <!-- <div class="about-page-team-card">
                     <div class="about-page-team-image">
                         <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/nidhi.png" alt="Nidhi Sonigra">
                     </div>
@@ -225,7 +225,7 @@
                         <h3 class="about-page-team-name">Nidhi Sonigra</h3>
                         <span class="about-page-team-designation">Manager Admin</span>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Team Member 4 -->
                 <div class="about-page-team-card">
@@ -260,7 +260,7 @@
                 </div>
 
                 <!-- Team Member 6 -->
-                <div class="about-page-team-card">
+                <!-- <div class="about-page-team-card">
                     <div class="about-page-team-image">
                         <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/dummy.jpg" alt="Kevin Sunny">
                     </div>
@@ -273,10 +273,10 @@
                         <h3 class="about-page-team-name">Kevin Sunny</h3>
                         <span class="about-page-team-designation">Sales Executive</span>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Team Member 7 -->
-                <div class="about-page-team-card">
+                <!-- <div class="about-page-team-card">
                     <div class="about-page-team-image">
                         <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/avinash.png" alt="Avinash Bodke">
                     </div>
@@ -289,7 +289,7 @@
                         <h3 class="about-page-team-name">Avinash Bodke</h3>
                         <span class="about-page-team-designation">Senior Accountant</span>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Team Member 8 -->
                 <div class="about-page-team-card">
@@ -340,7 +340,7 @@
                 </div>
 
                 <!-- Team Member 11 -->
-                <div class="about-page-team-card">
+                <!-- <div class="about-page-team-card">
                     <div class="about-page-team-image">
                         <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/astha.png" alt="Aasta Rokade">
                     </div>
@@ -353,10 +353,10 @@
                         <h3 class="about-page-team-name">Aasta Rokade</h3>
                         <span class="about-page-team-designation">Executive Telecaller</span>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Team Member 12 -->
-                <div class="about-page-team-card">
+                <!-- <div class="about-page-team-card">
                     <div class="about-page-team-image">
                         <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/nikita.png" alt="Nikita Sanap">
                     </div>
@@ -369,7 +369,7 @@
                         <h3 class="about-page-team-name">Nikita Sanap</h3>
                         <span class="about-page-team-designation">Executive Telecaller</span>
                     </div>
-                </div>
+                </div> -->
 
             </div>
         </div>

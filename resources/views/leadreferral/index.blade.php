@@ -2,137 +2,278 @@
 
 @section('content')
 
-<div class="container-fluid py-4">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold" style="color:#000">My Leads</h3>
+    <h3 class="fw-bold" style="color:#000">
+        My Leads
+    </h3>
 
-        <a href="{{ route('referraldsa.add.lead') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Add Lead
-        </a>
+    <a href="{{ route('referraldsa.add.lead') }}"
+       class="btn btn-primary">
+
+        <i class="fas fa-plus"></i>
+        Add Lead
+
+    </a>
+
+</div>
+
+
+@if(session('success'))
+
+    <div class="alert alert-success">
+        {{ session('success') }}
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+@endif
 
-    <div class="card shadow border-0">
 
-        <div class="card-body table-responsive">
+<div class="card shadow border-0">
 
-            <table class="table table-bordered table-hover align-middle">
+    <div class="card-body table-responsive">
 
-                <thead class="table-dark">
+        <table class="table table-bordered table-hover align-middle">
 
-                    <tr>
-                        <th>#</th>
-                        <th>Applicant Name</th>
-                        <th>Mobile</th>
-                        <th>Email</th>
-                        <th>Loan Category</th>
-                        <th>Loan Amount</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th width="150">Action</th>
-                    </tr>
+            <thead class="table-dark">
 
-                </thead>
+                <tr>
 
-                <tbody>
+                    <th>#</th>
 
-                @forelse($leads as $lead)
+                    <th>Applicant Name</th>
 
-                    <tr>
+                    <th>Mobile</th>
 
-                        <td>{{ $loop->iteration }}</td>
+                    <th>Email</th>
 
-                        <td>{{ $lead->customer_name }}</td>
+                    <th>Loan Category</th>
 
-                        <td>{{ $lead->mobile_no }}</td>
+                    <th>Loan Amount</th>
 
-                        <td>{{ $lead->email }}</td>
+                    <th>Status</th>
 
-                        <td>{{ $lead->category_name ?? $lead->loan_type }}</td>
+                    <th>Approved Loan Amount</th>
 
-                        <td>₹ {{ number_format($lead->loan_amount) }}</td>
+                    <th>Date</th>
 
-                        <td>
+                    <th width="150">
+                        Action
+                    </th>
 
-                            @if($lead->status=='New')
-                                <span class="badge bg-primary">New</span>
+                </tr>
 
-                            @elseif($lead->status=='Pending')
-                                <span class="badge bg-warning">Pending</span>
+            </thead>
 
-                            @elseif($lead->status=='Approved')
-                                <span class="badge bg-success">Approved</span>
 
-                            @elseif($lead->status=='Rejected')
-                                <span class="badge bg-danger">Rejected</span>
+            <tbody>
 
-                            @else
-                                <span class="badge bg-secondary">
-                                    {{ $lead->status }}
-                                </span>
-                            @endif
+            @forelse($leads as $lead)
 
-                        </td>
+                <tr>
 
-                        <td>{{ date('d M Y', strtotime($lead->created_at)) }}</td>
+                    {{-- # --}}
+                    <td>
+                        {{ $loop->iteration }}
+                    </td>
 
-                        <td>
 
-                            <a href="{{ route('referraldsa.edit',$lead->id) }}"
-                               class="btn btn-sm btn-warning">
-                                <i class="fas fa-edit"></i>
-                            </a>
+                    {{-- APPLICANT NAME --}}
+                    <td>
+                        {{ $lead->customer_name ?? '-' }}
+                    </td>
 
-                         <form
-action="{{ route('referraldsa.delete',$lead->id) }}"
-method="POST"
-class="d-inline">
 
-@csrf
+                    {{-- MOBILE --}}
+                    <td>
+                        {{ $lead->mobile_no ?? '-' }}
+                    </td>
 
-@method('DELETE')
 
-<button
-class="btn btn-danger btn-sm"
-onclick="return confirm('Are you sure you want to delete this lead?')">
+                    {{-- EMAIL --}}
+                    <td>
+                        {{ $lead->email ?? '-' }}
+                    </td>
 
-<i class="fas fa-trash"></i>
 
-</button>
+                    {{-- LOAN CATEGORY --}}
+                    <td>
+                        {{ $lead->category_name ?? '-' }}
+                    </td>
 
-</form>
 
-                        </td>
+                    {{-- LOAN AMOUNT --}}
+                    <td>
+                        ₹ {{ number_format($lead->loan_amount ?? 0) }}
+                    </td>
 
-                    </tr>
 
-                @empty
+                    {{-- STATUS --}}
+                    <td>
 
-                    <tr>
-                        <td colspan="9" class="text-center">
-                            No Leads Found
-                        </td>
-                    </tr>
+                        @if($lead->status == 'New')
 
-                @endforelse
+                            <span class="badge bg-primary">
+                                New
+                            </span>
 
-                </tbody>
 
-            </table>
+                        @elseif($lead->status == 'In Progress')
 
-            @if(method_exists($leads,'links'))
-                <div class="mt-3">
-                    {{ $leads->links() }}
-                </div>
-            @endif
+                            <span class="badge bg-warning text-dark">
+                                In Progress
+                            </span>
 
-        </div>
+
+                        @elseif($lead->status == 'Approved')
+
+                            <span class="badge bg-success">
+                                Approved
+                            </span>
+
+
+                        @elseif($lead->status == 'Rejected')
+
+                            <span class="badge bg-danger">
+                                Rejected
+                            </span>
+
+
+                        @elseif($lead->status == 'Closed')
+
+                            <span class="badge bg-dark">
+                                Closed
+                            </span>
+
+
+                        @else
+
+                            <span class="badge bg-secondary">
+                                {{ $lead->status ?? '-' }}
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- APPROVED LOAN AMOUNT --}}
+                    <td>
+
+                        @if(
+                            $lead->status == 'Closed' &&
+                            !empty($lead->approved_loan_amount)
+                        )
+
+                            <strong>
+                                ₹ {{ number_format($lead->approved_loan_amount) }}
+                            </strong>
+
+                        @else
+
+                            <span class="text-muted">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- DATE --}}
+                    <td>
+
+                        @if($lead->created_at)
+
+                            {{ \Carbon\Carbon::parse($lead->created_at)->format('d M Y') }}
+
+                        @else
+
+                            -
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- ACTION --}}
+            <td>
+
+    {{-- VIEW --}}
+    <a href="{{ route('referraldsa.view', $lead->id) }}"
+       class="btn btn-sm btn-info text-white"
+       title="View">
+
+        <i class="fas fa-eye"></i>
+
+    </a>
+
+
+    {{-- EDIT --}}
+    <a href="{{ route('referraldsa.edit', $lead->id) }}"
+       class="btn btn-sm btn-warning"
+       title="Edit">
+
+        <i class="fas fa-edit"></i>
+
+    </a>
+
+
+    {{-- DELETE --}}
+    <form
+        action="{{ route('referraldsa.delete', $lead->id) }}"
+        method="POST"
+        class="d-inline"
+        onsubmit="return confirm('Are you sure you want to delete this lead?');"
+    >
+
+        @csrf
+        @method('DELETE')
+
+        <button
+            type="submit"
+            class="btn btn-sm btn-danger"
+            title="Delete"
+        >
+
+            <i class="fas fa-trash"></i>
+
+        </button>
+
+    </form>
+
+</td>w
+
+                </tr>
+
+            @empty
+
+                <tr>
+
+                    <td colspan="10"
+                        class="text-center py-4">
+
+                        No Leads Found
+
+                    </td>
+
+                </tr>
+
+            @endforelse
+
+            </tbody>
+
+        </table>
+
+
+        @if(method_exists($leads, 'links'))
+
+            <div class="mt-3">
+
+                {{ $leads->links() }}
+
+            </div>
+
+        @endif
 
     </div>
 

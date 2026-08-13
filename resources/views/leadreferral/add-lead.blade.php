@@ -60,19 +60,31 @@ required>
 
 <div class="col-md-6 mb-3">
 
-<label>Gender</label>
+    <label>
+        Gender
+    </label>
 
-<select
-name="gender"
-class="form-select">
+    <select
+        name="gender"
+        class="form-select">
 
-<option value="">Select</option>
+        <option value="">
+            Select Gender
+        </option>
 
-<option>Male</option>
+        <option value="Male">
+            Male
+        </option>
 
-<option>Female</option>
+        <option value="Female">
+            Female
+        </option>
 
-</select>
+        <option value="Other">
+            Other
+        </option>
+
+    </select>
 
 </div>
 

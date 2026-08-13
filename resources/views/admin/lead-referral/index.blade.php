@@ -38,21 +38,29 @@
     </div>
 
     <!-- Today's Referral -->
-    <div class="col-lg-3 col-md-6 mb-3">
-        <a href="{{ route('admin.lead-referral.index',['type'=>'today']) }}" class="text-decoration-none text-dark">
-            <div class="card dashboard-card border-left-success shadow-sm">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="card-title">Today's Referral</span>
-                        <h2>{{ $todayLeadReferral }}</h2>
-                    </div>
-                    <div class="card-icon bg-success">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
+   <!-- Today's Leads -->
+<div class="col-lg-3 col-md-6 mb-3">
+    <a href="{{ route('admin.lead-referral.index',['type'=>'today_leads']) }}"
+       class="text-decoration-none text-dark">
+
+        <div class="card dashboard-card border-left-success shadow-sm">
+
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <span class="card-title">Today's Leads</span>
+                    <h2>{{ $todayLead }}</h2>
                 </div>
+
+                <div class="card-icon bg-success">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+
             </div>
-        </a>
-    </div>
+
+        </div>
+    </a>
+</div>
 
     <!-- Closed Leads -->
     <div class="col-lg-3 col-md-6 mb-3">
@@ -170,31 +178,21 @@
 
                 <table class="table table-bordered table-hover">
 
-                    <thead class="table-dark">
+                    <thead class="table-dark" id="leadReferralTableHead">
 
-                    <tr>
+    <tr>
+        <th>#</th>
+        <th>Referral Code</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>City</th>
+        <th>State</th>
+        <th>PAN</th>
+        <th width="120">Action</th>
+    </tr>
 
-                        <th>#</th>
-
-                        <th>Referral Code</th>
-
-                        <th>Name</th>
-
-                        <th>Email</th>
-
-                        <th>Mobile</th>
-
-                        <th>City</th>
-
-                        <th>State</th>
-
-                        <th>PAN</th>
-
-                        <th width="120">Action</th>
-
-                    </tr>
-
-                    </thead>
+</thead>
 
                     <tbody id="leadReferralList">
 
@@ -377,7 +375,111 @@
 @endsection
 
 @push('scripts')
+<script>
+$(function () {
 
+    // Remove previous status event
+    $(document).off('change.leadStatus');
+
+    // Add only ONE status event
+    $(document).on('change.leadStatus', '.lead-status', function (e) {
+
+        e.preventDefault();
+
+        let select = $(this);
+        let leadId = select.data('id');
+        let status = select.val();
+
+        console.log('STATUS CLICKED:', leadId, status);
+
+        // Prevent double request
+        if (select.data('updating') === true) {
+            return;
+        }
+
+        select.data('updating', true);
+        select.prop('disabled', true);
+
+        $.ajax({
+
+            url: "{{ route('admin.lead-referral.change-lead-status') }}",
+
+            type: "POST",
+
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: leadId,
+                status: status
+            },
+
+            success: function (response) {
+
+                console.log('STATUS RESPONSE:', response);
+
+                if (response.status == 1) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Lead status updated successfully.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                } else {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Unable to update lead status.'
+                    });
+
+                }
+            },
+
+            error: function (xhr) {
+
+                console.log('STATUS ERROR:', xhr.status);
+                console.log(xhr.responseText);
+
+                let message = 'Unable to update lead status.';
+
+                if (xhr.responseJSON) {
+
+                    if (xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+
+                    if (xhr.responseJSON.errors) {
+
+                        message = Object.values(
+                            xhr.responseJSON.errors
+                        )
+                        .flat()
+                        .join('\n');
+                    }
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: message
+                });
+            },
+
+            complete: function () {
+
+                select.data('updating', false);
+                select.prop('disabled', false);
+
+            }
+
+        });
+
+    });
+
+});
+</script>
 <script>
 
 let currentType = 'total_referral';
@@ -525,6 +627,65 @@ function loadLeadReferral(search = '', type = currentType) {
 
     currentType = type;
 
+    /*
+    |--------------------------------------------------------------------------
+    | CHANGE TABLE HEADER
+    |--------------------------------------------------------------------------
+    */
+
+ if (
+    type === 'total_leads' ||
+    type === 'closed_leads' ||
+    type === 'today_leads'
+) {
+
+    $('#leadReferralTableHead').html(`
+        <tr>
+            <th>#</th>
+            <th>Customer Name</th>
+            <th>Mobile Number</th>
+            <th>Email</th>
+            <th>Loan Type</th>
+            <th>Loan Amount</th>
+            <th>Status</th>
+            <th>Approved Loan Amount</th>
+            <th>Created Date</th>
+        </tr>
+    `);
+
+    $('#search').attr(
+        'placeholder',
+        'Search Customer Name / Mobile / Email / Loan Type'
+    );
+
+} else {
+
+    $('#leadReferralTableHead').html(`
+        <tr>
+            <th>#</th>
+            <th>Referral Code</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>City</th>
+            <th>State</th>
+            <th>PAN Number</th>
+            <th width="120">Action</th>
+        </tr>
+    `);
+
+    $('#search').attr(
+        'placeholder',
+        'Search Name / Email / Mobile'
+    );
+}
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOAD DATA
+    |--------------------------------------------------------------------------
+    */
+
     $.ajax({
 
         url: "{{ route('admin.lead-referral.list') }}",
@@ -536,16 +697,28 @@ function loadLeadReferral(search = '', type = currentType) {
             type: type
         },
 
-        success: function (response) {
+        success: function(response) {
 
             $('#leadReferralList').html(response.html);
+
+        },
+
+        error: function(xhr) {
+
+            console.log(xhr.responseText);
+
+            $('#leadReferralList').html(`
+                <tr>
+                    <td colspan="9" class="text-center text-danger">
+                        Unable to load data
+                    </td>
+                </tr>
+            `);
 
         }
 
     });
-
 }
-
 </script>
 <script>
     $(document).on('click', '.deleteLeadReferral', function () {
@@ -606,5 +779,65 @@ function loadLeadReferral(search = '', type = currentType) {
 
 });
 </script>
+<script>
+    $(document)
+    .off('change.approvedAmount', '.approved-loan-amount')
+    .on('change.approvedAmount', '.approved-loan-amount', function () {
+
+        let input = $(this);
+
+        let leadId = input.data('id');
+
+        let amount = input.val();
+
+        $.ajax({
+
+            url: "{{ route('admin.lead-referral.approved-amount') }}",
+
+            type: "POST",
+
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: leadId,
+                approved_loan_amount: amount
+            },
+
+            success: function (response) {
+
+                if (response.status == 1) {
+
+                    console.log(
+                        'Approved amount saved.'
+                    );
+
+                } else {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message
+                    });
+
+                }
+
+            },
+
+            error: function (xhr) {
+
+                console.log(xhr.responseText);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Unable to save approved loan amount.'
+                });
+
+            }
+
+        });
+
+    });
+</script>
+
 
 @endpush
