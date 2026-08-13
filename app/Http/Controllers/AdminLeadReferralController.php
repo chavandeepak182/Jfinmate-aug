@@ -20,11 +20,10 @@ public function index(Request $request)
         ->count();
 
     // Today's Lead Referrals
-    $todayLeadReferral = DB::table('users')
-        ->where('role_id', 7)
-        ->whereNull('deleted_at')
-        ->whereDate('created_at', today())
-        ->count();
+    // Today's Leads
+$todayLead = DB::table('lead_referral')
+    ->whereDate('created_at', today())
+    ->count();
 
     // Total Leads
     $totalLead = DB::table('lead_referral')->count();
@@ -45,7 +44,7 @@ $closedLead = DB::table('lead_referral')
 
     return view('admin.lead-referral.index', compact(
         'totalLeadReferral',
-        'todayLeadReferral',
+        'todayLead',
         'totalLead',
         'closedLead',
         'states'
@@ -62,39 +61,106 @@ public function loadList(Request $request)
         $type = $request->type;
 
         // ===========================
-        // Total Leads / Closed Leads
+        // Total Leads / Today's Leads / Closed Leads
         // ===========================
-        if ($type == 'total_leads' || $type == 'closed_leads') {
+        if (
+            $type == 'total_leads' ||
+            $type == 'closed_leads' ||
+            $type == 'today_leads'
+        ) {
 
             $query = DB::table('lead_referral')
-                ->leftJoin('states', 'lead_referral.state_id', '=', 'states.id')
-                ->leftJoin('cities', 'lead_referral.city_id', '=', 'cities.id');
+                ->leftJoin(
+                    'states',
+                    'lead_referral.state_id',
+                    '=',
+                    'states.id'
+                )
+                ->leftJoin(
+                    'cities',
+                    'lead_referral.city_id',
+                    '=',
+                    'cities.id'
+                )
+                ->leftJoin(
+                    'loan_category',
+                    'lead_referral.loan_type',
+                    '=',
+                    'loan_category.loan_category_id'
+                );
 
+            // ===========================
+            // Closed Leads
+            // ===========================
             if ($type == 'closed_leads') {
-                $query->where('lead_referral.status', 'Closed');
+
+                $query->where(
+                    'lead_referral.status',
+                    'Closed'
+                );
             }
 
+            // ===========================
+            // Today's Leads
+            // ===========================
+            if ($type == 'today_leads') {
+
+                $query->whereDate(
+                    'lead_referral.created_at',
+                    today()
+                );
+            }
+
+            // ===========================
+            // Search
+            // ===========================
             if ($request->search) {
 
                 $query->where(function ($q) use ($request) {
 
-                    $q->where('customer_name', 'like', '%' . $request->search . '%')
-                      ->orWhere('mobile_no', 'like', '%' . $request->search . '%')
-                      ->orWhere('email', 'like', '%' . $request->search . '%')
-                      ->orWhere('loan_type', 'like', '%' . $request->search . '%');
+                    $q->where(
+                        'lead_referral.customer_name',
+                        'like',
+                        '%' . $request->search . '%'
+                    )
+                    ->orWhere(
+                        'lead_referral.mobile_no',
+                        'like',
+                        '%' . $request->search . '%'
+                    )
+                    ->orWhere(
+                        'lead_referral.email',
+                        'like',
+                        '%' . $request->search . '%'
+                    )
+                    ->orWhere(
+                        'loan_category.category_name',
+                        'like',
+                        '%' . $request->search . '%'
+                    );
 
                 });
-
             }
 
-            $leadReferrals = $query->select(
-                'lead_referral.*',
-                'states.name as state_name',
-                'cities.city as city_name'
-            )
-            ->orderBy('lead_referral.id', 'DESC')
-            ->get();
+            // ===========================
+            // Get Leads
+            // ===========================
+            $leadReferrals = $query
+                ->select(
+                    'lead_referral.*',
+                    'states.name as state_name',
+                    'cities.city as city_name',
+                    'loan_category.category_name as loan_type_name'
+                )
+                ->orderBy(
+                    'lead_referral.id',
+                    'DESC'
+                )
+                ->get();
 
+            // ===========================
+            // Lead List View
+            // ===========================
             $html = view(
                 'admin.lead-referral.partials.lead-list',
                 compact('leadReferrals')
@@ -105,48 +171,100 @@ public function loadList(Request $request)
             ]);
         }
 
+
         // ===========================
         // Lead Referral Users
         // ===========================
 
         $query = DB::table('users')
-            ->leftJoin('profile', 'users.id', '=', 'profile.user_id')
-            ->leftJoin('cities', 'profile.city', '=', 'cities.id')
-            ->leftJoin('states', 'profile.state', '=', 'states.id')
-            ->where('users.role_id', 7)
-            ->whereNull('users.deleted_at');
+            ->leftJoin(
+                'profile',
+                'users.id',
+                '=',
+                'profile.user_id'
+            )
+            ->leftJoin(
+                'cities',
+                'profile.city',
+                '=',
+                'cities.id'
+            )
+            ->leftJoin(
+                'states',
+                'profile.state',
+                '=',
+                'states.id'
+            )
+            ->where(
+                'users.role_id',
+                7
+            )
+            ->whereNull(
+                'users.deleted_at'
+            );
 
+        // ===========================
+        // Today's Referral Users
+        // ===========================
         if ($type == 'today') {
-            $query->whereDate('users.created_at', today());
+
+            $query->whereDate(
+                'users.created_at',
+                today()
+            );
         }
 
+        // ===========================
+        // Search Referral Users
+        // ===========================
         if ($request->search) {
 
             $query->where(function ($q) use ($request) {
 
-                $q->where('users.name', 'like', '%' . $request->search . '%')
-                  ->orWhere('users.email_id', 'like', '%' . $request->search . '%')
-                  ->orWhere('users.mobile_no', 'like', '%' . $request->search . '%')
-                  ->orWhere('users.referral_code', 'like', '%' . $request->search . '%');
+                $q->where(
+                    'users.name',
+                    'like',
+                    '%' . $request->search . '%'
+                )
+                ->orWhere(
+                    'users.email_id',
+                    'like',
+                    '%' . $request->search . '%'
+                )
+                ->orWhere(
+                    'users.mobile_no',
+                    'like',
+                    '%' . $request->search . '%'
+                )
+                ->orWhere(
+                    'users.referral_code',
+                    'like',
+                    '%' . $request->search . '%'
+                );
 
             });
-
         }
 
-        $leadReferrals = $query->select(
-            'users.id',
-            'users.name',
-             'users.status',
-            'users.email_id',
-            DB::raw('COALESCE(profile.mobile_no, users.mobile_no) as mobile_no'),
-            'users.referral_code',
-            'profile.pan_number',
-            'profile.pincode',
-            'cities.city as city_name',
-            'states.name as state_name'
-        )
-        ->orderBy('users.id', 'DESC')
-        ->get();
+        $leadReferrals = $query
+            ->select(
+                'users.id',
+                'users.name',
+                'users.status',
+                'users.email_id',
+                DB::raw(
+                    'COALESCE(profile.mobile_no, users.mobile_no) as mobile_no'
+                ),
+                'users.referral_code',
+                'profile.pan_number',
+                'profile.pincode',
+                'cities.city as city_name',
+                'states.name as state_name'
+            )
+            ->orderBy(
+                'users.id',
+                'DESC'
+            )
+            ->get();
 
         $html = view(
             'admin.lead-referral.partials.list',
@@ -160,12 +278,62 @@ public function loadList(Request $request)
     } catch (\Exception $e) {
 
         return response()->json([
-            'html' => '<tr><td colspan="20">' . $e->getMessage() . '</td></tr>'
+            'html' => '<tr>
+                <td colspan="20" class="text-center text-danger">
+                    ' . $e->getMessage() . '
+                </td>
+            </tr>'
         ]);
-
     }
 }
 
+public function changeLeadStatus(Request $request)
+{
+    $request->validate([
+        'id' => 'required|integer',
+
+        'status' => 'required|in:New,In Progress,Approved,Rejected,Closed',
+
+        'approved_loan_amount' => 'nullable|numeric|min:0',
+    ]);
+
+    DB::table('lead_referral')
+        ->where('id', $request->id)
+        ->update([
+            'status' => $request->status,
+
+            'approved_loan_amount' =>
+                $request->status === 'Closed'
+                    ? $request->approved_loan_amount
+                    : null,
+
+            'updated_at' => now(),
+        ]);
+
+    return response()->json([
+        'status' => 1,
+        'message' => 'Lead status updated successfully.'
+    ]);
+}
+public function approvedLoanAmount(Request $request)
+{
+    $request->validate([
+        'id' => 'required|integer',
+        'approved_loan_amount' => 'required|numeric|min:0',
+    ]);
+
+    DB::table('lead_referral')
+        ->where('id', $request->id)
+        ->update([
+            'approved_loan_amount' => $request->approved_loan_amount,
+            'updated_at' => now(),
+        ]);
+
+    return response()->json([
+        'status' => 1,
+        'message' => 'Approved loan amount saved successfully.'
+    ]);
+}
 public function changeStatus(Request $request)
 {
     DB::table('users')

@@ -2,46 +2,120 @@
 
     @foreach($leadReferrals as $key => $row)
 
-    <tr>
+        <tr>
 
-        <td>{{ $key + 1 }}</td>
+            {{-- # --}}
+            <td>
+                {{ $key + 1 }}
+            </td>
 
-        <td>{{ $row->customer_name }}</td>
+            {{-- CUSTOMER NAME --}}
+            <td>
+                {{ $row->customer_name ?? '-' }}
+            </td>
 
-        <td>{{ $row->mobile_no }}</td>
+            {{-- MOBILE NUMBER --}}
+            <td>
+                {{ $row->mobile_no ?? '-' }}
+            </td>
 
-        <td>{{ $row->email }}</td>
+            {{-- EMAIL --}}
+            <td>
+                {{ $row->email ?? '-' }}
+            </td>
 
-        <td>{{ $row->loan_type ?? '-' }}</td>
+            {{-- LOAN TYPE --}}
+            <td>
+                {{ $row->loan_type_name ?? '-' }}
+            </td>
 
-        <td>₹ {{ number_format($row->loan_amount) }}</td>
+            {{-- LOAN AMOUNT --}}
+            <td>
+                ₹ {{ number_format($row->loan_amount ?? 0) }}
+            </td>
 
-        <td>
-            @if($row->status == 'Closed')
-                <span class="badge bg-success">Closed</span>
-            @elseif($row->status == 'New')
-                <span class="badge bg-primary">New</span>
-            @elseif($row->status == 'Pending')
-                <span class="badge bg-warning">Pending</span>
-            @else
-                <span class="badge bg-secondary">{{ $row->status }}</span>
-            @endif
-        </td>
+            {{-- STATUS --}}
+          {{-- STATUS --}}
+{{-- STATUS --}}
+<td>
 
-        <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d M Y') }}</td>
+    <select
+        class="form-select form-select-sm lead-status"
+        data-id="{{ $row->id }}"
+        style="width:140px;"
+    >
 
-       
+        <option value="New"
+            {{ ($row->status ?? '') == 'New' ? 'selected' : '' }}>
+            New
+        </option>
 
-    </tr>
+        <option value="In Progress"
+            {{ ($row->status ?? '') == 'In Progress' ? 'selected' : '' }}>
+            In Progress
+        </option>
+
+        <option value="Approved"
+            {{ ($row->status ?? '') == 'Approved' ? 'selected' : '' }}>
+            Approved
+        </option>
+
+        <option value="Rejected"
+            {{ ($row->status ?? '') == 'Rejected' ? 'selected' : '' }}>
+            Rejected
+        </option>
+
+        <option value="Closed"
+            {{ ($row->status ?? '') == 'Closed' ? 'selected' : '' }}>
+            Closed
+        </option>
+
+    </select>
+
+</td>
+{{-- APPROVED LOAN AMOUNT --}}
+<td>
+
+    @if(($row->status ?? '') == 'Closed')
+
+        <input
+            type="number"
+            class="form-control form-control-sm approved-loan-amount"
+            data-id="{{ $row->id }}"
+            value="{{ $row->approved_loan_amount ?? '' }}"
+            placeholder="Approved Amount"
+            min="0"
+            step="0.01"
+            style="width:150px;"
+        >
+
+    @else
+
+        <span class="text-muted">-</span>
+
+    @endif
+
+</td>
+
+            {{-- CREATED DATE --}}
+            <td>
+                @if($row->created_at)
+                    {{ \Carbon\Carbon::parse($row->created_at)->format('d M Y') }}
+                @else
+                    -
+                @endif
+            </td>
+
+        </tr>
 
     @endforeach
 
 @else
 
-<tr>
-    <td colspan="9" class="text-center text-danger">
-        No Lead Found
-    </td>
-</tr>
+    <tr>
+        <td colspan="8" class="text-center py-4">
+            No Leads Found
+        </td>
+    </tr>
 
 @endif

@@ -1,17 +1,27 @@
 <IfModule mod_rewrite.c>
-RewriteEngine On
-
-# Redirect requests to public folder
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ public/$1 [L]
-
+    RewriteEngine On
+    
+    # Redirect all requests to public folder
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ /public/$1 [L,QSA]
 </IfModule>
 
-# 🚀 PERFORMANCE FIX (IMPORTANT)
-php_value max_execution_time 300
-php_value max_input_time 300
-php_value memory_limit 512M
-php_value post_max_size 64M
-php_value upload_max_filesize 64M
+# Protect sensitive directories
+<FilesMatch "^(artisan|composer\.json|composer\.lock|\.env|\.gitignore|\.htaccess|phpunit\.xml|server\.php|web\.config)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect .env file specifically
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect vendor directory
+<IfModule mod_rewrite.c>
+    RewriteRule ^vendor/.*$ - [F,L,NC]
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes

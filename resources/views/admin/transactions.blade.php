@@ -568,28 +568,38 @@ JFS | Wallet Balance
 </div>
 
 <!-- Modern Invoice Modal -->
-<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+<!-- Transaction Invoice Modal -->
+<div class="modal fade"
+     id="invoiceModal"
+     tabindex="-1"
+     aria-labelledby="invoiceModalLabel"
+     aria-hidden="true">
 
     <div class="modal-dialog modal-lg modal-dialog-centered">
 
         <div class="modal-content invoice-modal">
 
-            <div class="modal-header">
-
-                <h4 class="modal-title fw-bold">
-
-                    <i class="fas fa-file-invoice-dollar text-primary me-2"></i>
-
-                    Transaction Invoice
-
-                </h4>
+            <!-- Header -->
+            <div class="modal-header invoice-modal-header">
 
                 <div>
+                    <h4 class="modal-title fw-bold mb-1">
+                        <i class="fas fa-file-invoice-dollar text-primary me-2"></i>
+                        Transaction Invoice
+                    </h4>
 
-                    <button id="downloadInvoice" class="btn btn-success me-2">
+                    <small class="text-muted">
+                        JFinserv Consultant
+                    </small>
+                </div>
 
-                        <i class="fa fa-download"></i>
+                <div class="d-flex align-items-center gap-2">
 
+                    <button id="downloadInvoice"
+                            type="button"
+                            class="btn btn-success invoice-download-btn">
+
+                        <i class="fa fa-download me-1"></i>
                         Download
 
                     </button>
@@ -603,30 +613,253 @@ JFS | Wallet Balance
 
             </div>
 
-            <div class="modal-body p-4">
+
+            <!-- Body -->
+            <div class="modal-body invoice-modal-body">
 
                 <div id="transaction-invoice-content">
 
-                    <!-- Logo -->
-
+                    <!-- Invoice Header -->
                     <div class="invoice-header">
 
-                        <img src="../theme/frontend/img/logo.png"
-                             class="invoice-logo">
+                        <div class="invoice-logo-wrapper">
 
-                        <h3>JFinserv Consultant</h3>
+                            <img src="{{ asset('theme/frontend/img/logo.png') }}"
+                                 class="invoice-logo"
+                                 alt="JFinserv Consultant">
 
-                        <p class="text-muted">
+                        </div>
 
+                        <h3 class="invoice-company">
+                            JFinserv Consultant
+                        </h3>
+
+                        <p class="invoice-subtitle">
                             Transaction Invoice
-
                         </p>
 
                     </div>
 
-                    <hr>
 
-                    <!-- AJAX Content Here -->
+                    <div class="invoice-divider"></div>
+
+
+                    <!-- Transaction Information -->
+                    <div class="invoice-section">
+
+                        <div class="section-title">
+                            <i class="fas fa-user-circle me-2"></i>
+                            Customer Information
+                        </div>
+
+
+                        <div class="invoice-grid">
+
+                            <!-- Row 1 -->
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    <i class="fas fa-user me-2"></i>
+                                    Customer Name
+                                </span>
+
+                                <span class="field-value"
+                                      id="invoice-user-name">
+                                    -
+                                </span>
+
+                            </div>
+
+
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    Email
+                                </span>
+
+                                <span class="field-value"
+                                      id="invoice-email">
+                                    -
+                                </span>
+
+                            </div>
+
+
+                            <!-- Row 2 -->
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    <i class="fas fa-phone me-2"></i>
+                                    Contact
+                                </span>
+
+                                <span class="field-value"
+                                      id="invoice-contact">
+                                    -
+                                </span>
+
+                            </div>
+
+
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    <i class="fas fa-calendar-alt me-2"></i>
+                                    Date
+                                </span>
+
+                                <span class="field-value"
+                                      id="invoice-date">
+                                    -
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Transaction Information -->
+                    <div class="invoice-section">
+
+                        <div class="section-title">
+                            <i class="fas fa-receipt me-2"></i>
+                            Transaction Details
+                        </div>
+
+
+                        <div class="invoice-grid">
+
+                            <!-- Row 1 -->
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    <i class="fas fa-hashtag me-2"></i>
+                                    Transaction ID
+                                </span>
+
+                                <span class="field-value transaction-value"
+                                      id="invoice-transaction-id">
+                                    -
+                                </span>
+
+                            </div>
+
+
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    Status
+                                </span>
+
+                                <span class="field-value">
+                                    <span class="invoice-status"
+                                          id="invoice-status">
+                                        -
+                                    </span>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Amount Details -->
+                    <div class="invoice-section">
+
+                        <div class="section-title">
+                            <i class="fas fa-money-bill-wave me-2"></i>
+                            Amount Details
+                        </div>
+
+
+                        <div class="invoice-grid">
+
+                            <!-- Row 1 -->
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    Requested Amount
+                                </span>
+
+                                <span class="field-value amount-value"
+                                      id="invoice-amount">
+                                    ₹0.00
+                                </span>
+
+                            </div>
+
+
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    GST
+                                </span>
+
+                                <span class="field-value"
+                                      id="invoice-gst">
+                                    ₹0.00
+                                </span>
+
+                            </div>
+
+
+                            <!-- Row 2 -->
+                            <div class="invoice-field">
+
+                                <span class="field-label">
+                                    TDS
+                                </span>
+
+                                <span class="field-value"
+                                      id="invoice-tds">
+                                    ₹0.00
+                                </span>
+
+                            </div>
+
+
+                            <div class="invoice-field final-amount-field">
+
+                                <span class="field-label">
+                                    Final Amount
+                                </span>
+
+                                <span class="field-value final-amount"
+                                      id="invoice-final-amount">
+                                    ₹0.00
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Existing AJAX Content -->
+                    <div id="invoice-ajax-content">
+                    </div>
+
+
+                    <!-- Footer -->
+                    <div class="invoice-footer">
+
+                        <div>
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Secure Transaction
+                        </div>
+
+                        <div>
+                            This is a computer-generated invoice.
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -637,6 +870,264 @@ JFS | Wallet Balance
     </div>
 
 </div>
+<style>
+    /* =========================================
+   INVOICE DESIGN
+========================================= */
+
+#transaction-invoice-content {
+    background: #fff;
+    padding: 32px;
+    border-radius: 14px;
+    border: 1px solid #e8edf3;
+    color: #1f2937;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.invoice-header {
+    text-align: center;
+    padding: 5px 0 18px;
+}
+
+.invoice-logo {
+    width: 145px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.invoice-header h3 {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.invoice-header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #7b8794;
+}
+
+#transaction-invoice-content hr {
+    border: 0;
+    border-top: 1px solid #e5e9ef;
+    margin: 20px 0 25px;
+}
+
+
+/* =========================================
+   INVOICE DETAILS
+========================================= */
+
+.invoice-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 18px;
+    margin-bottom: 25px;
+}
+
+
+/* =========================================
+   EACH FIELD
+========================================= */
+
+.invoice-detail-box {
+    background: #f8fafc;
+    border: 1px solid #e7ecf2;
+    border-radius: 10px;
+    padding: 14px 16px;
+    min-height: 68px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.invoice-detail-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #7a8796;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 6px;
+}
+
+.invoice-detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #202938;
+    word-break: break-word;
+}
+
+
+/* =========================================
+   TRANSACTION ID
+========================================= */
+
+.invoice-transaction-id {
+    font-family: monospace;
+    font-size: 13px;
+    color: #2563eb;
+}
+
+
+/* =========================================
+   CONTACT - FULL WIDTH
+========================================= */
+
+.invoice-contact {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================
+   AMOUNT SECTION
+========================================= */
+
+.invoice-amount-section {
+    margin-top: 8px;
+    border: 1px solid #e5eaf0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.invoice-amount-title {
+    background: #f8fafc;
+    padding: 13px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #263244;
+    border-bottom: 1px solid #e5eaf0;
+}
+
+.invoice-amount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 16px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.invoice-amount-row:last-child {
+    border-bottom: 0;
+}
+
+.invoice-amount-label {
+    font-size: 13px;
+    color: #667085;
+}
+
+.invoice-amount-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #263244;
+}
+
+
+/* =========================================
+   FINAL AMOUNT
+========================================= */
+
+.invoice-final-row {
+    background: #f0fdf4;
+}
+
+.invoice-final-row .invoice-amount-label {
+    font-weight: 700;
+    color: #166534;
+}
+
+.invoice-final-row .invoice-amount-value {
+    font-size: 19px;
+    font-weight: 800;
+    color: #15803d;
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.invoice-status {
+    display: inline-block;
+    width: fit-content;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.invoice-footer {
+    margin-top: 25px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e9ef;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 11px;
+    color: #8a95a3;
+}
+
+
+/* =========================================
+   DOWNLOAD BUTTON
+========================================= */
+
+.invoice-modal .btn-success {
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 767px) {
+
+    #transaction-invoice-content {
+        padding: 20px 15px;
+    }
+
+    .invoice-details {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .invoice-contact {
+        grid-column: auto;
+    }
+
+    .invoice-header h3 {
+        font-size: 20px;
+    }
+
+    .invoice-logo {
+        width: 125px;
+    }
+
+    .invoice-footer {
+        flex-direction: column;
+        gap: 7px;
+        text-align: center;
+    }
+}
+</style>
 
 @endsection
 
@@ -711,10 +1202,47 @@ $(document).ready(function() {
     });
 });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-    document.getElementById('downloadInvoice').addEventListener('click', function() {
-        // Open the print dialog
-        window.print();
-    });
+document.getElementById('downloadInvoice').addEventListener('click', function () {
+
+    const invoice = document.getElementById('transaction-invoice-content');
+
+    if (!invoice) {
+        alert('Invoice content not found.');
+        return;
+    }
+
+    const transactionId =
+        $('.show-history-btn').data('transaction-id') || 'invoice';
+
+    const options = {
+        margin: 10,
+
+        filename: 'invoice-' + transactionId + '.pdf',
+
+        image: {
+            type: 'jpeg',
+            quality: 0.98
+        },
+
+        html2canvas: {
+            scale: 2,
+            useCORS: true
+        },
+
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+        }
+    };
+
+    html2pdf()
+        .set(options)
+        .from(invoice)
+        .save();
+
+});
 </script>
 @endsection

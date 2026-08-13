@@ -307,8 +307,11 @@ JFS | Wallet Balance
                 <p><strong>Email ID:</strong> {{ $request->email }}</p>
                 <p><strong>Amount:</strong> ₹{{ number_format($request->amount,2) }}</p>
 
-                <form action="{{ route('admin.withdrawal.approve',$request->id) }}" method="POST">
-                    @csrf
+                <form id="approveForm{{ $request->id }}"
+      action="{{ route('admin.withdrawal.approve',$request->id) }}"
+      method="POST">
+
+    @csrf
 
                     <div class="mb-3">
                         <label>GST</label>
@@ -341,9 +344,14 @@ JFS | Wallet Balance
                         <input type="text" id="actual_amount{{ $request->id }}" class="form-control" readonly>
                     </div>
 
-                    <button type="submit" class="btn btn-success">
+                    <!-- <button type="submit" class="btn btn-success">
                         Approve
-                    </button>
+                    </button> -->
+                    <button type="button"
+                        class="btn btn-success approve-btn"
+                        data-id="{{ $request->id }}">
+                    Approve
+                </button>
 
                 </form>
 
@@ -536,6 +544,58 @@ function calculateAmount(requestId, amount) {
 
     $('#actual_amount' + requestId).val('₹' + actualAmount.toFixed(2)); // Display actual amount after GST and TDS
 }
+
+
+</script>
+<script>
+$(document).ready(function () {
+
+    $(document).on('click', '.approve-btn', function (e) {
+
+        e.preventDefault();
+
+        let requestId = $(this).data('id');
+
+        let form = document.getElementById(
+            'approveForm' + requestId
+        );
+
+        // Check required fields first
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        swal({
+            title: "Are you sure?",
+            text: "Do you want to approve this withdrawal request?",
+            icon: "warning",
+            buttons: {
+                cancel: {
+                    text: "No, Cancel",
+                    value: false,
+                    visible: true
+                },
+                confirm: {
+                    text: "Yes, Approve",
+                    value: true,
+                    visible: true
+                }
+            }
+        }).then(function (willApprove) {
+
+            if (willApprove) {
+
+                // Submit the original form
+                form.submit();
+
+            }
+
+        });
+
+    });
+
+});
 </script>
 
 @endsection
