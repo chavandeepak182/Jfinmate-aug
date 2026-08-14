@@ -1,34 +1,52 @@
 @section('title', 'About Us')
 @section('content')
 @include('dhara-jfin.layout.header')
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JFinMate · One Platform. Multiple Benefits.</title>
-  <!-- Font Awesome 6 (free) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    /* Hero Section */
+#home.hero {
+    width: 104%;
+    margin-left: -2%;
+    overflow: hidden;
+}
+
+/* Hero Slide */
+#home .hero-slider .slide {
+    width: 99%;
+    height: 81vh;
+    min-height: 500px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+/* Hero content */
+#home .hero-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    #home.hero {
+        width: 100%;
+        margin-left: 0;
     }
 
-    body {
-      background: #fafcff;
-      color: #1a2639;
-      line-height: 1.5;
+    #home .hero-slider .slide {
+        height: 86vh;
+        min-height: 500px;
     }
 
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
+    #home .hero-slider .slide {
+    width: 100%;
+    height: 88%;
+}
+}
+    
     /* Buttons */
     .btn-primary, .btn-outline {
       display: inline-block;
@@ -435,17 +453,18 @@
       .section-title { font-size: 1.8rem; }
     }
   </style>
-</head>
-<body>
+
   <!-- Hero Banner -->
  {{-- HERO SECTION --}}
     <section id="home" class="hero">
         <div class="hero-slider">
-            <div class="slide" style="background-image:  url('{{asset('theme/dhara-jfin/img/loan_banner_new.jpg')}}')">
+            <div class="slide" style="background-image:  url('{{asset('theme/dhara-jfin/img/refer.jpg')}}')">
                 <div class="container-tab hero-content">
-                    <div class="hero-intro">WELCOME TO JFINSERV</div>
-                    <h1>Fastest,Secure and <span style="color:#295cab">Easy Loan Process</span></h1>
-                    <p>Experience fast,secure loans with competitive rates and personalized support in Pune.Enjoy seamless service and exceptional rewards.</p>
+
+                    <div class="hero-intro">Buy. Finance. Refer. Earn.</div>
+                    <h1>One Platform. <span style="color:#295cab">Multiple Benefits.</span></h1>
+                    <p>Find your dream home or the right financial solution with JFinMate.<br>
+                     Enjoy exclusive customer benefits and unlock referral rewards <br>after becoming our customer.</p>
 
                    <div class="hero-btns">
                         <a href="{{ route('authv3.login.form') }}" class="btn btn-primary-hero"> Explore Properties</a>
@@ -454,28 +473,409 @@
                 </div>
             </div>
 
-            <div class="slide" style="background-image: url('{{asset('theme/dhara-jfin/img/reward_banner.jpg')}}'); background-position:right 10% top 5%;" >
-                <div class="container-tab hero-content">
-                    <div class="hero-intro">TRUSTED FINANCIAL PARTNERS</div>
-                    <h1>Unique Reward & <span style="color:#295cab">Earning Opportunity</span></h1>
-                    <p>We offer a unique earning opportunity through our referral program, rewarding both your referrals and those made by your friends.</p>
-
-                    <div class="hero-btns">
-                        <a href="{{ route('authv3.login.form') }}" class="btn btn-primary-hero"> Explore Properties</a>
-                        <a href="{{ url('/login') }}" class="btn btn-outline"> Explore Finance Solutions</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div class="slider-nav">
-            <button class="prev-slide"><i class="fas fa-chevron-left"></i></button>
-            <button class="next-slide"><i class="fas fa-chevron-right"></i></button>
-        </div>
+        
     </section>
 
-  <!-- Why Choose JFinMate? -->
+ <!DOCTYPE html>
+<html lang="en">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+   
+
+   
+
+    
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .btn-primary, .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 32px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: 0.2s ease;
+      border: 2px solid transparent;
+      cursor: default;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary {
+      background: #0b2b4a;
+      color: white;
+      border-color: #0b2b4a;
+    }
+
+    .btn-primary i {
+      font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+      background: #1d3f5e;
+      border-color: #1d3f5e;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #0b2b4a;
+      border-color: #0b2b4a;
+    }
+
+    .btn-outline i {
+      font-size: 1rem;
+    }
+
+    .btn-outline:hover {
+      background: #eef3f9;
+    }
+
+    .hero-visual {
+      flex: 0 0 220px;
+      background: #e5eff9;
+      border-radius: 60px;
+      padding: 28px 20px;
+      text-align: center;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #0b2b4a;
+      border: 1px solid rgba(11,43,74,0.04);
+      box-shadow: 0 8px 20px rgba(11,43,74,0.04);
+    }
+
+    .hero-visual i {
+      font-size: 3.2rem;
+      margin-bottom: 10px;
+      color: #0b2b4a;
+    }
+
+    .hero-visual .refer-badge {
+      background: #0b2b4a;
+      color: white;
+      padding: 6px 18px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      margin-top: 8px;
+    }
+
+    /* ===== SECTION TITLES ===== */
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .section-sub {
+      font-size: 1.1rem;
+      color: #2d405b;
+      max-width: 700px;
+    }
+
+    /* ===== WHY ===== */
+    .why-section {
+      padding: 56px 0 32px;
+      background: white;
+    }
+
+    .why-grid {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .why-text {
+      flex: 1 1 320px;
+    }
+
+    .why-text p {
+      font-size: 1.05rem;
+      color: #1e334d;
+      margin-bottom: 16px;
+    }
+
+    .why-highlight {
+      background: #e9f0fa;
+      padding: 14px 24px;
+      border-radius: 60px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: #0b2b4a;
+    }
+
+    .why-highlight i {
+      font-size: 1.2rem;
+    }
+
+    /* ===== JOURNEY ===== */
+    .journey-section {
+      background: #f2f7ff;
+      padding: 56px 0 48px;
+    }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 32px;
+    }
+
+    @media (max-width: 780px) {
+      .journey-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .journey-card {
+      background: white;
+      border-radius: 28px;
+      padding: 32px 30px;
+      box-shadow: 0 8px 24px rgba(0,20,40,0.04);
+      border: 1px solid rgba(11,43,74,0.06);
+      transition: 0.2s;
+    }
+
+    .journey-card h3 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .journey-card .icon-big {
+      font-size: 2.4rem;
+      color: #0b2b4a;
+      margin-bottom: 14px;
+    }
+
+    .journey-card ul {
+      list-style: none;
+      margin: 18px 0 24px;
+    }
+
+    .journey-card ul li {
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #1f3753;
+    }
+
+    .journey-card ul li i {
+      color: #0b2b4a;
+      width: 20px;
+      font-size: 1rem;
+    }
+
+    .footnote {
+      font-size: 0.85rem;
+      color: #4b627c;
+      margin-top: 16px;
+    }
+
+    /* ===== REWARDS ===== */
+    .rewards-section {
+      background: white;
+      padding: 56px 0 40px;
+    }
+
+    .rewards-highlight {
+      background: #e7eff9;
+      border-radius: 40px;
+      padding: 28px 32px;
+      margin: 24px 0 16px;
+    }
+
+    .rewards-highlight p {
+      font-size: 1.08rem;
+      color: #15304b;
+    }
+
+    .steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px 24px;
+      margin: 32px 0 12px;
+      counter-reset: step;
+    }
+
+    .step-item {
+      flex: 1 1 180px;
+      background: #f5f9ff;
+      border-radius: 24px;
+      padding: 22px 20px;
+      border-left: 4px solid #0b2b4a;
+      counter-increment: step;
+    }
+
+    .step-item::before {
+      content: "0" counter(step);
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #0b2b4a;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .step-item strong {
+      display: block;
+      font-size: 1.1rem;
+      margin: 6px 0 4px;
+    }
+
+    .step-item p {
+      color: #1f3753;
+      font-size: 0.95rem;
+    }
+
+    /* ===== PREFER ===== */
+    .prefer-section {
+      background: #f2f7ff;
+      padding: 48px 0;
+    }
+
+    .prefer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 16px 20px;
+      margin-top: 28px;
+    }
+
+    .prefer-item {
+      background: white;
+      padding: 14px 18px;
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .prefer-item i {
+      color: #0b2b4a;
+      font-size: 1.2rem;
+      width: 24px;
+    }
+
+    /* ===== FAQ ===== */
+    .faq-section {
+      background: white;
+      padding: 52px 0 48px;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 40px;
+      margin-top: 28px;
+    }
+
+    @media (max-width: 700px) {
+      .faq-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .faq-item h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .faq-item h4 i {
+      color: #0b2b4a;
+      font-size: 1rem;
+    }
+
+    .faq-item p {
+      color: #1f3753;
+      padding-left: 32px;
+    }
+
+    /* ===== FINAL CTA ===== */
+    .final-cta {
+      background: linear-gradient(135deg, #0b2b4a 0%, #1e4a6e 100%);
+      color: white;
+      padding: 56px 0 48px;
+      text-align: center;
+    }
+
+    .final-cta h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      max-width: 700px;
+      margin: 0 auto 8px;
+    }
+
+    .final-cta .sub {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+
+    .final-cta .btn-group {
+      justify-content: center;
+    }
+
+    .final-cta .btn-group .btn-primary {
+      background: white;
+      color: #0b2b4a;
+      border-color: white;
+    }
+
+    .final-cta .btn-group .btn-primary:hover {
+      background: #e7edf5;
+    }
+
+    .final-cta .btn-group .btn-outline {
+      color: white;
+      border-color: white;
+    }
+
+    .final-cta .btn-group .btn-outline:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .final-cta .footnote {
+      color: rgba(255,255,255,0.6);
+      margin-top: 32px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .hero-content h1 { font-size: 2.2rem; }
+      .hero-sub { font-size: 1.1rem; }
+      .section-title { font-size: 1.8rem; }
+      .hero-visual { flex: 1 1 100%; }
+      .hero-grid { flex-direction: column; }
+    }
+  </style>
+</head>
+
+
+
+
+  <!-- WHY CHOOSE -->
   <section class="why-section">
     <div class="container">
       <div class="why-grid">
@@ -485,19 +885,18 @@
           <p>Whether you're purchasing your first home, investing in property, or looking for the right financing, we're here to make the journey simple, transparent, and rewarding.</p>
           <div class="why-highlight"><i class="fas fa-gift"></i> Turn Every Successful Referral Into Extra Rewards</div>
         </div>
-        <div style="flex:0 0 220px; background: #e5eff9; border-radius: 60px; padding: 20px; text-align: center; min-height: 120px; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #0b2b4a;">
-          <i class="fas fa-people-arrows" style="font-size: 3rem; margin-right: 12px;"></i> Refer & earn
+        <div style="flex:0 0 220px; background: #e5eff9; border-radius: 60px; padding: 20px; text-align: center; min-height: 120px; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #0b2b4a; gap: 12px; flex-wrap: wrap; border: 1px solid rgba(11,43,74,0.04);">
+          <i class="fas fa-people-arrows" style="font-size: 2.8rem;"></i> Refer & earn
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Choose Your Journey -->
+  <!-- JOURNEY -->
   <section class="journey-section">
     <div class="container">
       <h2 class="section-title">Choose Your Journey</h2>
       <div class="journey-grid">
-        <!-- Looking for a Property -->
         <div class="journey-card">
           <div class="icon-big"><i class="fas fa-home"></i></div>
           <h3>Looking for a Property?</h3>
@@ -508,9 +907,8 @@
             <li><i class="fas fa-check-circle"></i> Exclusive customer offers*</li>
             <li><i class="fas fa-check-circle"></i> Access to referral rewards after becoming a customer</li>
           </ul>
-          <a href="#" class="btn-primary"><i class="fas fa-building"></i> Explore Properties</a>
+          <a href="{{ route('authv3.login.form') }}" class="btn-primary"><i class="fas fa-building"></i> Explore Properties</a>
         </div>
-        <!-- Looking for Finance -->
         <div class="journey-card">
           <div class="icon-big"><i class="fas fa-coins"></i></div>
           <h3>Looking for Finance?</h3>
@@ -522,14 +920,14 @@
             <li><i class="fas fa-check-circle"></i> No Processing Fee on eligible offers*</li>
             <li><i class="fas fa-check-circle"></i> Referral rewards after becoming a customer</li>
           </ul>
-          <a href="#" class="btn-outline"><i class="fas fa-hand-holding-usd"></i> Explore Finance</a>
+          <a href="{{ url('/login') }}" class="btn-outline"><i class="fas fa-hand-holding-usd"></i> Explore Finance</a>
         </div>
       </div>
-      <p class="footnote mt-3">*Terms & conditions apply. Offers vary by project and eligibility.</p>
+      <p class="footnote">*Terms & conditions apply. Offers vary by project and eligibility.</p>
     </div>
   </section>
 
-  <!-- How JFinMate Rewards You + How It Works -->
+  <!-- REWARDS + HOW IT WORKS -->
   <section class="rewards-section">
     <div class="container">
       <h2 class="section-title">How JFinMate Rewards You</h2>
@@ -549,7 +947,7 @@
     </div>
   </section>
 
-  <!-- Why Customers Prefer JFinMate -->
+  <!-- WHY CUSTOMERS PREFER -->
   <section class="prefer-section">
     <div class="container">
       <h2 class="section-title">Why Customers Prefer JFinMate</h2>
@@ -594,17 +992,15 @@
     </div>
   </section>
 
-  <!-- Final CTA -->
+  <!-- FINAL CTA -->
   <section class="final-cta">
     <div class="container">
       <h2>Your Journey Doesn't End After You Buy. <br>It Gets Even More Rewarding.</h2>
       <p class="sub">Find your dream property, secure the right financial solution, and enjoy benefits that continue even after your journey is complete.</p>
-      <div class="btn-group" style="justify-content: center;">
-        <a href="#" class="btn-primary"><i class="fas fa-building"></i> Explore Properties</a>
-        <a href="#" class="btn-outline"><i class="fas fa-hand-holding-usd"></i> Explore Finance Solutions</a>
+      <div class="btn-group">
+        <a href="{{ route('authv3.login.form') }}" class="btn-primary"><i class="fas fa-building"></i> Explore Properties</a>
+        <a href="{{ url('/login') }}" class="btn-outline"><i class="fas fa-hand-holding-usd"></i> Explore Finance Solutions</a>
       </div>
-      <p style="margin-top: 32px; opacity: 0.6; font-size: 0.9rem;">JFinMate · One Platform. Multiple Benefits.</p>
+      <p class="footnote" style="margin-top: 32px; opacity: 0.6; font-size: 0.9rem;">JFinMate · One Platform. Multiple Benefits.</p>
     </div>
   </section>
-</body>
-</html>
