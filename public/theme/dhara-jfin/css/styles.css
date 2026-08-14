@@ -451,7 +451,7 @@ header.scrolled .logo img {
 }
 
 .slide {
-    width: 100%; /* Each slide takes full width of container */
+    width:100%; /* Each slide takes full width of container */
     flex-shrink: 0; /* Prevent slides from shrinking */
     height: 100%;
     background-size: cover;

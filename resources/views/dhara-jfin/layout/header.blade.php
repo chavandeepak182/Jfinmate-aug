@@ -43,8 +43,10 @@
         <ul class="nav-links">
             <li><a href="{{ url('/') }}">Home</a></li>
             <li><a href="{{ url('/about') }}">About Us</a></li>
+           
             <li class="dropdown">
                 <a href="{{ url('/services') }}">Services</a>
+                
                 <ul class="dropdown-menu">
                     <li><a href="{{ url('/home-loan') }}">Home Loan</a></li>
                     <li><a href="{{ url('/loan-against-property') }}">Loan Against Property</a></li>
@@ -54,6 +56,7 @@
                     <li><a href="{{ url('/lease-rental-discounting') }}">Lease Rental Discounting</a></li>
                 </ul>
             </li>
+             <li><a href="{{ url('/referearn') }}">Refer & Earn </a></li>
             <li><a href="{{ url('/properties') }}">Properties</a></li>
             <li><a href="{{ url('/eligibility-calculator') }}">Calculator</a></li>
             <li><a href="{{ url('/contact') }}">Contact</a></li>
