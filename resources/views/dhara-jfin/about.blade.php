@@ -1,6 +1,120 @@
 @section('title', 'About Us')
 @section('content')
 @include('dhara-jfin.layout.header')
+
+<style>
+    /* ============================================================
+   OUR TEAM SECTION – MOBILE RESPONSIVE (UI unchanged)
+   Only adds responsive behavior, preserves all existing styles
+   ============================================================ */
+
+/* ----- force images to be responsive & maintain aspect ratio ----- */
+.about-page-team-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ----- mobile first: ensure grid stacks properly on small screens ----- */
+.about-page-team-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* single column on mobile */
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+/* ----- cards take full width on mobile, but keep max-width for readability ----- */
+.about-page-team-card {
+  width: 100%;
+  max-width: 320px; /* prevents cards from becoming too wide on mobile */
+  margin: 0 auto;
+}
+
+/* ----- tablet (portrait) – 2 columns ----- */
+@media (min-width: 600px) {
+  .about-page-team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  .about-page-team-card {
+    max-width: 340px;
+  }
+}
+
+/* ----- desktop – 3 columns ----- */
+@media (min-width: 1024px) {
+  .about-page-team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+  .about-page-team-card {
+    max-width: 360px;
+  }
+}
+
+/* ----- large screens – 4 columns (optional, but matches your grid) ----- */
+@media (min-width: 1280px) {
+  .about-page-team-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .about-page-team-card {
+    max-width: 100%;
+  }
+}
+
+/* ----- extra small devices (below 380px) – prevent overflow ----- */
+@media (max-width: 380px) {
+  .about-page-team-grid {
+    gap: 1.2rem;
+  }
+  .about-page-team-card {
+    max-width: 100%;
+  }
+  .about-page-team-info {
+    padding: 0.8rem 0.5rem 1.2rem;
+  }
+  .about-page-team-name {
+    font-size: 1rem;
+  }
+  .about-page-team-designation {
+    font-size: 0.8rem;
+  }
+}
+
+/* ----- preserve all existing styles: no UI changes ----- */
+/* The following ensures that your existing styles (colors, fonts, shadows, etc.)
+   remain untouched. Only layout & spacing are adjusted for responsiveness. */
+
+.about-page-team-section {
+  /* your existing styles remain */
+}
+
+.about-page-section-container {
+  /* your existing styles remain */
+}
+
+.about-page-section-header {
+  /* your existing styles remain */
+}
+
+.about-page-section-label {
+  /* your existing styles remain */
+}
+
+.about-page-team-overlay {
+  /* your existing styles remain */
+}
+
+.about-page-team-social {
+  /* your existing styles remain */
+}
+
+.about-page-social-icon {
+  /* your existing styles remain */
+}
+
+/* ====== END – NO UI CHANGES, ONLY RESPONSIVE BEHAVIOR ====== */
+</style>
 <main>
         <section class="video-hero">
         <video id="videobcg" preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
@@ -40,7 +154,7 @@
                     <div class="about-content-right">
                         <div class="about-image-wrapper">
                             <!-- Placeholder image based on reference -->
-                            <img src="{{asset('theme/dhara-jfin/img/about-1.jpg')}}" alt="Jfinserv Team">
+                            <img src="{{asset('theme/dhara-jfin/img/about-1.jpg')}}" alt="JF Finserve team and financial services">
                         </div>
                         <div class="stats-grid">
                             <div class="stat-box">
@@ -93,72 +207,290 @@
             </div>
         </section>
 
-        <section class="awards-section">
-            <div class="container-tab">
-                <div class="section-header">
-                    <h4 class="finserv-eyebrow" style="color:#295cab;">Our Awards</h4>
-                    <h2 class="finserv-trusted" style="color:#295cab;">Top Corporate <strong style="color:#00abeb">Recognitions</strong></h2>
+       
+<section class="awards-section">
+    <div class="container-tab">
+
+        <div class="section-header">
+            <h4 class="finserv-eyebrow" style="color:#295cab;">Our Awards</h4>
+            <h2 class="finserv-trusted" style="color:#295cab;">
+                Top Corporate <strong style="color:#00abeb">Recognitions</strong>
+            </h2>
+        </div>
+
+        <div class="awards-grid">
+
+            <!-- Award 1 -->
+            <div class="award-card">
+                <div class="award-logo">
+                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/home_rank.jpg"
+                         alt="Home Loan Sourcing Rank 1 Award"
+                         class="award-logo-img">
                 </div>
-                
-                <div class="awards-grid">
-                    <div class="award-card">
-                        <div class="award-logo">
-                            <i class="fas fa-university" style="color: #ed1c24;"></i>
-                        </div>
-                        <h3>Home Loan Sourcing - Rank 1<sup>st</sup></h3>
-                        <p>Year 2023-24</p>
-                    </div>
-                    
-                    <div class="award-card">
-                        <div class="award-logo">
-                            <span style="font-weight: 800; font-size: 1.5rem; color: #000;">ARKA</span>
-                        </div>
-                        <h3>Preferred Business Partner</h3>
-                        <p>Year 2023-24</p>
-                    </div>
-                    
-                    <div class="award-card">
-                        <div class="award-logo">
-                            <i class="fas fa-university" style="color: #ed1c24;"></i>
-                        </div>
-                        <h3>Best Performing in Home Loan Sourcing</h3>
-                        <p>Year 2023-24</p>
-                    </div>
-                    
-                    <div class="award-card">
-                        <div class="award-logo">
-                            <i class="fas fa-university" style="color: #0054a6;"></i>
-                        </div>
-                        <h3>For Mobilizing Mortgage Loan - Rank 1<sup>st</sup></h3>
-                        <p>Year 2022-23</p>
-                    </div>
-                    
-                    <div class="award-card">
-                        <div class="award-logo">
-                            <span style="font-weight: 700; color: #1e3a8a;">ANANDRATHI</span>
-                        </div>
-                        <h3>Best Category in Business</h3>
-                        <p>Year 2022-23</p>
-                    </div>
-                    
-                    <div class="award-card">
-                        <div class="award-logo">
-                            <i class="fas fa-university" style="color: #0054a6;"></i>
-                        </div>
-                        <h3>For Mobilizing Mortgage Loan - Rank 1<sup>st</sup></h3>
-                        <p>Year 2021-22</p>
-                    </div>
-                    
-                    <div class="award-card">
-                        <div class="award-logo">
-                            <i class="fas fa-landmark" style="color: #1e40af;"></i>
-                        </div>
-                        <h3>Top Performing DSA</h3>
-                        <p>Year 2021-22</p>
-                    </div>
-                </div>
+
+                <h3>Home Loan Sourcing - Rank 1<sup>st</sup></h3>
+                <p>Year 2023-24</p>
             </div>
-        </section>
+
+
+            <!-- Award 2 -->
+            <div class="award-card">
+                <div class="award-logo">
+                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/Preferred Business Partner.jpg"
+                         alt="ARKA Preferred Business Partner Award"
+                         class="award-logo-img">
+                </div>
+
+                <h3>Preferred Business Partner</h3>
+                <p>Year 2023-24</p>
+            </div>
+
+
+            <!-- Award 3 -->
+            <!-- <div class="award-card">
+                <div class="award-logo">
+                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/bom.jpg"
+                         alt="Best Performing Home Loan Sourcing Award"
+                         class="award-logo-img">
+                </div>
+
+                <h3>Best Performing in Home Loan Sourcing</h3>
+                <p>Year 2023-24</p>
+            </div> -->
+
+
+            <!-- Award 4 -->
+            <div class="award-card">
+                <div class="award-logo">
+                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/pnb.jpg"
+                         alt="Mortgage Loan Mobilizing Rank 1 Award"
+                         class="award-logo-img">
+                </div>
+
+                <h3>For Mobilizing Mortgage Loan - Rank 1<sup>st</sup></h3>
+                <p>Year 2022-23</p>
+            </div>
+
+
+            <!-- Award 5 -->
+            <div class="award-card">
+                <div class="award-logo">
+                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/Best Category in Business.jpg"
+                         alt="ANAND RATHI Best Category in Business Award"
+                         class="award-logo-img">
+                </div>
+
+                <h3>Best Category in Business</h3>
+                <p>Year 2022-23</p>
+            </div>
+
+
+            <!-- Award 6 -->
+            <div class="award-card">
+                <div class="award-logo">
+                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/bom.jpg"
+                         alt="Mortgage Loan Mobilizing Rank 1 Award"
+                         class="award-logo-img">
+                </div>
+
+                <h3>For Mobilizing Mortgage Loan - Rank 1<sup>st</sup></h3>
+                <p>Year 2021-22</p>
+            </div>
+
+
+            <!-- Award 7 -->
+            <div class="award-card">
+                <div class="award-logo">
+                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/tpd.png"
+                         alt="Top Performing DSA Award"
+                         class="award-logo-img">
+                </div>
+
+                <h3>Top Performing DSA</h3>
+                <p>Year 2021-22</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<style>
+/* ================================
+   AWARDS SECTION
+================================ */
+.awards-section {
+    padding: 70px 0;
+    background: #f8fbff;
+}
+
+.awards-section .section-header {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.awards-section .finserv-eyebrow {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.awards-section .finserv-trusted {
+    margin: 0;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+
+/* ================================
+   AWARDS GRID
+================================ */
+.awards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+
+/* ================================
+   AWARD CARD
+================================ */
+.award-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 28px 22px;
+    text-align: center;
+    min-height: 260px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    border: 1px solid #e8eef7;
+
+    box-shadow: 0 8px 25px rgba(41, 92, 171, 0.08);
+
+    transition: all 0.3s ease;
+}
+
+.award-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 15px 35px rgba(41, 92, 171, 0.16);
+    border-color: #00abeb;
+}
+
+
+/* ================================
+   AWARD LOGO BOX
+================================ */
+.award-logo {
+    width: 120px;
+    height: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 22px;
+
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+
+/* ================================
+   AWARD IMAGE
+================================ */
+.award-logo-img {
+    max-width: 110px;
+    max-height: 90px;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+
+/* ================================
+   AWARD TITLE
+================================ */
+.award-card h3 {
+    margin: 0 0 8px;
+
+    color: #173b70;
+
+    font-size: 17px;
+    line-height: 1.45;
+
+    font-weight: 700;
+}
+
+.award-card h3 sup {
+    font-size: 10px;
+    top: -0.4em;
+    position: relative;
+}
+
+
+/* ================================
+   YEAR
+================================ */
+.award-card p {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+/* ================================
+   TABLET
+================================ */
+@media (max-width: 991px) {
+
+    .awards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .awards-section .finserv-trusted {
+        font-size: 30px;
+    }
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+@media (max-width: 575px) {
+
+    .awards-section {
+        padding: 50px 15px;
+    }
+
+    .awards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .awards-section .finserv-trusted {
+        font-size: 26px;
+    }
+
+    .award-card {
+        min-height: 240px;
+    }
+}
+</style>
+```
+
 
 
         <section class="about-page-page-hero">
@@ -182,7 +514,7 @@
                 <!-- Team Member 1 -->
                 <div class="about-page-team-card">
                     <div class="about-page-team-image">
-                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/dilip-y.jpg" alt="Dilip Kumar">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/dilip-y.jpg" alt="JF Finserve team member Dilip Y">
                     </div>
                     <div class="about-page-team-overlay">
                         <ul class="about-page-team-social">
@@ -198,7 +530,7 @@
                 <!-- Team Member 2 -->
                 <div class="about-page-team-card">
                     <div class="about-page-team-image">
-                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/parag.png" alt="Parag Bhosale">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/parag.png" alt="JF Finserve team member Parag">
                     </div>
                     <div class="about-page-team-overlay">
                         <ul class="about-page-team-social">
@@ -212,25 +544,25 @@
                 </div>
 
                 <!-- Team Member 3 -->
-                <!-- <div class="about-page-team-card">
+                <div class="about-page-team-card">
                     <div class="about-page-team-image">
-                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/nidhi.png" alt="Nidhi Sonigra">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/deepak.webp" alt="Nidhi Sonigra">
                     </div>
                     <div class="about-page-team-overlay">
                         <ul class="about-page-team-social">
-                            <li><a href="#" class="about-page-social-icon"></a></li>
+                            <li><a href="https://www.linkedin.com/in/deepak-chavan-970a40193" class="about-page-social-icon"></a></li>
                         </ul>
                     </div>
                     <div class="about-page-team-info">
-                        <h3 class="about-page-team-name">Nidhi Sonigra</h3>
-                        <span class="about-page-team-designation">Manager Admin</span>
+                        <h3 class="about-page-team-name">Deepak  Chavan</h3>
+                        <span class="about-page-team-designation">Technical Team Lead</span>
                     </div>
-                </div> -->
+                </div>
 
                 <!-- Team Member 4 -->
                 <div class="about-page-team-card">
                     <div class="about-page-team-image">
-                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/lokesh.png" alt="Lokesh Bhosale">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/lokesh.png" alt="JF Finserve team member Lokesh">
                     </div>
                     <div class="about-page-team-overlay">
                         <ul class="about-page-team-social">
@@ -242,11 +574,25 @@
                         <span class="about-page-team-designation">Sales Manager</span>
                     </div>
                 </div>
+                <div class="about-page-team-card">
+                    <div class="about-page-team-image">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/pooja.webp" alt="Nidhi Sonigra">
+                    </div>
+                    <div class="about-page-team-overlay">
+                        <ul class="about-page-team-social">
+                            <li><a href="#" class="about-page-social-icon"></a></li>
+                        </ul>
+                    </div>
+                    <div class="about-page-team-info">
+                        <h3 class="about-page-team-name">Pooja Mohite</h3>
+                        <span class="about-page-team-designation">HR Generalist</span>
+                    </div>
+                </div>
 
                 <!-- Team Member 5 -->
                 <div class="about-page-team-card">
                     <div class="about-page-team-image">
-                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/praksh.png" alt="Prakash Malage">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/praksh.png" alt="JF Finserve team member Praksh">
                     </div>
                     <div class="about-page-team-overlay">
                         <ul class="about-page-team-social">
@@ -294,7 +640,7 @@
                 <!-- Team Member 8 -->
                 <div class="about-page-team-card">
                     <div class="about-page-team-image">
-                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/rushi.png" alt="Rushikesh Suryavanshi">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/rushi.png" alt="JF Finserve team member Rushi">
                     </div>
                     <div class="about-page-team-overlay">
                         <ul class="about-page-team-social">
@@ -310,7 +656,7 @@
                 <!-- Team Member 9 -->
                 <div class="about-page-team-card">
                     <div class="about-page-team-image">
-                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/dummy.jpg" alt="Sara Shaikh">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/sara-s.webp" alt="JF Finserve team member profile placeholder">
                     </div>
                     <div class="about-page-team-overlay">
                         <ul class="about-page-team-social">
@@ -326,7 +672,7 @@
                 <!-- Team Member 10 -->
                 <div class="about-page-team-card">
                     <div class="about-page-team-image">
-                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/dummy.jpg" alt="Sonali Bhosale">
+                        <img src="{{ asset('theme') }}/dhara-jfin/img/team_new/sonali-b.webp" alt="JF Finserve team member profile placeholder">
                     </div>
                     <div class="about-page-team-overlay">
                         <ul class="about-page-team-social">

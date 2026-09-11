@@ -313,7 +313,7 @@
         <section>
             <div class="container">
                 <div class="user signinBx">                   
-                <div class="imgBx"><img src="{{ asset('theme') }}/frontend/img/user-login.jpg" alt="" /></div>
+                <div class="imgBx"><img src="{{ asset('theme') }}/frontend/img/user-login.jpg" alt="JF Finserve user login" /></div>
                     <div class="formBx">
                         @if (session('error'))
                             <div class="alert alert-danger">

@@ -5,6 +5,1486 @@
 
 <main>
         <style>
+        
+        /* =========================================================
+   JFINSERV HERO - CLEAN VERSION
+   ========================================================= */
+
+.jfinHero,
+.jfinHero * {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.jfinHero {
+    position: relative;
+
+    width: 100%;
+    height: 570px;
+
+    overflow: hidden;
+
+    margin: 0;
+    padding: 0;
+
+    background: #eef7ff;
+}
+
+
+/* =========================================================
+   SLIDER
+   ========================================================= */
+
+.jfinHeroSlider {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+}
+
+
+/* =========================================================
+   SLIDE
+   ========================================================= */
+
+.jfinHeroSlide {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-repeat: no-repeat;
+
+    background-size: cover;
+    background-position: center center;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity .7s ease,
+        visibility .7s ease;
+
+    z-index: 1;
+}
+
+
+/* Active */
+
+.jfinHeroSlideActive {
+    opacity: 1;
+
+    visibility: visible;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   SLIDE IMAGE POSITIONS - DESKTOP
+   ========================================================= */
+
+.jfinHeroSlide:nth-child(1) {
+    background-position: center center;
+}
+
+.jfinHeroSlide:nth-child(2) {
+    background-position: right center;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.jfinHeroContent {
+    position: relative;
+
+    width: 100%;
+    max-width: 1350px;
+
+    height: 100%;
+
+    margin: 0 auto;
+
+    padding: 0 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    z-index: 10;
+}
+
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+.jfinHeroText {
+    position: relative;
+
+    width: 52%;
+    max-width: 650px;
+
+    z-index: 20;
+}
+
+
+/* =========================================================
+   LABEL
+   ========================================================= */
+
+.jfinHeroLabel {
+    margin-bottom: 15px;
+
+    color: #ed1c24;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.jfinHeroTitle {
+    margin: 0 0 18px;
+
+    color: #295cab;
+
+    font-size: 48px;
+    font-weight: 800;
+
+    line-height: 1.12;
+
+    letter-spacing: -.5px;
+}
+
+
+.jfinHeroTitle span {
+    color: #009fe3;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.jfinHeroDescription {
+    max-width: 570px;
+
+    margin: 0 0 28px;
+
+    color: #333;
+
+    font-size: 16px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.jfinHeroButtons {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.jfinHeroBtn {
+    min-width: 130px;
+
+    height: 48px;
+
+    padding: 0 25px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 30px;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition: .25s ease;
+}
+
+
+/* Apply */
+
+.jfinHeroApply {
+    color: #fff;
+
+    background: #2858d7;
+
+    border: 2px solid #2858d7;
+
+    box-shadow: 0 8px 20px rgba(40,88,215,.25);
+}
+
+
+/* Login */
+
+.jfinHeroLogin {
+    color: #fff;
+
+    background: #ed1c24;
+
+    border: 2px solid #ed1c24;
+
+    box-shadow: 0 8px 20px rgba(237,28,36,.22);
+}
+
+
+/* =========================================================
+   ARROWS
+   ========================================================= */
+
+.jfinHeroNavigation {
+    position: absolute;
+
+    right: 35px;
+    bottom: 30px;
+
+    display: flex;
+
+    gap: 10px;
+
+    z-index: 100;
+}
+
+
+.jfinHeroArrow {
+    width: 48px;
+    height: 48px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #444;
+
+    background: rgba(255,255,255,.95);
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,.12);
+}
+
+/* =========================================================
+   JFINSERV HERO - MOBILE ONLY
+   DESKTOP CSS WILL NOT CHANGE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    /* HERO */
+    .jfinHero {
+        width: 100% !important;
+        height: 225px !important;
+        min-height: 225px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: hidden !important;
+
+        position: relative !important;
+    }
+
+
+    /* SLIDER */
+    .jfinHeroSlider {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+
+    /* =====================================================
+       IMAGE
+       ===================================================== */
+
+    .jfinHeroSlide {
+        width: 100% !important;
+        height: 100% !important;
+
+        background-repeat: no-repeat !important;
+
+        /*
+         * Smaller image on mobile
+         */
+        background-size: auto 82% !important;
+
+        background-position: right bottom !important;
+
+        transform: none !important;
+    }
+
+
+    /* First banner */
+    .jfinHeroSlide:nth-child(1) {
+        background-size: auto 82% !important;
+        background-position: right bottom !important;
+    }
+
+
+    /* Second banner */
+    .jfinHeroSlide:nth-child(2) {
+        background-size: auto 82% !important;
+        background-position: right bottom !important;
+    }
+
+
+    /* =====================================================
+       CONTENT
+       ===================================================== */
+
+    .jfinHeroContainer {
+        width: 100% !important;
+        height: 100% !important;
+
+        margin: 0 !important;
+
+        padding: 14px 10px 8px 12px !important;
+
+        display: flex !important;
+
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+
+        position: relative !important;
+
+        z-index: 10 !important;
+    }
+
+
+    /* =====================================================
+       TEXT AREA
+       ===================================================== */
+
+    .jfinHeroContent {
+        width: 55% !important;
+
+        max-width: 205px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        position: relative !important;
+
+        z-index: 30 !important;
+    }
+
+
+    /* =====================================================
+       LABEL
+       ===================================================== */
+
+    .jfinHeroLabel {
+        margin: 0 0 5px 0 !important;
+        padding: 0 !important;
+
+        font-size: 7px !important;
+
+        line-height: 1.2 !important;
+
+        letter-spacing: 2px !important;
+
+        white-space: nowrap !important;
+    }
+
+
+    /* =====================================================
+       TITLE
+       ===================================================== */
+
+    .jfinHeroTitle {
+        width: 100% !important;
+
+        margin: 0 0 6px 0 !important;
+        padding: 0 !important;
+
+        font-size: 18px !important;
+
+        line-height: 1.08 !important;
+
+        letter-spacing: 0 !important;
+
+        position: relative !important;
+
+        top: 0 !important;
+        left: 0 !important;
+        right: auto !important;
+        bottom: auto !important;
+
+        transform: none !important;
+
+        z-index: 40 !important;
+    }
+
+
+    .jfinHeroTitle span {
+        color: #009fe3 !important;
+    }
+
+
+    /* =====================================================
+       DESCRIPTION
+       ===================================================== */
+
+    .jfinHeroDescription {
+        width: 100% !important;
+
+        max-width: 200px !important;
+
+        margin: 0 0 9px 0 !important;
+        padding: 0 !important;
+
+        font-size: 7.2px !important;
+
+        line-height: 1.3 !important;
+
+        position: relative !important;
+
+        z-index: 40 !important;
+
+        display: -webkit-box !important;
+
+        -webkit-box-orient: vertical !important;
+
+        -webkit-line-clamp: 3 !important;
+
+        overflow: hidden !important;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    .jfinHeroButtons {
+        width: 100% !important;
+
+        display: flex !important;
+
+        align-items: center !important;
+
+        gap: 7px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        position: relative !important;
+
+        z-index: 50 !important;
+    }
+
+
+    .jfinHeroButton {
+        width: 88px !important;
+        min-width: 88px !important;
+
+        height: 39px !important;
+
+        padding: 0 5px !important;
+
+        display: inline-flex !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        border-radius: 25px !important;
+
+        font-size: 10.5px !important;
+
+        white-space: nowrap !important;
+    }
+
+
+    /* =====================================================
+       ARROWS
+       ===================================================== */
+
+    .jfinHeroNavigation {
+        position: absolute !important;
+
+        right: 8px !important;
+
+        bottom: 8px !important;
+
+        display: flex !important;
+
+        gap: 7px !important;
+
+        z-index: 100 !important;
+    }
+
+
+    .jfinHeroArrow {
+        width: 36px !important;
+        height: 36px !important;
+
+        min-width: 36px !important;
+
+        padding: 0 !important;
+
+        display: flex !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        font-size: 12px !important;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .jfinHero {
+        height: 220px !important;
+        min-height: 220px !important;
+    }
+
+
+    .jfinHeroSlide {
+        /*
+         * Keep person + phone smaller
+         */
+        background-size: auto 78% !important;
+
+        background-position: right bottom !important;
+    }
+
+
+    .jfinHeroContainer {
+        padding: 13px 9px 7px 11px !important;
+    }
+
+
+    .jfinHeroContent {
+        width: 54% !important;
+        max-width: 200px !important;
+    }
+
+
+    .jfinHeroTitle {
+        font-size: 17px !important;
+        line-height: 1.07 !important;
+    }
+
+
+    .jfinHeroDescription {
+        font-size: 7px !important;
+
+        max-width: 190px !important;
+
+        line-height: 1.28 !important;
+    }
+
+
+    .jfinHeroButton {
+        width: 86px !important;
+        min-width: 86px !important;
+
+        height: 38px !important;
+
+        font-size: 10px !important;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .jfinHero {
+        height: 215px !important;
+        min-height: 215px !important;
+    }
+
+
+    .jfinHeroSlide {
+        background-size: auto 75% !important;
+
+        background-position: right bottom !important;
+    }
+
+
+    .jfinHeroContainer {
+        padding: 12px 8px 7px 10px !important;
+    }
+
+
+    .jfinHeroContent {
+        width: 55% !important;
+    }
+
+
+    .jfinHeroTitle {
+        font-size: 16px !important;
+    }
+
+
+    .jfinHeroDescription {
+        font-size: 6.8px !important;
+    }
+
+
+    .jfinHeroButton {
+        width: 80px !important;
+        min-width: 80px !important;
+
+        height: 36px !important;
+
+        font-size: 9.5px !important;
+    }
+
+
+    .jfinHeroNavigation {
+        right: 7px !important;
+        bottom: 7px !important;
+    }
+
+
+    .jfinHeroArrow {
+        width: 33px !important;
+        height: 33px !important;
+    }
+
+}
+@media (max-width: 767px) {
+
+    /* Give the text more horizontal space */
+    .jfinHeroContent {
+        width: 62% !important;
+        max-width: 250px !important;
+    }
+
+    .jfinHeroText {
+        width: 100% !important;
+        max-width: 250px !important;
+    }
+
+    /* Don't break normal words */
+    .jfinHeroTitle {
+        width: 100% !important;
+
+        font-size: 18px !important;
+        line-height: 1.08 !important;
+
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        white-space: normal !important;
+    }
+
+    .jfinHeroTitle span {
+        display: inline !important;
+
+        white-space: normal !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
+
+    /* Description */
+    .jfinHeroDescription {
+        width: 100% !important;
+        max-width: 230px !important;
+
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+
+        font-size: 7.5px !important;
+        line-height: 1.35 !important;
+    }
+
+    /* Keep image on right */
+    .jfinHeroSlide {
+        background-size: auto 78% !important;
+        background-position: right bottom !important;
+    }
+
+}
+
+
+/* =====================================================
+   480px
+   ===================================================== */
+
+@media (max-width: 480px) {
+
+    .jfinHeroContent {
+        width: 61% !important;
+        max-width: 235px !important;
+    }
+
+    .jfinHeroText {
+        width: 100% !important;
+        max-width: 235px !important;
+    }
+
+    .jfinHeroTitle {
+        font-size: 17px !important;
+        line-height: 1.08 !important;
+    }
+
+    .jfinHeroDescription {
+        max-width: 215px !important;
+        font-size: 7px !important;
+    }
+
+}
+
+
+/* =====================================================
+   360px
+   ===================================================== */
+
+@media (max-width: 360px) {
+
+    .jfinHeroContent {
+        width: 60% !important;
+        max-width: 215px !important;
+    }
+
+    .jfinHeroText {
+        max-width: 215px !important;
+    }
+
+    .jfinHeroTitle {
+        font-size: 16px !important;
+    }
+
+    .jfinHeroDescription {
+        max-width: 195px !important;
+        font-size: 6.8px !important;
+    }
+
+}
+@media (max-width: 767px) {
+
+    .jfinHeroContent {
+        width: 64% !important;
+        max-width: 255px !important;
+    }
+
+    .jfinHeroText {
+        width: 100% !important;
+        max-width: 255px !important;
+    }
+
+    .jfinHeroTitle {
+        width: 100% !important;
+
+        font-size: 18px !important;
+        line-height: 1.08 !important;
+
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
+
+    .jfinHeroTitle span {
+        display: inline !important;
+        white-space: normal !important;
+    }
+
+}
+
+
+/* SMALL MOBILE */
+
+@media (max-width: 480px) {
+
+    .jfinHeroContent {
+        width: 64% !important;
+        max-width: 240px !important;
+    }
+
+    .jfinHeroText {
+        max-width: 240px !important;
+    }
+
+    .jfinHeroTitle {
+        font-size: 17px !important;
+    }
+
+}
+
+
+/* VERY SMALL MOBILE */
+
+@media (max-width: 360px) {
+
+    .jfinHeroContent {
+        width: 63% !important;
+        max-width: 225px !important;
+    }
+
+    .jfinHeroText {
+        max-width: 225px !important;
+    }
+
+    .jfinHeroTitle {
+        font-size: 16px !important;
+    }
+
+}@media (max-width: 767px) {
+
+    .jfinHeroContent {
+        width: 70% !important;
+        max-width: 280px !important;
+        flex: 0 0 70% !important;
+    }
+
+    .jfinHeroText {
+        width: 100% !important;
+        max-width: 280px !important;
+    }
+
+    .jfinHeroTitle {
+        width: 250px !important;
+        max-width: 250px !important;
+
+        font-size: 18px !important;
+        line-height: 1.08 !important;
+
+        margin: 0 0 7px 0 !important;
+
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        white-space: normal !important;
+    }
+
+    .jfinHeroTitle span {
+        display: inline !important;
+        white-space: normal !important;
+        word-break: normal !important;
+    }
+
+    .jfinHeroDescription {
+        width: 220px !important;
+        max-width: 220px !important;
+
+        font-size: 7.2px !important;
+        line-height: 1.3 !important;
+    }
+
+    .jfinHeroButtons {
+        gap: 7px !important;
+    }
+
+    .jfinHeroButton {
+        width: 105px !important;
+        min-width: 105px !important;
+    }
+
+    .jfinHeroSlide {
+        background-size: auto 78% !important;
+        background-position: right bottom !important;
+    }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    .jfinHeroContent {
+        width: 69% !important;
+        max-width: 260px !important;
+    }
+
+    .jfinHeroText {
+        max-width: 260px !important;
+    }
+
+    .jfinHeroTitle {
+        width: 235px !important;
+        max-width: 235px !important;
+
+        font-size: 17px !important;
+    }
+
+    .jfinHeroDescription {
+        width: 205px !important;
+        max-width: 205px !important;
+    }
+
+    .jfinHeroButton {
+        width: 100px !important;
+        min-width: 100px !important;
+    }
+}
+
+
+/* =========================================
+   360px MOBILE
+   ========================================= */
+
+@media (max-width: 360px) {
+
+    .jfinHeroContent {
+        width: 68% !important;
+        max-width: 240px !important;
+    }
+
+    .jfinHeroTitle {
+        width: 220px !important;
+        max-width: 220px !important;
+
+        font-size: 16px !important;
+    }
+
+    .jfinHeroDescription {
+        width: 195px !important;
+        max-width: 195px !important;
+    }
+
+    .jfinHeroButton {
+        width: 92px !important;
+        min-width: 92px !important;
+    }
+}
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .jfinHero {
+        height: 480px;
+    }
+
+    .jfinHeroContent {
+        padding: 0 40px;
+    }
+
+    .jfinHeroText {
+        width: 55%;
+    }
+
+    .jfinHeroTitle {
+        font-size: 40px;
+    }
+
+    .jfinHeroDescription {
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .jfinHero {
+        position: relative;
+
+        width: 100%;
+
+        /*
+         * Banner starts normally.
+         * No negative margin.
+         * No transform.
+         */
+        height: 225px !important;
+        min-height: 225px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: hidden !important;
+    }
+
+
+    .jfinHeroSlider {
+        width: 100%;
+        height: 100%;
+    }
+
+
+    /* =====================================================
+       MOBILE SLIDE
+       ===================================================== */
+
+    .jfinHeroSlide {
+        position: absolute;
+
+        inset: 0;
+
+        width: 100%;
+        height: 100%;
+
+        /*
+         * VERY IMPORTANT
+         */
+        background-size: auto 100% !important;
+
+        background-repeat: no-repeat !important;
+
+        background-position: right center !important;
+
+        opacity: 0;
+
+        visibility: hidden;
+
+        transform: none !important;
+    }
+
+
+    .jfinHeroSlideActive {
+        opacity: 1;
+
+        visibility: visible;
+    }
+
+
+    /* Slide 1 */
+
+    .jfinHeroSlide:nth-child(1) {
+        background-position: right center !important;
+    }
+
+
+    /* Slide 2 */
+
+    .jfinHeroSlide:nth-child(2) {
+        background-position: right center !important;
+    }
+
+
+    /* =====================================================
+       CONTENT
+       ===================================================== */
+
+    .jfinHeroContent {
+        position: relative;
+
+        width: 100%;
+        height: 100%;
+
+        margin: 0;
+        padding: 16px 12px 10px !important;
+
+        display: block !important;
+
+        z-index: 10;
+    }
+
+
+    /* =====================================================
+       TEXT AREA
+       ===================================================== */
+
+    .jfinHeroText {
+        position: relative;
+
+        width: 54% !important;
+
+        max-width: 210px !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        z-index: 30;
+    }
+
+
+    /* =====================================================
+       LABEL
+       ===================================================== */
+
+    .jfinHeroLabel {
+        margin: 0 0 5px;
+
+        color: #ed1c24;
+
+        font-size: 7px;
+
+        font-weight: 700;
+
+        line-height: 1.25;
+
+        letter-spacing: 2px;
+    }
+
+
+    /* =====================================================
+       TITLE
+       ===================================================== */
+
+    .jfinHeroTitle {
+        position: relative;
+
+        margin: 0 0 6px;
+
+        padding: 0;
+
+        color: #295cab;
+
+        font-size: 18px !important;
+
+        font-weight: 800;
+
+        line-height: 1.08 !important;
+
+        letter-spacing: 0;
+
+        /*
+         * Prevent clipping
+         */
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+
+        transform: none !important;
+    }
+
+
+    .jfinHeroTitle span {
+        color: #009fe3;
+    }
+
+
+    /* =====================================================
+       DESCRIPTION
+       ===================================================== */
+
+    .jfinHeroDescription {
+        width: 100%;
+
+        max-width: 200px;
+
+        margin: 0 0 10px;
+
+        padding: 0;
+
+        color: #333;
+
+        font-size: 7.5px;
+
+        line-height: 1.35;
+
+        display: -webkit-box;
+
+        -webkit-line-clamp: 3;
+
+        -webkit-box-orient: vertical;
+
+        overflow: hidden;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    .jfinHeroButtons {
+        display: flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        margin: 0;
+
+        padding: 0;
+
+        position: relative;
+
+        z-index: 40;
+    }
+
+
+    .jfinHeroBtn {
+        width: 94px;
+
+        min-width: 94px;
+
+        height: 40px;
+
+        padding: 0 5px;
+
+        border-radius: 25px;
+
+        font-size: 11px;
+
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       MOBILE ARROWS
+       ===================================================== */
+
+    .jfinHeroNavigation {
+        position: absolute;
+
+        right: 10px;
+
+        bottom: 9px;
+
+        display: flex;
+
+        gap: 8px;
+
+        z-index: 100;
+    }
+
+
+    .jfinHeroArrow {
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .jfinHero {
+        height: 225px !important;
+    }
+
+
+    .jfinHeroContent {
+        padding: 15px 12px 10px !important;
+    }
+
+
+    .jfinHeroText {
+        width: 53% !important;
+    }
+
+
+    .jfinHeroTitle {
+        font-size: 17px !important;
+    }
+
+
+    .jfinHeroDescription {
+        font-size: 7.2px;
+
+        max-width: 195px;
+    }
+
+
+    .jfinHeroBtn {
+        width: 90px;
+
+        min-width: 90px;
+
+        height: 39px;
+
+        font-size: 10.5px;
+    }
+
+
+    .jfinHeroArrow {
+        width: 37px;
+
+        height: 37px;
+    }
+}
+
+
+/* =========================================================
+   360px
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .jfinHero {
+        height: 220px !important;
+    }
+
+
+    .jfinHeroContent {
+        padding: 14px 10px 8px !important;
+    }
+
+
+    .jfinHeroText {
+        width: 54% !important;
+    }
+
+
+    .jfinHeroTitle {
+        font-size: 16px !important;
+    }
+
+
+    .jfinHeroDescription {
+        font-size: 7px;
+
+        -webkit-line-clamp: 3;
+    }
+
+
+    .jfinHeroBtn {
+        width: 83px;
+
+        min-width: 83px;
+
+        height: 37px;
+
+        font-size: 10px;
+    }
+
+
+    .jfinHeroNavigation {
+        right: 8px;
+
+        bottom: 8px;
+    }
+
+
+    .jfinHeroArrow {
+        width: 34px;
+
+        height: 34px;
+    }
+}
+/* =====================================================
+   FIX HEADER OVERLAPPING HERO
+   ===================================================== */
+
+@media (max-width: 767px) {
+
+    .jfinHero {
+        margin-top: 67px !important;
+        height: 225px !important;
+        min-height: 225px !important;
+    }
+
+    .jfinHeroContent {
+        padding-top: 12px !important;
+    }
+
+    .jfinHeroText {
+        margin-top: 0 !important;
+    }
+
+    .jfinHeroLabel {
+        margin-top: 0 !important;
+    }
+
+    .jfinHeroTitle {
+        margin-top: 0 !important;
+        transform: none !important;
+        top: auto !important;
+    }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    .hero {
+        height: 560px !important;
+        min-height: 560px !important;
+    }
+
+    .hero .slide {
+        height: 560px !important;
+        min-height: 560px !important;
+
+      
+        background-position: right bottom !important;
+    }
+
+    .hero .hero-content {
+        width: 65% !important;
+        max-width: 65% !important;
+
+        padding-top: 65px !important;
+    }
+
+    .hero .hero-content h1 {
+        font-size: 23px !important;
+    }
+
+    .hero .hero-content p {
+        font-size: 12px !important;
+    }
+}
+
+
+
+/* =========================================================
+   FINSERV FEATURE SECTION
+   ========================================================= */
+
+.finserv-wrapper {
+    width: 100%;
+    padding: 80px 20px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.financial-services {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
         /* * {
             margin: 0;
             padding: 0;
@@ -841,44 +2321,379 @@
         flex-direction: column;
     }
 }
+
+
+/* =========================================
+   HERO BACKGROUND SEAMLESS FIX
+   Do not change layout/design
+   ========================================= */
+
+.jfinHero {
+    background: #effbff !important;
+}
+
+.jfinHeroSlider,
+.jfinHeroSlide {
+    background-color: #effbff !important;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .jfinHero {
+        background: #effbff !important;
+    }
+
+    .jfinHeroSlider {
+        background: #effbff !important;
+    }
+
+    .jfinHeroSlide {
+        background-color: #effbff !important;
+        background-position: right center !important;
+    }
+}
+
+/* =========================================================
+   FINAL MOBILE HERO - REMOVE WHITE PATCHES
+   Keep existing design / text / buttons / person unchanged
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .jfinHero {
+        background: #effbff !important;
+        overflow: hidden !important;
+    }
+
+    .jfinHeroSlider {
+        background: #effbff !important;
+    }
+
+    .jfinHeroSlide {
+        width: 100% !important;
+        height: 100% !important;
+
+        background-repeat: no-repeat !important;
+
+        /* Keep the person/image on right */
+        background-size: auto 100% !important;
+        background-position: right center !important;
+
+        background-color: #effbff !important;
+    }
+
+    /*
+     * Cover the image's white/uneven background
+     * behind the text area only.
+     */
+  
+
+    .jfinHeroContent {
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+    .jfinHeroText {
+        position: relative !important;
+        z-index: 20 !important;
+    }
+}
+
+
+/* Small mobile */
+@media (max-width: 480px) {
+
+    .jfinHeroSlide {
+        background-size: auto 100% !important;
+        background-position: right center !important;
+    }
+
+    
+}
+/* =========================================
+   FINAL MOBILE HERO FIX
+   Image FULL + NO CUT
+   ========================================= */
+
+@media (max-width: 767px) {
+
+    .jfinHero {
+        width: 100% !important;
+        height: 225px !important;
+        min-height: 225px !important;
+        overflow: hidden !important;
+        background: #effbff !important;
+    }
+
+    .jfinHeroSlider {
+        width: 100% !important;
+        height: 100% !important;
+        background: #effbff !important;
+    }
+
+    .jfinHeroSlide {
+        position: absolute !important;
+        inset: 0 !important;
+
+        width: 100% !important;
+        height: 100% !important;
+
+        background-repeat: no-repeat !important;
+
+        /* IMPORTANT - don't cut image */
+        background-size: auto 100% !important;
+        background-position: right center !important;
+
+        background-color: #effbff !important;
+
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .jfinHeroSlideActive {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .jfinHeroContent {
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+    .jfinHeroText {
+        position: relative !important;
+        z-index: 20 !important;
+    }
+}
+
+
+/* 480px */
+@media (max-width: 480px) {
+
+    .jfinHero {
+        height: 220px !important;
+        min-height: 220px !important;
+    }
+
+    .jfinHeroSlide {
+        background-size: auto 100% !important;
+        background-position: right center !important;
+    }
+}
+
+
+/* 360px */
+@media (max-width: 360px) {
+
+    .jfinHero {
+        height: 215px !important;
+        min-height: 215px !important;
+    }
+
+    .jfinHeroSlide {
+        background-size: auto 100% !important;
+        background-position: right center !important;
+    }
+}
+
+/* Very small mobile */
+
 </style>
 
-    {{-- HERO SECTION --}}
-    <section id="home" class="hero">
-        <div class="hero-slider">
-            <div class="slide" style="background-image:  url('{{asset('theme/dhara-jfin/img/loan_banner_new.jpg')}}')">
-                <div class="container-tab hero-content">
-                    <div class="hero-intro">WELCOME TO JFINSERV</div>
-                    <h1>Fastest,Secure and <span style="color:#295cab">Easy Loan Process</span></h1>
-                    <p>Experience fast,secure loans with competitive rates and personalized support in Pune.Enjoy seamless service and exceptional rewards.</p>
+   {{-- =========================================================
+     JFINSERV HERO
+     ========================================================= --}}
 
-                    <div class="hero-btns">
-                        <a href="{{ route('authv3.login.form') }}" class="btn btn-primary-hero">Apply Now</a>
-                        <a href="{{ route('authv3.login.form') }}" class="btn btn-outline">Login Now</a>
+<section class="jfinHero" id="home">
+
+    <div class="jfinHeroSlider">
+
+        {{-- ================= SLIDE 1 ================= --}}
+        <div class="jfinHeroSlide jfinHeroSlideActive"
+             style="background-image:url('{{ asset('theme/dhara-jfin/img/loan_banner_new.jpg') }}');">
+
+            <div class="jfinHeroContent">
+
+                <div class="jfinHeroText">
+
+                    <div class="jfinHeroLabel">
+                        WELCOME TO JFINSERV
                     </div>
+
+                    <h1 class="jfinHeroTitle">
+                        Fastest, Secure and
+                        <span>Easy Loan Process</span>
+                    </h1>
+
+                    <p class="jfinHeroDescription">
+                        Experience fast, secure loans with competitive rates
+                        and personalized support in Pune. Enjoy seamless
+                        service and exceptional rewards.
+                    </p>
+
+                    <div class="jfinHeroButtons">
+
+                        <a href="{{ route('authv3.login.form') }}"
+                           class="jfinHeroBtn jfinHeroApply">
+                            Apply Now
+                        </a>
+
+                        <a href="{{ route('authv3.login.form') }}"
+                           class="jfinHeroBtn jfinHeroLogin">
+                            Login Now
+                        </a>
+
+                    </div>
+
                 </div>
+
             </div>
 
-            <div class="slide" style="background-image: url('{{asset('theme/dhara-jfin/img/reward_banner.jpg')}}'); background-position:right 10% top 5%;" >
-                <div class="container-tab hero-content">
-                    <div class="hero-intro">TRUSTED FINANCIAL PARTNERS</div>
-                    <h1>Unique Reward & <span style="color:#295cab">Earning Opportunity</span></h1>
-                    <p>We offer a unique earning opportunity through our referral program, rewarding both your referrals and those made by your friends.</p>
+        </div>
 
-                    <div class="hero-btns">
-                        <a href="{{ route('authv3.login.form') }}" class="btn btn-primary-hero">Apply Now</a>
-                        <a href="{{ url('/login') }}" class="btn btn-outline">Login Now</a>
+
+        {{-- ================= SLIDE 2 ================= --}}
+        <div class="jfinHeroSlide"
+             style="background-image:url('{{ asset('theme/dhara-jfin/img/reward_banner.jpg') }}');">
+
+            <div class="jfinHeroContent">
+
+                <div class="jfinHeroText">
+
+                    <div class="jfinHeroLabel">
+                        TRUSTED FINANCIAL PARTNERS
                     </div>
+
+                    <h1 class="jfinHeroTitle">
+                        Unique Reward &
+                        <span>Earning Opportunity</span>
+                    </h1>
+
+                    <p class="jfinHeroDescription">
+                        We offer a unique earning opportunity through our
+                        referral program, rewarding both your referrals and
+                        those made by your friends.
+                    </p>
+
+                    <div class="jfinHeroButtons">
+
+                        <a href="{{ route('authv3.login.form') }}"
+                           class="jfinHeroBtn jfinHeroApply">
+                            Apply Now
+                        </a>
+
+                        <a href="{{ url('/login') }}"
+                           class="jfinHeroBtn jfinHeroLogin">
+                            Login Now
+                        </a>
+
+                    </div>
+
                 </div>
+
             </div>
+
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="slider-nav">
-            <button class="prev-slide"><i class="fas fa-chevron-left"></i></button>
-            <button class="next-slide"><i class="fas fa-chevron-right"></i></button>
-        </div>
-    </section>
+    </div>
+
+
+    {{-- ================= ARROWS ================= --}}
+    <div class="jfinHeroNavigation">
+
+        <button type="button"
+                class="jfinHeroArrow jfinHeroPrev">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <button type="button"
+                class="jfinHeroArrow jfinHeroNext">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+    </div>
+
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const slides = document.querySelectorAll('.jfinHeroSlide');
+    const prevBtn = document.querySelector('.jfinHeroPrev');
+    const nextBtn = document.querySelector('.jfinHeroNext');
+
+    if (slides.length <= 1) {
+        return;
+    }
+
+    let currentSlide = 0;
+    let autoSlide;
+
+    function showSlide(index) {
+
+        slides.forEach(function (slide) {
+            slide.classList.remove('jfinHeroSlideActive');
+        });
+
+        currentSlide = (index + slides.length) % slides.length;
+
+        slides[currentSlide].classList.add('jfinHeroSlideActive');
+    }
+
+
+    /* =========================
+       NEXT BUTTON
+       ========================= */
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+            showSlide(currentSlide + 1);
+
+            /* Restart automatic slider */
+            restartAutoSlide();
+        });
+    }
+
+
+    /* =========================
+       PREVIOUS BUTTON
+       ========================= */
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+            showSlide(currentSlide - 1);
+
+            /* Restart automatic slider */
+            restartAutoSlide();
+        });
+    }
+
+
+    /* =========================
+       AUTO SLIDE
+       ========================= */
+    function startAutoSlide() {
+
+        autoSlide = setInterval(function () {
+            showSlide(currentSlide + 1);
+        }, 5000);
+
+    }
+
+
+    function restartAutoSlide() {
+
+        clearInterval(autoSlide);
+        startAutoSlide();
+
+    }
+
+
+    /* =========================
+       START FIRST SLIDE
+       ========================= */
+    showSlide(0);
+    startAutoSlide();
+
+});
+</script>
 
     {{-- FEATURES --}}
     
@@ -914,19 +2729,22 @@
                 </div>
             </div>
 
-            <div class="service-card">
-                <div class="service-icon">
-                    <i class="fas fa-gift"></i>
-                </div>
-                <div class="service-content">
-                    <h3>Unlimited Rewards</h3>
-                    <p>
-                        Earn rewards and referral income with performance-based bonuses
-                        that grow with your success.
-                    </p>
-                    <a href="{{ url('/about') }}" class="service-btn">Learn More</a>
-                </div>
-            </div>
+          <div class="service-card">
+    <div class="service-icon">
+        <i class="fas fa-gift"></i>
+    </div>
+
+    <div class="service-content">
+        <h3>Unlimited Rewards</h3>
+
+        <p>
+            Earn rewards and referral income with performance-based bonuses
+            that grow with your success.
+        </p>
+
+        <a href="{{ route('refer.earn') }}" class="service-btn">Learn More</a>
+    </div>
+</div>
 
             <div class="service-card">
                 <div class="service-icon">
@@ -938,7 +2756,7 @@
                         Minimal paperwork, quick approvals, and funds disbursed within
                         7 working days.
                     </p>
-                    <a href="{{ url('/about') }}" class="service-btn">Learn More</a>
+                    <a href="{{ route('refer.earn') }}" class="service-btn">Learn More</a>
                 </div>
             </div>
 
@@ -952,7 +2770,7 @@
                         Get loans up to ₹100 Cr with flexible terms, competitive rates,
                         and expert guidance.
                     </p>
-                    <a href="{{ url('/about') }}" class="service-btn">Learn More</a>
+                    <a href="{{ route('services') }}" class="service-btn">Learn More</a>
                 </div>
             </div>
 
@@ -984,7 +2802,7 @@
             </div>
 
             <div class="about-image">
-                <img src="{{asset('theme/dhara-jfin/img/f_partner.png')}}" alt="Financial Planning">
+                <img src="{{asset('theme/dhara-jfin/img/f_partner.png')}}" alt="JF Finserve financial partnership services">
             </div>
         </div>
     </section>
@@ -1407,9 +3225,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
     elements.forEach(el => observer.observe(el));
 });
-    document.querySelectorAll('.service-btn').forEach(btn => {
+document.querySelectorAll('.service-btn').forEach(btn => {
     btn.addEventListener('click', e => {
-        e.preventDefault();
         console.log(btn.closest('.service-card').querySelector('h3').innerText);
     });
 });

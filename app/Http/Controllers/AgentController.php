@@ -481,196 +481,572 @@ public function getCities($state_id)
             'sanctionLetter' => $loan->sanction_letter, // Add this line
         ]);
     }
-    public function update(Request $request)
-    {
-        
-        // dd($request->all());
-        try {
-            $validated = $request->validate([
-                'loan_id' => 'required|integer',
-                'status' => 'required|string',
-                'loan_category_id' => 'required|integer',
-                'amount' => 'required|numeric',
-                     'amount_approved' => 'nullable|required_if:status,disbursed|numeric|min:0|max:'.$request->amount,
-                'tenure' => 'required|integer',
-                'in_principle' => 'nullable|string',
-                'remarks' => 'nullable|string',
-                'sanction_letter' => 'nullable|file|mimes:pdf,doc,docx',
-                'documents.*' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png',
+   public function update(Request $request)
+{
+    try {
+
+        /*
+        |--------------------------------------------------------------------------
+        | STEP 1: FIND LOAN
+        |--------------------------------------------------------------------------
+        */
+
+        $loan = Loan::with(['user'])
+            ->where('loan_id', $request->input('loan_id'))
+            ->firstOrFail();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STEP 2: VALIDATION
+        |--------------------------------------------------------------------------
+        */
+
+        $rules = [
+            'loan_id' => 'required|integer',
+            'status' => 'required|string',
+            'loan_category_id' => 'required|integer',
+            'amount' => 'required|numeric',
+
+            'amount_approved' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                'max:' . $request->input('amount'),
+            ],
+
+            'tenure' => 'required|integer',
+            'in_principle' => 'nullable|string',
+            'remarks' => 'nullable|string',
+
+            'sanction_letter' => [
+                'nullable',
+                'file',
+                'mimes:pdf,doc,docx',
+                'max:5120',
+            ],
+
+            'documents.*' => [
+                'nullable',
+                'file',
+                'mimes:pdf,doc,docx,jpg,jpeg,png',
+                'max:5120',
+            ],
+        ];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SANCTION LETTER REQUIRED WHEN DISBURSED
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $request->input('status') === 'disbursed'
+            && !$request->hasFile('sanction_letter')
+            && empty($loan->sanction_letter)
+        ) {
+            $rules['sanction_letter'] = [
+                'required',
+                'file',
+                'mimes:pdf,doc,docx',
+                'max:5120',
+            ];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | APPROVED AMOUNT REQUIRED WHEN APPROVED / DISBURSED
+        |--------------------------------------------------------------------------
+        */
+
+        if (in_array($request->input('status'), ['approved', 'disbursed'])) {
+
+            $rules['amount_approved'] = [
+                'required',
+                'numeric',
+                'min:0',
+                'max:' . $request->input('amount'),
+            ];
+        }
+
+
+        $request->validate($rules, [
+            'sanction_letter.required' =>
+                'Please upload the sanction letter before disbursing the loan.',
+
+            'amount_approved.required' =>
+                'Please enter the approved amount.',
+
+            'amount_approved.max' =>
+                'Approved amount cannot be greater than loan amount.',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STEP 3: DATABASE TRANSACTION
+        |--------------------------------------------------------------------------
+        */
+
+        DB::transaction(function () use ($request, $loan) {
+
+            $oldStatus = $loan->status;
+            $newStatus = $request->input('status');
+
+
+            Log::info('Agent loan update started', [
+                'loan_id' => $loan->loan_id,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'agent_id' => session('user_id'),
             ]);
 
-            DB::transaction(function () use ($request) {
-                $loan = Loan::where('loan_id', $request->input('loan_id'))->firstOrFail();
-                $oldStatus = $loan->status;
-                $newStatus = $request->input('status');
 
-                Log::info('Loan status update:', [
+            /*
+            |--------------------------------------------------------------------------
+            | STEP 4: UPDATE LOAN
+            |--------------------------------------------------------------------------
+            */
+
+            $loan->loan_category_id = $request->input('loan_category_id');
+            $loan->amount = $request->input('amount');
+            $loan->tenure = $request->input('tenure');
+            $loan->status = $newStatus;
+            $loan->remarks = $request->input('remarks');
+            $loan->in_principle = $request->input('in_principle');
+            $loan->amount_approved = $request->input('amount_approved');
+
+            $loan->save();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | STEP 5: UPDATE PROFILE
+            |--------------------------------------------------------------------------
+            */
+
+            $profile = Profile::where(
+                'user_id',
+                $loan->user_id
+            )->first();
+
+            if ($profile) {
+
+                $profile->update([
+                    'city' => $request->input('city'),
+                    'state' => $request->input('state'),
+                    'mobile_no' => $request->input('mobile_no'),
+                    'marital_status' => $request->input('marital_status'),
+                    'dob' => $request->input('dob'),
+                    'residence_address' => $request->input('residence_address'),
+                    'pincode' => $request->input('pincode'),
+                ]);
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | STEP 6: SANCTION LETTER
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('sanction_letter')) {
+
+                $sanctionPath = $request
+                    ->file('sanction_letter')
+                    ->store('sanction_letters', 'public');
+
+                $loan->sanction_letter = $sanctionPath;
+                $loan->save();
+
+                Log::info('Sanction letter uploaded', [
                     'loan_id' => $loan->loan_id,
-                    'old_status' => $oldStatus,
-                    'new_status' => $newStatus,
+                    'path' => $sanctionPath,
                 ]);
-                
+            }
 
-               $loan->update([
-                    'loan_category_id' => $request->input('loan_category_id'),
-                    'amount' => $request->input('amount'),
-                    'tenure' => $request->input('tenure'),
-                    'status' => $newStatus,
-                    'remarks' => $request->input('remarks'),
-                    'in_principle' => $request->input('in_principle'),
-                    'amount_approved' => $request->input('amount_approved'),
-                ]);
 
-                // ✅ ADD THIS BLOCK
-                $profile = Profile::where('user_id', $loan->user_id)->first();
+            /*
+            |--------------------------------------------------------------------------
+            | STEP 7: DOCUMENTS
+            |--------------------------------------------------------------------------
+            */
 
-                if ($profile) {
-                    $profile->update([
-                        'city' => $request->city,
-                        'state' => $request->state,
-                        'mobile_no' => $request->mobile_no,
-                        'marital_status' => $request->marital_status,
-                        'dob' => $request->dob,
-                        'residence_address' => $request->residence_address,
-                        'pincode' => $request->pincode,
+            if ($request->hasFile('documents')) {
+
+                $documents = $request->file('documents');
+
+                $documentNames = $request->input(
+                    'document_name',
+                    []
+                );
+
+                foreach ($documents as $index => $document) {
+
+                    $name = $documentNames[$index]
+                        ?? $document->getClientOriginalName();
+
+                    $path = $document->store(
+                        'documents',
+                        'public'
+                    );
+
+                    Document::create([
+                        'user_id' => $loan->user_id,
+                        'loan_id' => $loan->loan_id,
+                        'document_name' => $name,
+                        'file_path' => $path,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
                 }
+            }
 
-                if ($request->hasFile('sanction_letter')) {
-                    $sanctionPath = $request->file('sanction_letter')->store('sanction_letters', 'public');
-                    $loan->sanction_letter = $sanctionPath;
-                    $loan->save();
-                }
 
-                // Handle documents upload  
+            /*
+            |--------------------------------------------------------------------------
+            | STEP 8: STATUS CHANGE EVENT
+            |--------------------------------------------------------------------------
+            */
 
-               if ($request->hasFile('documents')) {
-                    $documents = $request->file('documents');
-                    $documentNames = $request->input('document_name');
-                    
-                    foreach ($documents as $index => $document) {
-                        // Ensure there's a corresponding name for each document
-                        $name = $documentNames[$index] ?? $document->getClientOriginalName();
-                        
-                        $path = $document->store('documents', 'public');
-                        
-                        Document::create([
-                            'user_id' => $loan->user_id,
-                            'loan_id' => $loan->loan_id,
-                            'document_name' => $name,
-                            'file_path' => $path,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-                    }
-                }
+            if ($oldStatus !== $newStatus) {
 
-                Log::info('Loan details updated for loan ID: ' . $loan->loan_id);
-
-                if ($oldStatus !== $newStatus) {
-                    log::info('Dispatching LoanStatusUpdated event for loan ID: ' . $loan->loan_reference_id, [
+                Log::info(
+                    'Loan status changed',
+                    [
+                        'loan_id' => $loan->loan_id,
+                        'loan_reference_id' => $loan->loan_reference_id,
                         'old_status' => $oldStatus,
                         'new_status' => $newStatus,
-                        'loan_reference_id' => $loan->loan_reference_id,
-                        'user_id' => auth()->id(),
-                    ]);    
+                    ]
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | SEND EVENT
+                |--------------------------------------------------------------------------
+                */
+
+                try {
+
                     event(new LoanStatusUpdated(
                         $loan->loan_reference_id,
-                        auth()->id(),
-                        auth()->user()->role, // assuming you store role
+                        auth()->id() ?? session('user_id'),
+                        auth()->user()?->role ?? 'agent',
                         $loan->status,
                         $loan->user_id
                     ));
-                    $customer = $loan->user;
-                    $customerEmail = $customer->email_id;
-                    $customerName = $customer->name;
-                    $status = $newStatus;
-                    $remarks = $request->input('remarks');
-                    $msg = "Your loan status has been updated to: $status. Remarks: $remarks";
-                    $temp_id = 4; // Example template ID, adjust accordingly
-                    app(UsersController::class)->temail($customerEmail, $customerName, $msg, $temp_id);
+
+                    Log::info(
+                        'LoanStatusUpdated event dispatched successfully',
+                        [
+                            'loan_id' => $loan->loan_id,
+                        ]
+                    );
+
+                } catch (\Throwable $eventError) {
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | EVENT ERROR SHOULD NOT BREAK LOAN UPDATE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    Log::error(
+                        'LoanStatusUpdated event error',
+                        [
+                            'loan_id' => $loan->loan_id,
+                            'message' => $eventError->getMessage(),
+                            'file' => $eventError->getFile(),
+                            'line' => $eventError->getLine(),
+                        ]
+                    );
                 }
 
-                Log::info('Loan status updated event dispatched for loan ID: ' . $loan->loan_id);
+
+                /*
+                |--------------------------------------------------------------------------
+                | IMPORTANT:
+                | DO NOT CALL UsersController::temail()
+                |--------------------------------------------------------------------------
+                |
+                | Your previous code had:
+                |
+                | app(UsersController::class)->temail(...)
+                |
+                | That method does not exist and caused the 500 error.
+                |
+                */
+
+                if ($loan->user) {
+
+                    Log::info(
+                        'Loan status notification information',
+                        [
+                            'loan_id' => $loan->loan_id,
+                            'customer_id' => $loan->user->id,
+                            'customer_email' => $loan->user->email_id,
+                            'customer_name' => $loan->user->name,
+                            'status' => $newStatus,
+                        ]
+                    );
+                }
+            }
 
 
-                if ($newStatus == 'disbursed') {
-                    $loan->amount_approved = $request->input('amount_approved');
-                    $loan->status = $newStatus; // Set status again, to be sure
-                    $loan->save(); // Explicitly save all changes
+            /*
+            |--------------------------------------------------------------------------
+            | STEP 9: DISBURSED LOGIC
+            |--------------------------------------------------------------------------
+            */
 
-                    Log::info('Loan approved amount set for loan ID: ' . $loan->loan_id);
+            if ($newStatus === 'disbursed') {
 
-                    // Handle tree node addition
-                    $referralUser = User::find($loan->referral_user_id);
+                $loan->amount_approved =
+                    $request->input('amount_approved');
 
-                    if (!$referralUser) {
-                        Log::warning("Referral user not found for ID: {$loan->referral_user_id}. Searching for next available node.");
-                        $parentNode = app(CategoryController::class)->findNextAvailableNode();
+                $loan->status = 'disbursed';
 
-                        if (!$parentNode) {
-                            Log::error("No available position found in the tree.");
-                            return;
-                        }
+                $loan->save();
 
-                        $parentUserId = $parentNode->user_id;
+
+                Log::info(
+                    'Disbursed processing started',
+                    [
+                        'loan_id' => $loan->loan_id,
+                        'amount_approved' => $loan->amount_approved,
+                    ]
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | FIND REFERRAL USER
+                |--------------------------------------------------------------------------
+                */
+
+                $referralUser = User::find(
+                    $loan->referral_user_id
+                );
+
+                $parentUserId = null;
+
+
+                if ($referralUser) {
+
+                    $parentUserId = $referralUser->id;
+
+                    Log::info(
+                        'Referral user found',
+                        [
+                            'parent_user_id' => $parentUserId,
+                        ]
+                    );
+
+                } else {
+
+                    Log::warning(
+                        'Referral user not found',
+                        [
+                            'referral_user_id' =>
+                                $loan->referral_user_id,
+                        ]
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | FIND NEXT AVAILABLE NODE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $parentNode =
+                        app(CategoryController::class)
+                            ->findNextAvailableNode();
+
+                    if ($parentNode) {
+
+                        $parentUserId =
+                            $parentNode->user_id;
+
                     } else {
-                        Log::info("Referral user found: " . json_encode($referralUser->toArray()));
-                        $parentUserId = $referralUser->id;
-                    }
 
-                    $childName = $loan->user->name;
-                    $childUserId = $loan->user->id;
-
-                    $existingCategory = DB::table('categories')->where('user_id', $childUserId)->first();
-
-                    if ($existingCategory) {
-                        Log::info("User already exists in the tree. Skipping node insertion for user ID: {$childUserId}");
-                    } else {
-                        if (app(CategoryController::class)->addNode($parentUserId, $childName, $childUserId)) {
-                            Log::info("Node successfully inserted into tree for loan applicant.");
-                        } else {
-                            Log::error("Failed to insert node into tree for loan applicant.");
-                            return;
-                        }
-                    }
-
-                    // Fetch ancestors for commission distribution
-                    $childCategory = DB::table('categories')->where('user_id', $childUserId)->first();
-
-                    if (!$childCategory) {
-                        Log::error("Category not found for Child User ID: {$childUserId}");
-                        return;
-                    }
-
-                    $ancestors = DB::table('categories')
-                        ->where('_lft', '<', $childCategory->_lft)
-                        ->where('_rgt', '>', $childCategory->_rgt)
-                        ->orderBy('_lft', 'asc')
-                        ->get();
-
-                    if ($ancestors->isEmpty()) {
-                        Log::info("No ancestors found for Child User ID: {$childUserId}. Skipping commission distribution.");
-                        return;
-                    }
-
-                    // Distribute commission
-                    app(CategoryController::class)->commissionDistribution($childUserId, $loan->amount_approved);
-
-                    if ($referralUser) {
-                        Log::info("Commission distribution executed for user: {$loan->user_id}, Parent: {$referralUser->name}");
-                    } else {
-                        Log::info("Commission distribution executed for user: {$loan->user_id}, No valid referral user found.");
+                        Log::warning(
+                            'No available MLM parent node found',
+                            [
+                                'loan_id' => $loan->loan_id,
+                            ]
+                        );
                     }
                 }
-            });
 
-            return redirect()->back()->with('success', 'Loan updated successfully!');
-        } catch (\Exception $e) {
-            Log::error("Error updating loan:", ['exception' => $e->getMessage()]);
-            return redirect()->back()->withErrors(['error' => "An error occurred: {$e->getMessage()}"])->withInput();
-        }
+
+                /*
+                |--------------------------------------------------------------------------
+                | ADD CUSTOMER TO MLM TREE
+                |--------------------------------------------------------------------------
+                */
+
+                $childUserId = $loan->user_id;
+
+                $childName =
+                    $loan->user->name ?? 'Unknown User';
+
+
+                $existingCategory =
+                    DB::table('categories')
+                        ->where('user_id', $childUserId)
+                        ->first();
+
+
+                if (!$existingCategory && $parentUserId) {
+
+                    try {
+
+                        $result =
+                            app(CategoryController::class)
+                                ->addNode(
+                                    $parentUserId,
+                                    $childName,
+                                    $childUserId
+                                );
+
+                        Log::info(
+                            'MLM node processing completed',
+                            [
+                                'loan_id' => $loan->loan_id,
+                                'result' => $result,
+                            ]
+                        );
+
+                    } catch (\Throwable $mlmError) {
+
+                        Log::error(
+                            'MLM node error',
+                            [
+                                'loan_id' => $loan->loan_id,
+                                'message' => $mlmError->getMessage(),
+                                'file' => $mlmError->getFile(),
+                                'line' => $mlmError->getLine(),
+                            ]
+                        );
+                    }
+
+                } elseif ($existingCategory) {
+
+                    Log::info(
+                        'Customer already exists in MLM tree',
+                        [
+                            'user_id' => $childUserId,
+                        ]
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | COMMISSION DISTRIBUTION
+                |--------------------------------------------------------------------------
+                */
+
+                $childCategory =
+                    DB::table('categories')
+                        ->where('user_id', $childUserId)
+                        ->first();
+
+
+                if ($childCategory) {
+
+                    try {
+
+                        app(CategoryController::class)
+                            ->commissionDistribution(
+                                $childUserId,
+                                $loan->amount_approved
+                            );
+
+                        Log::info(
+                            'Commission distribution completed',
+                            [
+                                'loan_id' => $loan->loan_id,
+                                'user_id' => $childUserId,
+                                'amount' => $loan->amount_approved,
+                            ]
+                        );
+
+                    } catch (\Throwable $commissionError) {
+
+                        Log::error(
+                            'Commission distribution error',
+                            [
+                                'loan_id' => $loan->loan_id,
+                                'message' => $commissionError->getMessage(),
+                                'file' => $commissionError->getFile(),
+                                'line' => $commissionError->getLine(),
+                            ]
+                        );
+                    }
+                }
+            }
+
+
+            Log::info(
+                'Agent loan update completed',
+                [
+                    'loan_id' => $loan->loan_id,
+                ]
+            );
+        });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STEP 10: AJAX SUCCESS RESPONSE
+        |--------------------------------------------------------------------------
+        */
+
+        return response()->json([
+            'status' => 1,
+            'msg' => 'Loan updated successfully!'
+        ]);
+
+
+    } catch (\Throwable $e) {
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ERROR LOG
+        |--------------------------------------------------------------------------
+        */
+
+        Log::error(
+            'Agent loan update failed',
+            [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'loan_id' => $request->input('loan_id'),
+            ]
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AJAX ERROR RESPONSE
+        |--------------------------------------------------------------------------
+        */
+
+        return response()->json([
+            'status' => 0,
+            'msg' => $e->getMessage(),
+        ], 500);
     }
+}
     public function agentMis()
     {
         $agent_id = session()->get('user_id'); // Assuming the agent's ID is stored as 'user_id'

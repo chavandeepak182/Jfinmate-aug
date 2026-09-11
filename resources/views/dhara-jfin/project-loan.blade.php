@@ -39,7 +39,7 @@
                     </div>
                     <div class="about-content-right">
                         <div class="about-image-wrapper">
-                            <img src="{{ asset('theme/dhara-jfin/img/project_loan_page.jpg') }}" alt="Project Loan">
+                            <img src="{{ asset('theme/dhara-jfin/img/project_loan_page.jpg') }}" alt="Project loan financing from JF Finserve">
                         </div>
                     </div>
                 </div>

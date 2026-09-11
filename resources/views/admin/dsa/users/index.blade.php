@@ -58,7 +58,11 @@
 
                     <div class="col-md-4 mb-3">
                         <label>Password</label>
-                        <input type="password" name="password" class="form-control" placeholder="Enter new password (optional)">
+                        <input type="password"
+       name="password"
+       class="form-control"
+       placeholder="Enter new password (optional)">
+<small id="passwordError" class="text-danger"></small>
                     </div>
 
                     <div class="col-md-4 mb-3">
@@ -317,5 +321,29 @@ $('input[name="email"]').on('input', function(){
     }
 });
  </script>
+ <script>
+$('input[name="password"]').on('input', function () {
+
+    let password = this.value;
+
+    if (password.length > 0 && password.length < 6) {
+
+        // Red highlight
+        $(this).addClass('is-invalid');
+
+        // Error message
+        $('#passwordError').text('Password must be at least 6 characters');
+
+    } else {
+
+        // Remove red highlight
+        $(this).removeClass('is-invalid');
+
+        // Remove error message
+        $('#passwordError').text('');
+    }
+
+});
+</script>
 
 @endsection

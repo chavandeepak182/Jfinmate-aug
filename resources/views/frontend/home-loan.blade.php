@@ -14,7 +14,7 @@
                     <a href="/loan-application" class="btn btn-primary rounded py-3 px-5 mt-5 flex-shrink-0">Apply Now</a>
                 </div>
                 <div class="col-md-6 px-5">
-                    <img src="{{ asset('theme') }}/frontend/img/personal-loan.png" width="528px">
+                    <img src="{{ asset('theme') }}/frontend/img/personal-loan.png" width="528px" alt="Loan services ">
                 </div>
             </div>
         </div>

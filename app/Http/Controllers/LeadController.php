@@ -273,112 +273,112 @@ public function misAjax(Request $request)
         return view('leads.create', compact('agents'));
     }
 
-    public function store(Request $request) {
-        // Check if the user has role_id 4 (admin) or 2 (agent)
-        if (!in_array(session('role_id'), [4, 2])) {
-            return redirect('/home')->with('error', 'You do not have access to this page.');
-        }
-    
-        // If the user is an agent, automatically set the assigned_to field to the agent's ID
-        if (session('role_id') == 2) {
-            $request['assigned_to'] = session('user_id'); // Assuming the logged-in user's ID is stored in session as 'user_id'
-        }
-    
-        // Validate the lead data
-        // $request->validate([
-        //     'name' => 'required',
-        //     'email' => 'required|email|unique:leads',
-        //     'phone' => 'required',
-        //     'lead_source' => 'required',
-        //     'property_type' => 'required',
-        //     'budget_min' => 'required|numeric',
-        //     'budget_max' => 'required|numeric',
-        //     'location_preference' => 'required',
-        //     'possession_time' => 'required',
-        //     'property_status' => 'required',
-        //     'lead_status' => 'required',
-        //     'lead_score' => 'required|numeric',
-        //     'assigned_to' => 'required|exists:users,id',
-        //     'lead_type' => 'required',
-        //     'financing_status' => 'required',
-        // ]);
-              $request->validate(
-[
-    // 👤 BASIC DETAILS
-    'name' => [
-        'required',
-        'string',
-        'max:255',
-        'regex:/^[a-zA-Z\s]+$/'
-    ],
-
-    'email' => 'required|email|unique:leads,email',
-
-    'phone' => [
-        'required',
-        'digits:10'
-    ],
-
-    'alternate_phone' => [
-        'nullable',
-        'digits:10'
-    ],
-
-    // 📌 LEAD INFO
-    'lead_source'   => 'required|string',
-    'campaign_name' => 'nullable|string|max:255',
-    'property_type' => 'required|string',
-
-    // 💰 BUDGET
-    'budget_min' => 'required|numeric|min:0',
-    'budget_max' => 'required|numeric|gte:budget_min',
-
-    // 🏠 PROPERTY DETAILS
-    'location_preference' => 'required|string|max:255',
-    'possession_time'     => 'required|string',
-    'property_status'     => 'required|string',
-    'lead_status'         => 'required|string',
-
-    // 👨‍💼 ASSIGNMENT
-    'assigned_to' => 'required|exists:users,id',
-
-    // 📅 DATES
-    'follow_up_date' => 'nullable|date',
-    'closing_date'   => 'nullable|date',
-
-    // 🔢 AVAILABLE UNITS
-    'lead_score' => 'required|integer|min:1',
-
-    // 📝 EXTRA
-    'notes' => 'nullable|string',
-
-    // 🏷 TYPE & FINANCE
-    'lead_type'        => 'required|string',
-    'financing_status' => 'required|string',
-    'loan_provider'    => 'nullable|string|max:255',
-],
-[
-    // ❌ CUSTOM ERROR MESSAGES
-    'name.required' => 'Full Name is required',
-    'name.regex'   => 'Full Name should contain only letters',
-
-    'email.required' => 'Email Address is required',
-    'email.unique'   => 'This email is already registered',
-
-    'phone.required' => 'Phone Number is required',
-    'phone.digits'   => 'Phone Number must be exactly 10 digits',
-
-    'alternate_phone.digits' => 'Alternate Phone must be 10 digits',
-
-    'budget_max.gte' => 'Maximum Budget must be greater than Minimum Budget',
-
-    'lead_score.required' => 'Available Units is required',
-]);
-
-        // Create the lead if valid
-        Lead::create($request->all());
-        return redirect()->route('admin.listlead')->with('success', 'Lead added successfully.');
+   public function store(Request $request)
+{
+    // Check if the user has role_id 4 (admin) or 2 (agent)
+    if (!in_array(session('role_id'), [4, 2])) {
+        return redirect('/home')->with('error', 'You do not have access to this page.');
     }
+
+    // If the user is an agent, automatically assign the lead to that agent
+    if (session('role_id') == 2) {
+        $request['assigned_to'] = session('user_id');
+    }
+
+    // Validate the lead data
+    $request->validate(
+        [
+            // 👤 BASIC DETAILS
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-Z\s]+$/'
+            ],
+
+            'email' => [
+                'required',
+                'email',
+                'unique:leads,email'
+            ],
+
+            'phone' => [
+                'required',
+                'digits:10'
+            ],
+
+            'alternate_phone' => [
+                'nullable',
+                'digits:10'
+            ],
+
+            // 📌 LEAD INFO
+            'lead_source' => 'required|string',
+            'campaign_name' => 'nullable|string|max:255',
+            'property_type' => 'required|string',
+
+            // 💰 BUDGET
+            'budget_min' => 'required|numeric|min:0',
+            'budget_max' => 'required|numeric|gte:budget_min',
+
+            // 🏠 PROPERTY DETAILS
+            'location_preference' => 'required|string|max:255',
+            'possession_time' => 'required|string',
+            'property_status' => 'required|string',
+            'lead_status' => 'required|string',
+
+            // 👨‍💼 ASSIGNMENT
+            'assigned_to' => 'required|exists:users,id',
+
+            // 📅 DATES
+            'follow_up_date' => 'nullable|date|after_or_equal:today',
+            'closing_date' => 'nullable|date',
+
+            // 🔢 AVAILABLE UNITS
+            'lead_score' => 'required|integer|min:1',
+
+            // 📝 EXTRA
+            'notes' => 'nullable|string',
+
+            // 🏷 TYPE & FINANCE
+            'lead_type' => 'required|string',
+            'financing_status' => 'required|string',
+            'loan_provider' => 'nullable|string|max:255',
+        ],
+        [
+            // ❌ CUSTOM ERROR MESSAGES
+
+            'name.required' => 'Full Name is required',
+            'name.regex' => 'Full Name should contain only letters',
+
+            'email.required' => 'Email Address is required',
+            'email.email' => 'Please enter a valid email address',
+            'email.unique' => 'This email is already registered',
+
+            'phone.required' => 'Phone Number is required',
+            'phone.digits' => 'Phone Number must be exactly 10 digits',
+
+            'alternate_phone.digits' => 'Alternate Phone must be 10 digits',
+
+            'budget_max.gte' =>
+                'Maximum Budget must be greater than Minimum Budget',
+
+            'lead_score.required' =>
+                'Available Units is required',
+
+            // 📅 FOLLOW-UP DATE ERROR
+            'follow_up_date.after_or_equal' =>
+                'Follow-up Date cannot be a past date. Please select today or a future date.',
+        ]
+    );
+
+    // Create the lead if validation passes
+    Lead::create($request->all());
+
+    return redirect()
+        ->route('admin.listlead')
+        ->with('success', 'Lead added successfully.');
+}
 
     public function show(Lead $lead) {
         return view('leads.show', compact('lead'));

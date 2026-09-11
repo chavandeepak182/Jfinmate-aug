@@ -14,18 +14,23 @@ class EnquiryController extends Controller
         return view('frontend.enquiry-form');
     }
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'contact' => 'required|string|max:15',
-            'amount' => '|numeric',
-            'address' => '|string',
-            'message' => '|string',
-            'enquiry_type' => 'string'
-        ]);
-        Enquiry::create($validated);
-        // return view('frontend.thank-loan');
-       return redirect()->back()->with('success', 'Thank you for your enquiry! Our team will get back to you shortly.');
-    }
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'contact' => 'required|string|max:15',
+        'amount' => 'nullable|numeric',
+        'address' => 'nullable|string',
+        'message' => 'nullable|string',
+        'enquiry_type' => 'nullable|string',
+        'property_id' => 'nullable|integer',
+    ]);
+
+    $enquiry = Enquiry::create($validated);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Thank you for your enquiry! Our team will get back to you shortly.'
+    ]);
+}
 }

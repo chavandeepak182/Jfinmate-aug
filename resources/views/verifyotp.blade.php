@@ -335,7 +335,7 @@
     <section>
         <div class="container">
             <div class="user signinBx">
-                <div class="imgBx"><img src="{{ asset('theme') }}/frontend/img/user-login.jpg" alt="" />
+                <div class="imgBx"><img src="{{ asset('theme') }}/frontend/img/user-login.jpg" alt="JF Finserve user login" />
                 </div>
                 <div class="formBx">
                     @if (session('error'))

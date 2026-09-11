@@ -42,7 +42,7 @@
 
                 <div class="about-content-right">
                     <div class="about-image-wrapper">
-                        <img src="{{ asset('theme/dhara-jfin/img/overdraft_page.jpg') }}" alt="Overdraft Facility">
+                        <img src="{{ asset('theme/dhara-jfin/img/overdraft_page.jpg') }}" alt="Business overdraft loan from JF Finserve">
                     </div>
                 </div>
             </div>

@@ -40,6 +40,229 @@
         --border-color: #e2e8f0;
     }
 
+    /* Brochure Modal Styles */
+#enquiryModal .modal-content-prop {
+    background: #ffffff;
+    width: 500px;
+    padding: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    color: #1a1a2e;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#enquiryModal .modal-header-prop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 28px 30px 20px;
+    background: linear-gradient(135deg, #4c5fd7 0%, #295cab 100%);
+    color: #ffffff;
+}
+
+#enquiryModal .modal-header-title h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: #ffffff;
+}
+
+#enquiryModal .modal-header-title p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    margin: 0;
+}
+
+#enquiryModal .modal-close-prop {
+    margin-top: -4px;
+}
+
+#enquiryModal .close-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #ffffff;
+    font-size: 18px;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+#enquiryModal .close-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: rotate(90deg);
+}
+
+#enquiryModal .modal-body {
+    padding: 24px 30px 30px;
+}
+
+#enquiryModal .form-group {
+    margin-bottom: 16px;
+}
+
+#enquiryModal .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2c3e80;
+    margin-bottom: 5px;
+}
+
+#enquiryModal .form-group .required {
+    color: #ef4444;
+}
+
+#enquiryModal .brochure-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #f9fafb;
+    color: #1a1a2e;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#enquiryModal .brochure-input:focus {
+    border-color: #4c5fd7;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(76, 95, 215, 0.1);
+}
+
+#enquiryModal .brochure-input::placeholder {
+    color: #9ca3af;
+}
+
+#enquiryModal .brochure-info-box {
+    display: flex;
+    gap: 12px;
+    margin: 18px 0 20px;
+    padding: 12px 0;
+    border-top: 1px solid #f1f3f9;
+    border-bottom: 1px solid #f1f3f9;
+}
+
+#enquiryModal .brochure-info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+#enquiryModal .brochure-info-item i {
+    color: #4c5fd7;
+    font-size: 16px;
+}
+
+#enquiryModal .brochure-submit-btn {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #4c5fd7 0%, #295cab 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#enquiryModal .brochure-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(76, 95, 215, 0.4);
+}
+
+#enquiryModal .brochure-submit-btn:active {
+    transform: translateY(0);
+}
+
+#enquiryModal .brochure-submit-btn i {
+    font-size: 18px;
+}
+
+/* Modal Backdrop */
+.modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Modal Container */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+}
+
+#enquiryModal.modal.active {
+    visibility: visible;
+}
+
+/* Responsive */
+@media (max-width: 540px) {
+    #enquiryModal .modal-content-prop {
+        width: 92%;
+        margin: 0 10px;
+        border-radius: 16px;
+    }
+    
+    #enquiryModal .modal-header-prop {
+        padding: 20px 20px 16px;
+    }
+    
+    #enquiryModal .modal-header-title h2 {
+        font-size: 20px;
+    }
+    
+    #enquiryModal .modal-body {
+        padding: 20px;
+    }
+    
+    #enquiryModal .brochure-info-box {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
     * { box-sizing: border-box; }
 
     .custom-container {
@@ -1314,37 +1537,76 @@
         </div>
 
         <!-- //brouchure modal -->
-        <div id="modalBackdrop" class="modal-backdrop" onclick="closeEnquiryModal()"></div>
-        <div class="modal" id="enquiryModal">
-            <div class="modal-content-prop">
-                <div class="modal-header-prop">
-                <div class="modal-header-title">
-                    <h2>Download Brochure</h2>
-                    <p>Please enter your details to download the brochure.</p>
-                </div>
-                <div class="modal-close-prop">
-                    <span class="close-btn" onclick="closeEnquiryModal()">X</span>
-                </div>
-                </div>
-                <div class="modal-body">
-                    <form id="enquiryForm" class="enquiry-form">
-                        <!-- Laravel CSRF -->
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="text" name="name" placeholder="Your Name" required>
-                        <input type="text"
-                            name="contact"
-                            id="contact"
-                            placeholder="Phone"
-                            maxlength="10"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                            required>
-                        <input type="email" name="email" placeholder="Your Email" required>
-                        <input type="hidden" name="enquiry_type" value="brochure">
-                        <button type="submit">Download Now</button>
-                    </form>
-                </div>
+<!-- //brouchure modal -->
+<div id="modalBackdrop" class="modal-backdrop" onclick="closeEnquiryModal()"></div>
+<div class="modal" id="enquiryModal">
+    <div class="modal-content-prop">
+        <div class="modal-header-prop">
+            <div class="modal-header-title">
+                <h2>Download Brochure</h2>
+                <p>Get complete project details in your inbox</p>
+            </div>
+            <div class="modal-close-prop">
+                <span class="close-btn" onclick="closeEnquiryModal()">✕</span>
             </div>
         </div>
+        <div class="modal-body">
+            <form id="enquiryForm" class="enquiry-form">
+                <!-- Laravel CSRF -->
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                
+                <div class="form-group">
+                    <label for="brochure_name">Full Name <span class="required">*</span></label>
+                    <input type="text" 
+                           id="brochure_name" 
+                           name="name" 
+                           placeholder="Enter your full name"
+                           class="brochure-input"
+                           required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="brochure_phone">Phone Number <span class="required">*</span></label>
+                    <input type="text"
+                           name="contact"
+                           id="brochure_phone"
+                           placeholder="Enter 10 digit mobile number"
+                           class="brochure-input"
+                           maxlength="10"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                           required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="brochure_email">Email Address <span class="required">*</span></label>
+                    <input type="email" 
+                           id="brochure_email"
+                           name="email" 
+                           placeholder="your.email@example.com"
+                           class="brochure-input"
+                           required>
+                </div>
+                
+                <input type="hidden" name="enquiry_type" value="brochure">
+                
+                <div class="brochure-info-box">
+                    <div class="brochure-info-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Instant PDF Download</span>
+                    </div>
+                    <div class="brochure-info-item">
+                        <i class="fas fa-lock"></i>
+                        <span>Your data is secure</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="brochure-submit-btn">
+                    <i class="fas fa-download"></i> Download Brochure Now
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
         <script>
 document.getElementById("enquiryForm").addEventListener("submit", function(e){
 
@@ -1523,6 +1785,20 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
 });
+function openEnquiryModal() {
+    document.getElementById('enquiryModal').style.visibility = 'visible';
+    document.getElementById('enquiryModal').classList.add('active');
+    document.getElementById('modalBackdrop').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEnquiryModal() {
+    document.getElementById('enquiryModal').style.visibility = 'hidden';
+    document.getElementById('enquiryModal').classList.remove('active');
+    document.getElementById('modalBackdrop').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {

@@ -65,4 +65,6 @@ class Loan extends Model
 {
     return $this->belongsTo(\App\Models\DsaCustomer::class, 'user_id', 'user_id');
 }
+
+
 }

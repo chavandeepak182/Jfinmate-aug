@@ -9,6 +9,400 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
    
  <style>/* ===== Overlay ===== */
+
+/* =========================================================
+   CUSTOMER / USER TABLE UI
+   Only UI styling - HTML, AJAX & functionality unchanged
+   ========================================================= */
+
+/* Main table card */
+#user_table_container {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+/* Search area */
+#userSearch {
+    height: 44px;
+    width: 100%;
+    border: 1px solid #dfe3e8;
+    border-radius: 7px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    box-shadow: none;
+    transition: all 0.2s ease;
+}
+
+#userSearch::placeholder {
+    color: #9aa1aa;
+    font-size: 13px;
+}
+
+#userSearch:focus {
+    border-color: #295cab;
+    box-shadow: 0 0 0 3px rgba(41, 92, 171, 0.08);
+    outline: none;
+}
+
+/* Search row spacing */
+#user_table_container ~ * {
+    box-sizing: border-box;
+}
+
+/* Table */
+#user_table {
+    width: 100%;
+    min-width: 850px;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+}
+
+/* Table header */
+#user_table thead th {
+    background: #f6f8fb;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 14px 16px;
+    border-top: 1px solid #e8ebef;
+    border-bottom: 1px solid #e8ebef;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* First header */
+#user_table thead th:first-child {
+    border-left: 1px solid #e8ebef;
+    border-radius: 8px 0 0 0;
+}
+
+/* Last header */
+#user_table thead th:last-child {
+    border-right: 1px solid #e8ebef;
+    border-radius: 0 8px 0 0;
+}
+
+/* Table body cells */
+#user_table tbody td {
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #4b5563;
+    vertical-align: middle;
+    border-bottom: 1px solid #edf0f3;
+    background: #fff;
+    white-space: nowrap;
+}
+
+/* ID column */
+#user_table tbody td:first-child {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Row hover */
+#user_table tbody tr {
+    transition: background 0.2s ease;
+}
+
+#user_table tbody tr:hover td {
+    background: #f8fafc;
+}
+
+/* Customer name link */
+#user_table .user-link {
+    color: #295cab;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+#user_table .user-link:hover {
+    color: #174a91;
+    text-decoration: underline;
+}
+
+/* Empty table */
+#user_table tbody:empty::after {
+    content: "No records found";
+    display: block;
+    text-align: center;
+    padding: 30px;
+    color: #9ca3af;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+#user_table td:last-child {
+    min-width: 135px;
+}
+
+#user_table .edit-user,
+#user_table .delete-user,
+#user_table .reset-password {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin-right: 5px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+/* Edit */
+#user_table .edit-user {
+    background: #e8f1ff;
+    color: #2563eb;
+}
+
+#user_table .edit-user:hover {
+    background: #2563eb;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* Delete */
+#user_table .delete-user {
+    background: #feecec;
+    color: #dc2626;
+}
+
+#user_table .delete-user:hover {
+    background: #dc2626;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* Reset password */
+#user_table .reset-password {
+    background: #fff5d9;
+    color: #d97706;
+}
+
+#user_table .reset-password:hover {
+    background: #d97706;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* Remove default Bootstrap button focus outline */
+#user_table button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* =========================================================
+   PAGINATION / TABLE FOOTER
+   ========================================================= */
+
+#user_table_container > .d-flex {
+    padding: 14px 4px 2px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Showing entries */
+#user_table_container .dataTables_info {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* Pagination wrapper */
+#user_table_container .dataTables_paginate {
+    margin-left: auto;
+}
+
+/* Pagination list */
+#user_table_container .pagination {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Pagination item */
+#user_table_container .pagination .page-item {
+    margin: 0;
+}
+
+/* Pagination links */
+#user_table_container .pagination .page-link {
+    min-width: 34px;
+    height: 34px;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e6eb;
+    border-radius: 6px;
+    background: #fff;
+    color: #4b5563;
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+/* Pagination hover */
+#user_table_container .pagination .page-link:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #295cab;
+}
+
+/* Active page */
+#user_table_container .pagination .page-item.active .page-link {
+    background: #295cab;
+    border-color: #295cab;
+    color: #fff;
+}
+
+/* Disabled pagination */
+#user_table_container .pagination .page-item.disabled .page-link {
+    background: #f8f9fa;
+    color: #b0b6bd;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   TABLE CARD SPACING
+   ========================================================= */
+
+.card:has(#user_table) {
+    border: 1px solid #edf0f3;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    background: #fff;
+}
+
+.card:has(#user_table) .card-body {
+    padding: 22px;
+}
+
+/* Search column */
+.card:has(#user_table) .row.mb-3 {
+    margin-bottom: 18px !important;
+}
+
+.card:has(#user_table) .row.mb-3 .col-md-4 {
+    max-width: 380px;
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    /* Card spacing */
+    .card:has(#user_table) .card-body {
+        padding: 14px;
+    }
+
+    /* Search full width */
+    .card:has(#user_table) .row.mb-3 .col-md-4 {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    #userSearch {
+        height: 42px;
+        font-size: 13px;
+    }
+
+    /* Horizontal table scroll */
+    #user_table_container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    #user_table {
+        min-width: 850px;
+    }
+
+    #user_table thead th {
+        padding: 12px 13px;
+        font-size: 12px;
+    }
+
+    #user_table tbody td {
+        padding: 12px 13px;
+        font-size: 12px;
+    }
+
+    /* Action buttons */
+    #user_table .edit-user,
+    #user_table .delete-user,
+    #user_table .reset-password {
+        width: 30px;
+        height: 30px;
+        margin-right: 3px;
+    }
+
+    /* Footer */
+    #user_table_container > .d-flex {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start !important;
+        padding-top: 14px;
+    }
+
+    #user_table_container .dataTables_paginate {
+        width: 100%;
+        margin-left: 0;
+        overflow-x: auto;
+    }
+
+    #user_table_container .pagination {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        width: max-content;
+    }
+
+    #user_table_container .pagination .page-link {
+        min-width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    #user_table_container .dataTables_info {
+        font-size: 12px;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+
+    .card:has(#user_table) .card-body {
+        padding: 10px;
+    }
+
+    #user_table thead th {
+        padding: 11px 12px;
+    }
+
+    #user_table tbody td {
+        padding: 11px 12px;
+    }
+
+    #user_table_container > .d-flex {
+        gap: 10px;
+    }
+}
+
+
 .modal-overlay {
     background: rgba(0,0,0,0.15);
     display: flex;
@@ -419,7 +813,7 @@ body.modal-open {
                                     <th> Email ID </th>
                                     <th> Mobile Number </th>
                                     <th> Pan No. </th>
-                                    <!-- <th> Status </th> -->
+                                    <th> Status </th>
                                     <th> Action </th>
                                 </tr>
                             </thead>
@@ -441,20 +835,25 @@ body.modal-open {
                                         <td>{{ $user->email_id }}</td>
 <td>{{ $user->profile->mobile_no ?? $user->mobile_no ?? '-' }}</td>
                                         <td>{{ $user->profile->pan_number ?? ''}}</td>
-                                        <!-- <td>
-                                            <label>
-                                                <input type="radio" name="status_{{ $user->id }}" value="1"
-                                                    onclick="updateStatus({{ $user->id }}, 1)"
-                                                    {{ $user->is_email_verify == 1 ? 'checked' : '' }}>
-                                                Active
-                                            </label>
-                                            <label>
-                                                <input type="radio" name="status_{{ $user->id }}" value="0"
-                                                    onclick="updateStatus({{ $user->id }}, 0)"
-                                                    {{ $user->is_email_verify == 0 ? 'checked' : '' }}>
-                                                Inactive
-                                            </label>
-                                        </td> -->
+                                       <td>
+    <label style="margin-right: 12px;">
+        <input type="radio"
+               name="status_{{ $user->id }}"
+               value="1"
+               onclick="updateStatus({{ $user->id }}, 1)"
+               {{ $user->status == 1 ? 'checked' : '' }}>
+        Active
+    </label>
+
+    <label>
+        <input type="radio"
+               name="status_{{ $user->id }}"
+               value="0"
+               onclick="updateStatus({{ $user->id }}, 0)"
+               {{ $user->status == 0 ? 'checked' : '' }}>
+        Inactive
+    </label>
+</td>
                                         <td>
                                            <button type="button"
                                                     class="btn btn-primary btn-xs edit-user"
@@ -500,80 +899,224 @@ body.modal-open {
            
  
     <!-- Add User Modal -->
-    <div class="modal fade" id="addUserView" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add New user</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  
+<div class="modal fade" id="addUserView" tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+            <!-- Modal Header -->
+            <div class="modal-header px-4 py-3 bg-white border-bottom">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="d-flex align-items-center justify-content-center rounded-circle"
+                         style="width:44px;height:44px;background:#f1f3f5;">
+                        <i class="fa fa-user-plus text-dark fs-5"></i>
+                    </div>
+
+                    <div>
+                        <h5 class="modal-title fw-semibold text-dark mb-0"
+                            id="exampleModalLabel">
+                            Add New User
+                        </h5>
+
+                        <small class="text-muted">
+                            Enter the user's details below
+                        </small>
+                    </div>
+
                 </div>
-                <div class="modal-body">
-                    <form class="user" id="addUser" method="post">
-                        @csrf
-                        <div class="row">
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body p-4"
+                 style="background:#fafafa;">
+
+                <form class="user" id="addUser" method="post">
+                    @csrf
+
+                    <!-- Basic Information -->
+                    <div class="mb-4">
+
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fw-semibold text-dark">
+                                Basic Information
+                            </span>
+                            <div class="flex-grow-1 ms-3"
+                                 style="height:1px;background:#e9ecef;"></div>
+                        </div>
+
+                        <div class="row g-3">
+
                             <div class="form-group col-lg-4">
-                                <label for="recipient-name" class="col-form-label">Name:</label>
-                                <input type="text" class="form-control" id="full_name" name="full_name" required>
+                                <label for="full_name"
+                                       class="form-label fw-semibold text-dark">
+                                    Name
+                                </label>
+
+                                <input type="text"
+                                       class="form-control"
+                                       id="full_name"
+                                       name="full_name"
+                                       required
+                                       placeholder="Enter full name">
                             </div>
-                            
 
                             <div class="form-group col-lg-4">
-                                <label for="recipient-name" class="col-form-label">Email ID:</label>
-                                <input type="email" class="form-control" id="email_id" name="email_id" required>
+                                <label for="email_id"
+                                       class="form-label fw-semibold text-dark">
+                                    Email ID
+                                </label>
+
+                                <input type="email"
+                                       class="form-control"
+                                       id="email_id"
+                                       name="email_id"
+                                       required
+                                       placeholder="Enter email address">
                             </div>
-                              <input type="hidden" id="user_id" name="user_id">
+
+                            <input type="hidden"
+                                   id="user_id"
+                                   name="user_id">
 
                             <div class="form-group col-lg-4">
-    <label class="col-form-label">Password:</label>
+                                <label class="form-label fw-semibold text-dark">
+                                    Password
+                                </label>
 
-    <div class="password-wrapper">
-        <input type="password"
-               class="form-control"
-               id="password"
-               name="password"
-               placeholder="Leave blank to keep existing password">
+                                <div class="password-wrapper position-relative">
 
-        <span class="toggle-password" onclick="togglePassword()">
-            <i class="fa fa-eye" id="eyeIcon"></i>
-        </span>
-    </div>
+                                    <input type="password"
+                                           class="form-control"
+                                           id="password"
+                                           name="password"
+                                           placeholder="Enter minimum 6 characters"
+                                           minlength="6"
+                                           style="padding-right:45px;">
 
-    <small class="text-muted">
-        Leave blank to keep existing password
-    </small>
-</div>
+                                    <span class="toggle-password"
+                                          onclick="togglePassword()"
+                                          style="position:absolute;
+                                                 right:14px;
+                                                 top:50%;
+                                                 transform:translateY(-50%);
+                                                 cursor:pointer;
+                                                 z-index:5;
+                                                 color:#6c757d;">
+                                        <i class="fa fa-eye"
+                                           id="eyeIcon"></i>
+                                    </span>
+
+                                </div>
+
+                                <small class="text-muted">
+                                    Leave blank to keep existing password
+                                </small>
+                            </div>
 
                         </div>
-                        <input type="hidden" id="user_type" name="user_type" value="customer">
+                    </div>
+
+                    <input type="hidden"
+                           id="user_type"
+                           name="user_type"
+                           value="customer">
 
 
-                        <div class="row">
+                    <!-- Personal Information -->
+                    <div class="mb-4">
+
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fw-semibold text-dark">
+                                Personal Information
+                            </span>
+
+                            <div class="flex-grow-1 ms-3"
+                                 style="height:1px;background:#e9ecef;"></div>
+                        </div>
+
+                        <div class="row g-3">
+
                             <div class="form-group col-lg-4">
-                                <label for="recipient-name" class="col-form-label">Mobile Number:</label>
-                                <input type="tel" class="form-control" id="mobile_no" name="mobile_no" required>
+                                <label for="mobile_no"
+                                       class="form-label fw-semibold text-dark">
+                                    Mobile Number
+                                </label>
+
+                                <input type="tel"
+                                       class="form-control"
+                                       id="mobile_no"
+                                       name="mobile_no"
+                                       required
+                                       placeholder="Enter mobile number">
                             </div>
 
                             <div class="form-group col-lg-4">
-                                <label for="recipient-name" class="col-form-label">Date of Birth:</label>
+                                <label for="dob"
+                                       class="form-label fw-semibold text-dark">
+                                    Date of Birth
+                                </label>
+
                                 <input type="date"
-       class="form-control"
-       id="dob"
-       name="dob"
-       max="{{ \Carbon\Carbon::now()->subYears(18)->format('Y-m-d') }}">
-
+                                       class="form-control"
+                                       id="dob"
+                                       name="dob"
+                                       max="{{ \Carbon\Carbon::now()->subYears(18)->format('Y-m-d') }}">
                             </div>
 
                             <div class="form-group col-lg-4">
-                                <label for="recipient-name" class="col-form-label">Address:</label>
-                                <input type="tel" class="form-control" id="address" name="address">
+                                <label for="address"
+                                       class="form-label fw-semibold text-dark">
+                                    Address
+                                </label>
+
+                                <input type="tel"
+                                       class="form-control"
+                                       id="address"
+                                       name="address"
+                                       placeholder="Enter address">
                             </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- Location Information -->
+                    <div class="mb-2">
+
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fw-semibold text-dark">
+                                Location Information
+                            </span>
+
+                            <div class="flex-grow-1 ms-3"
+                                 style="height:1px;background:#e9ecef;"></div>
                         </div>
 
-                        <div class="row">
+                        <div class="row g-3">
+
                             <div class="form-group col-lg-4">
-                                <label class="col-form-label">State</label>
-                                <select class="form-control" id="state" name="state" required>
-                                    <option value="">-- Select State --</option>
+                                <label class="form-label fw-semibold text-dark">
+                                    State
+                                </label>
+
+                                <select class="form-control"
+                                        id="state"
+                                        name="state"
+                                        required>
+                                    <option value="">
+                                        -- Select State --
+                                    </option>
+
                                     @foreach($states as $state)
                                         <option value="{{ $state->id }}">
                                             {{ $state->name }}
@@ -583,78 +1126,165 @@ body.modal-open {
                             </div>
 
                             <div class="form-group col-lg-4">
-                                <label class="col-form-label">City</label>
-                                <select class="form-control" id="city" name="city" required>
-                                    <option value="">-- Select City --</option>
+                                <label class="form-label fw-semibold text-dark">
+                                    City
+                                </label>
+
+                                <select class="form-control"
+                                        id="city"
+                                        name="city"
+                                        required>
+                                    <option value="">
+                                        -- Select City --
+                                    </option>
                                 </select>
                             </div>
 
-
                             <div class="form-group col-lg-4">
-                                <label for="recipient-name" class="col-form-label">Pincode:</label>
-                                <input type="text" class="form-control" id="pincode" name="pincode">
+                                <label for="pincode"
+                                       class="form-label fw-semibold text-dark">
+                                    Pincode
+                                </label>
+
+                                <input type="text"
+                                       class="form-control pincode-input"
+                                       id="pincode"
+                                       name="pincode"
+                                       maxlength="6"
+                                       inputmode="numeric"
+                                       autocomplete="postal-code"
+                                       placeholder="Enter 6 digit pincode">
+
+                                <small id="pincode_error"
+                                       class="text-danger"></small>
                             </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <!-- <button type="submit" class="btn btn-primary">Save</button> -->
-                            <button type="submit"
-                                    class="btn btn-primary"
-                                    id="submitUserBtn">
-                                Save
-                            </button>
 
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="modal-footer px-0 pb-0 mt-4 border-top">
+
+                        <button type="button"
+                                class="btn btn-light border px-4"
+                                data-bs-dismiss="modal">
+                            Close
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-dark px-4"
+                                id="submitUserBtn">
+                            <i class="fa fa-save me-2"></i>
+                            Save User
+                        </button>
+
+                    </div>
+
+                </form>
+
             </div>
         </div>
     </div>
-  <div class="modal fade" id="resetPasswordModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
+</div>
 
-      <div class="modal-header">
-        <h5 class="modal-title">Reset Password</h5>
-        <button class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
 
-      <div class="modal-body">
-        <form id="resetPasswordForm">
-          @csrf
 
-          <input type="hidden" id="reset_user_id">
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
 
-          <div class="mb-3">
-    <label>New Password</label>
+            <!-- Header -->
+            <div class="modal-header px-4 py-3 bg-white border-bottom">
 
-    <div class="input-group">
-        <input type="password"
-               class="form-control"
-               id="new_password"
-               placeholder="Enter new password"
-               required
-               minlength="6">
+                <div class="d-flex align-items-center gap-3">
 
-        <span class="input-group-text"
-              style="cursor:pointer"
-              id="toggleNewPassword">
-            <i class="fa fa-eye"></i>
-        </span>
+                    <div class="d-flex align-items-center justify-content-center rounded-circle"
+                         style="width:42px;height:42px;background:#f1f3f5;">
+                        <i class="fa fa-lock text-dark"></i>
+                    </div>
+
+                    <div>
+                        <h5 class="modal-title mb-0 fw-semibold text-dark">
+                            Reset Password
+                        </h5>
+                        <small class="text-muted">
+                            Create a new secure password
+                        </small>
+                    </div>
+
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body p-4">
+
+                <form id="resetPasswordForm">
+                    @csrf
+
+                    <input type="hidden" id="reset_user_id">
+
+                    <div class="mb-4">
+
+                        <label for="new_password"
+                               class="form-label fw-semibold text-dark mb-2">
+                            New Password
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text bg-light border-end-0"
+                                  style="border-radius:10px 0 0 10px;">
+                                <i class="fa fa-key text-secondary"></i>
+                            </span>
+
+                            <input type="password"
+                                   class="form-control bg-light border-start-0 border-end-0"
+                                   id="new_password"
+                                   placeholder="Enter new password"
+                                   required
+                                   minlength="6"
+                                   style="height:48px;">
+
+                            <span class="input-group-text bg-light border-start-0"
+                                  style="cursor:pointer;border-radius:0 10px 10px 0;"
+                                  id="toggleNewPassword">
+                                <i class="fa fa-eye text-secondary"></i>
+                            </span>
+
+                        </div>
+
+                        <small class="text-muted d-block mt-2">
+                            <i class="fa fa-info-circle me-1"></i>
+                            Password must contain at least 6 characters.
+                        </small>
+
+                    </div>
+
+                    <!-- Update Button -->
+                    <button type="submit"
+                            class="btn btn-dark w-100 fw-semibold"
+                            style="height:48px;border-radius:10px;">
+                        <i class="fa fa-key me-2"></i>
+                        Update Password
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
     </div>
 </div>
 
 
-          <button type="submit" class="btn btn-primary">
-            Update Password
-          </button>
-        </form>
-      </div>
 
-    </div>
-  </div>
-</div>
+
 
 
 
@@ -914,44 +1544,7 @@ $(document).on('submit', '#addUser', function (e) {
     }
 });
 </script>
-<script>
-    function updateStatus(userId, status)
-{
-    $.ajax({
-        url: "{{ route('admin.update.employee.status') }}",
-        type: "POST",
-        data: {
-            _token: "{{ csrf_token() }}",
-            user_id: userId,
-            status: status
-        },
-        success: function(res){
 
-            swal("Success", "Employee status changed successfully", "success")
-            .then(() => {
-
-                // reload employee list
-                $.ajax({
-                    url: "{{ route('load.list.by.type') }}",
-                    type: "GET",
-                    data: {
-                        type: 'agent'
-                    },
-                    success: function(res){
-                        $('#user_table_body').html(res.html);
-                        $('.dataTables_paginate nav').html(res.pagination);
-                    }
-                });
-
-            });
-
-        },
-        error: function(){
-            swal("Error", "Status update failed", "error");
-        }
-    });
-}
-</script>
 <script>
     $(document).on('click', '.reset-password', function () {
     let userId = $(this).data('id');
@@ -1115,57 +1708,79 @@ $(document).on('keyup', '#userSearch', function () {
 });
 </script>
 <script>
+function updateStatus(userId, status) {
 
-function updateStatus(userId, status)
-{
     $.ajax({
         url: "{{ route('admin.update.employee.status') }}",
         type: "POST",
+
         data: {
             _token: "{{ csrf_token() }}",
             user_id: userId,
             status: status
         },
-        success: function(res){
 
-            let label = "User";
+        success: function(res) {
 
-            if(currentType === 'customer'){
-                label = "Customer";
+            if (res.status == 1) {
+
+                let label = "User";
+
+                if (currentType === 'customer') {
+                    label = "Customer";
+                } else if (currentType === 'agent') {
+                    label = "Employee";
+                } else if (currentType === 'cp') {
+                    label = "Channel Partner";
+                }
+
+                swal(
+                    "Success",
+                    status == 1
+                        ? label + " activated successfully"
+                        : label + " deactivated successfully",
+                    "success"
+                ).then(function() {
+
+                    // Reload current list
+                    $.ajax({
+                        url: "{{ route('load.list.by.type') }}",
+                        type: "GET",
+                        data: {
+                            type: currentType,
+                            page: 1
+                        },
+
+                        success: function(res) {
+                            $('#user_table_body').html(res.html);
+                            $('.dataTables_paginate nav').html(res.pagination);
+                        }
+                    });
+
+                });
+
+            } else {
+
+                swal(
+                    "Error",
+                    res.msg || "Status update failed",
+                    "error"
+                );
             }
-            else if(currentType === 'agent'){
-                label = "Employee";
-            }
-            else if(currentType === 'cp'){
-                label = "Channel Partner";
-            }
+        },
 
-            swal("Success", label + " status updated successfully", "success")
-            .then(() => location.reload());
+        error: function(xhr) {
 
+            console.log(xhr.responseText);
+
+            swal(
+                "Error",
+                "Status update failed",
+                "error"
+            );
         }
     });
 }
-$(document).ready(function () {
-
-    currentType = 'customer'; // default
-
-    // trigger same API as click
-    $.ajax({
-        url: "{{ route('load.list.by.type') }}",
-        type: "GET",
-        data: {
-            type: 'customer',
-            page: 1
-        },
-        success: function (res) {
-            $('#user_table_body').html(res.html);
-            $('.dataTables_paginate nav').html(res.pagination);
-        }
-    });
-
-});
-
 </script>
 <script>
     // 🔴 LIVE EMAIL VALIDATION (typing time)
@@ -1185,6 +1800,25 @@ $(document).on('input', '#email_id', function () {
         $('#email_id').after('<small class="text-danger">Only .com, .in, .net, .org, .edu allowed</small>');
     }
 
+});
+</script>
+<script>
+$(document).on('input', '#password', function () {
+
+    let password = $(this).val();
+
+    // Remove old error
+    $('#password_error').remove();
+
+    // Password minimum 6 characters
+    if (password.length > 0 && password.length < 6) {
+
+        $(this).after(
+            '<small id="password_error" class="text-danger">' +
+            'Password must be at least 6 characters.' +
+            '</small>'
+        );
+    }
 });
 </script>
 @endsection

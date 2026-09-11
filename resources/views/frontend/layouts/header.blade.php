@@ -180,11 +180,6 @@ body {
     </div>
 </div>
 
-
-
-
-
-
 <header class="main-header">
     <div class="container">
         <div class="header-inner">
@@ -257,6 +252,7 @@ body {
         <li><a href="{{ route('eligibility.calculator') }}">Calculator</a></li>
         <li><a href="{{ url('services') }}">Services</a></li>
         <li><a href="{{ url('properties') }}">Properties</a></li>
+        
 
         <li class="mega-dropdown calculator-dropdown">
                         <a href="javascript:void(0)" class="dropdown-toggle">Resources</a>
@@ -272,6 +268,7 @@ body {
                                     <i class="bi bi-graph-up-arrow icon"></i>
                                     <div><h4>Referral</h4></div>
                                 </a>
+                                
                             </div>
                         </div>
                     </li>

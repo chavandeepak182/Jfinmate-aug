@@ -181,7 +181,7 @@
                     <thead class="table-dark" id="leadReferralTableHead">
 
     <tr>
-        <th>#</th>
+        <th>Sr.No.</th>
         <th>Referral Code</th>
         <th>Name</th>
         <th>Email</th>
@@ -286,8 +286,11 @@
                             <label>PAN Number</label>
 
                             <input type="text"
-                                   name="pan_no"
-                                   class="form-control">
+       name="pan_no"
+       id="pan_no"
+       class="form-control"
+       maxlength="10"
+       style="text-transform: uppercase;">
 
                         </div>
 
@@ -837,6 +840,13 @@ function loadLeadReferral(search = '', type = currentType) {
         });
 
     });
+
+    $('#pan_no').on('input', function () {
+    this.value = this.value
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, '')
+        .substring(0, 10);
+});
 </script>
 
 

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Loan;
 use App\Exports\MisExport;
+use Illuminate\Support\Facades\Validator; 
 use Maatwebsite\Excel\Facades\Excel;
 
 class DsaController extends Controller
@@ -733,39 +734,97 @@ public function settings()
 return view('admin.dsa.settings', compact('documents', 'bank'));    }
 
     // 🔹 SAVE SETTINGS
-  public function saveSettings(Request $request)
+// 🔹 SAVE SETTINGS WITH COMPLETE VALIDATION
+public function saveSettings(Request $request)
 {
-    $request->validate([
-        'bank_name' => 'required',
+    // Complete validation rules with custom messages
+    $validator = Validator::make($request->all(), [
+        'bank_name' => 'required|string|max:255',
         'account_number' => 'required|numeric|digits_between:9,18',
-        'ifsc_code' => 'required',
-        'account_holder_name' => 'required',
-        'upi_id' => 'required',
-    ],[
+        'ifsc_code' => 'required|string|regex:/^[A-Z]{4}0[A-Z0-9]{6}$/',
+        'branch_name' => 'required|string|max:255',
+        'account_holder_name' => 'required|string|max:255',
+        'upi_id' => 'required|string|max:255|regex:/^[a-zA-Z0-9.\-_]+@[a-zA-Z0-9.\-_]+$/',
+    ], [
+        // Custom error messages
         'bank_name.required' => 'Bank Name is required',
+        'bank_name.string' => 'Bank Name must be a valid text',
+        'bank_name.max' => 'Bank Name cannot exceed 255 characters',
+        
         'account_number.required' => 'Account Number is required',
+        'account_number.numeric' => 'Account Number must contain only numbers',
+        'account_number.digits_between' => 'Account Number must be between 9 to 18 digits',
+        
         'ifsc_code.required' => 'IFSC Code is required',
-        'branch_name' => 'required',
+        'ifsc_code.regex' => 'Please enter a valid IFSC Code (e.g., SBIN0001234)',
+        
+        'branch_name.required' => 'Branch Name is required',
+        'branch_name.string' => 'Branch Name must be a valid text',
+        'branch_name.max' => 'Branch Name cannot exceed 255 characters',
+        
         'account_holder_name.required' => 'Account Holder Name is required',
+        'account_holder_name.string' => 'Account Holder Name must be a valid text',
+        'account_holder_name.max' => 'Account Holder Name cannot exceed 255 characters',
+        
         'upi_id.required' => 'UPI ID is required',
+        'upi_id.regex' => 'Please enter a valid UPI ID (e.g., example@paytm)',
     ]);
+
+    // Check if validation fails
+    if ($validator->fails()) {
+        return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+    }
 
     $dsaId = session('user_id');
 
-    DB::table('dsa_bank_details')->updateOrInsert(
-        ['dsa_id' => $dsaId],
-        [
-            'bank_name' => $request->bank_name,
-            'account_number' => $request->account_number,
-            'ifsc_code' => strtoupper($request->ifsc_code),
-            'account_holder_name' => $request->account_holder_name,
-            'upi_id' => $request->upi_id,
-            'branch_name' => $request->branch_name,
-            'updated_at' => now()
-        ]
-    );
+    // Check if account number already exists for another DSA
+    $existingAccount = DB::table('dsa_bank_details')
+        ->where('account_number', $request->account_number)
+        ->where('dsa_id', '!=', $dsaId)
+        ->first();
 
-    return back()->with('success','Bank Details Added Successfully');
+    if ($existingAccount) {
+        return redirect()->back()
+            ->with('error', 'This Account Number is already registered with another DSA.')
+            ->withInput();
+    }
+
+    // Check if UPI ID already exists for another DSA
+    $existingUpi = DB::table('dsa_bank_details')
+        ->where('upi_id', $request->upi_id)
+        ->where('dsa_id', '!=', $dsaId)
+        ->first();
+
+    if ($existingUpi) {
+        return redirect()->back()
+            ->with('error', 'This UPI ID is already registered with another DSA.')
+            ->withInput();
+    }
+
+    // Save or update bank details
+    try {
+        DB::table('dsa_bank_details')->updateOrInsert(
+            ['dsa_id' => $dsaId],
+            [
+                'bank_name' => trim($request->bank_name),
+                'account_number' => trim($request->account_number),
+                'ifsc_code' => strtoupper(trim($request->ifsc_code)),
+                'account_holder_name' => trim($request->account_holder_name),
+                'upi_id' => trim($request->upi_id),
+                'branch_name' => trim($request->branch_name),
+                'updated_at' => now()
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Bank Details Added Successfully');
+
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->with('error', 'Something went wrong: ' . $e->getMessage())
+            ->withInput();
+    }
 }
     public function uploadDocument(Request $request)
 {

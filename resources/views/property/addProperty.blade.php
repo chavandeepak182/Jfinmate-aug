@@ -495,7 +495,8 @@ document.getElementById("email").addEventListener("input", function () {
         <div class="col-lg-3 bg-light p-4">
            <div class="mb-4">
     <!-- Multiple Property Images Upload -->
-    <h3 class="h6"><strong>Property Images<span class="text-danger">*</span></strong></h3>
+    <!-- <h3 class=""><strong>Property Images<span class="text-danger">*</span></strong></h3> -->
+     <label class="form-label">Property Images</label><span class="text-danger">*</span>
     <input class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp" name="property_images[]" id="property_images" multiple required />
     <small class="text-muted">You can upload multiple images (JPG, JPEG, PNG, WEBP).</small>
 
@@ -503,7 +504,8 @@ document.getElementById("email").addEventListener("input", function () {
     <div id="imagePreview" class="mt-3 d-flex flex-wrap gap-2"></div>
 
     <!-- Property Brochure Upload -->
-    <h3 class="h6 mt-3"><strong>Property Brochure<span class="text-danger">*</span></strong></h3>
+    <!-- <h3 class="h6 mt-3"><strong>Property Brochure<span class="text-danger">*</span></strong></h3> -->
+    <label class="form-label">Property Brochure</label><span class="text-danger">*</span>
     <input class="form-control" type="file" accept=".pdf" name="property_voucher" />
     <small class="text-muted">Upload the property brochure in PDF format.</small>
 </div>

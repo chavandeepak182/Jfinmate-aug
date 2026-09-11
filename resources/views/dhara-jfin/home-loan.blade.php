@@ -2,6 +2,1064 @@
 
 
 <main>
+    <style>
+        /* =========================================================
+   JFIN PROCESS - MOBILE RESPONSIVE ONLY
+   ADD AT THE VERY END OF CSS
+========================================================= */
+
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    /* Main section */
+    .jf-process {
+        width: 100%;
+        padding: 60px 15px !important;
+        overflow: hidden;
+    }
+
+    .jf-process .jf-container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 !important;
+        margin: 0 auto;
+    }
+
+
+    /* -----------------------------------------
+       SECTION HEADING
+    ----------------------------------------- */
+
+    .jf-process .jf-section-heading {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto 30px !important;
+        padding: 0 5px;
+
+        text-align: center;
+    }
+
+    .jf-process .eyebrow {
+        display: block;
+
+        margin: 0 0 9px !important;
+
+        font-size: 11px !important;
+        line-height: 1.4;
+
+        letter-spacing: 1px;
+
+        color: #00abe9 !important;
+    }
+
+    .jf-process .jf-section-heading h2 {
+        width: 100%;
+
+        margin: 0 0 10px !important;
+
+        font-size: 28px !important;
+        line-height: 1.25 !important;
+
+        color: #fff;
+    }
+
+    .jf-process .jf-section-heading p {
+        width: 100%;
+
+        margin: 0 auto !important;
+
+        font-size: 14px !important;
+        line-height: 1.55 !important;
+
+        color: rgba(255,255,255,0.72);
+    }
+
+
+    /* -----------------------------------------
+       INTRO BOX
+    ----------------------------------------- */
+
+    .jf-process-intro {
+        width: 100%;
+        max-width: 100%;
+
+        display: flex !important;
+
+        align-items: flex-start !important;
+
+        gap: 12px !important;
+
+        margin: 0 auto 40px !important;
+
+        padding: 18px !important;
+
+        border-radius: 14px !important;
+
+        box-sizing: border-box;
+    }
+
+    .jf-process-quote-icon {
+        flex: 0 0 36px !important;
+
+        width: 36px !important;
+        height: 36px !important;
+
+        font-size: 14px !important;
+
+        background: #00abe9 !important;
+
+        color: #fff !important;
+    }
+
+    .jf-process-intro p {
+        width: auto;
+
+        flex: 1;
+
+        margin: 0 !important;
+
+        font-size: 13px !important;
+        line-height: 1.65 !important;
+
+        text-align: left;
+
+        color: rgba(255,255,255,0.82);
+    }
+
+
+    /* -----------------------------------------
+       INFOGRAPHIC
+    ----------------------------------------- */
+
+    .jf-process-infographic {
+        position: relative;
+
+        width: 100% !important;
+
+        display: flex !important;
+
+        flex-direction: column !important;
+
+        align-items: center !important;
+
+        gap: 0 !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+    }
+
+
+    /* -----------------------------------------
+       VERTICAL CONNECTING LINE
+    ----------------------------------------- */
+
+    .jf-process-line {
+        display: block !important;
+
+        position: absolute !important;
+
+        top: 40px !important;
+        bottom: 40px !important;
+
+        left: 50% !important;
+        right: auto !important;
+
+        width: 2px !important;
+        height: auto !important;
+
+        transform: translateX(-50%) !important;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(0,171,233,0.15),
+                #00abe9,
+                rgba(0,171,233,0.15)
+            ) !important;
+
+        z-index: 0 !important;
+    }
+
+
+    /* -----------------------------------------
+       EACH STEP
+    ----------------------------------------- */
+
+    .jf-process-card {
+        position: relative !important;
+
+        z-index: 1 !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        display: flex !important;
+
+        flex-direction: column !important;
+
+        align-items: center !important;
+
+        justify-content: flex-start !important;
+
+        padding: 0 10px 45px !important;
+
+        margin: 0 !important;
+
+        text-align: center !important;
+
+        box-sizing: border-box;
+    }
+
+    .jf-process-card:last-child {
+        padding-bottom: 10px !important;
+    }
+
+
+    /* -----------------------------------------
+       STEP ICON
+    ----------------------------------------- */
+
+    .jf-process-icon {
+        position: relative !important;
+
+        z-index: 2 !important;
+
+        width: 82px !important;
+        height: 82px !important;
+
+        min-width: 82px !important;
+        min-height: 82px !important;
+
+        margin: 0 auto 10px !important;
+
+        display: flex !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        border: 5px solid #00abe9 !important;
+
+        border-radius: 50% !important;
+
+        background: #fff !important;
+
+        color: #07547d !important;
+
+        font-size: 23px !important;
+
+        box-shadow:
+            0 8px 25px rgba(0,0,0,0.20);
+
+        box-sizing: border-box;
+    }
+
+
+    /* -----------------------------------------
+       STEP NUMBER
+    ----------------------------------------- */
+
+    .jf-process-number {
+        position: relative !important;
+
+        z-index: 3 !important;
+
+        display: inline-flex !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        min-width: 42px !important;
+        height: 25px !important;
+
+        margin: 0 auto 9px !important;
+
+        padding: 0 9px !important;
+
+        border-radius: 20px !important;
+
+        background: #07547d !important;
+
+        border: 1px solid #00abe9 !important;
+
+        color: #00abe9 !important;
+
+        font-size: 11px !important;
+        font-weight: 800 !important;
+
+        line-height: 1 !important;
+
+        box-sizing: border-box;
+    }
+
+
+    /* -----------------------------------------
+       STEP CONTENT
+    ----------------------------------------- */
+
+    .jf-process-card-content {
+        position: relative;
+
+        z-index: 2;
+
+        width: 100% !important;
+
+        max-width: 340px !important;
+
+        margin: 0 auto !important;
+
+        padding: 0 !important;
+
+        text-align: center !important;
+    }
+
+    .jf-process-card-content h3 {
+        width: 100%;
+
+        margin: 0 0 8px !important;
+
+        font-size: 17px !important;
+        line-height: 1.4 !important;
+
+        color: #fff !important;
+    }
+
+    .jf-process-card-content p {
+        width: 100%;
+
+        margin: 0 !important;
+
+        font-size: 13px !important;
+        line-height: 1.6 !important;
+
+        color: rgba(255,255,255,0.67) !important;
+    }
+
+
+    /* -----------------------------------------
+       FOOTNOTE
+    ----------------------------------------- */
+
+    .jf-process .jf-footnote {
+        width: 100%;
+
+        margin: 25px auto 0 !important;
+
+        padding: 0 10px;
+
+        text-align: center;
+
+        font-size: 11px !important;
+        line-height: 1.5;
+
+        color: rgba(255,255,255,0.5) !important;
+    }
+}
+
+
+/* =========================================================
+   MOBILE 575px
+========================================================= */
+
+@media (max-width: 575px) {
+
+    .jf-process {
+        padding: 48px 14px !important;
+    }
+
+
+    /* Heading */
+
+    .jf-process .jf-section-heading {
+        margin-bottom: 25px !important;
+        padding: 0 3px;
+    }
+
+    .jf-process .eyebrow {
+        font-size: 10px !important;
+        letter-spacing: 0.9px !important;
+    }
+
+    .jf-process .jf-section-heading h2 {
+        font-size: 25px !important;
+        line-height: 1.3 !important;
+    }
+
+    .jf-process .jf-section-heading p {
+        font-size: 13px !important;
+        line-height: 1.55 !important;
+    }
+
+
+    /* Intro */
+
+    .jf-process-intro {
+        display: block !important;
+
+        padding: 18px 16px !important;
+
+        margin-bottom: 38px !important;
+
+        text-align: center !important;
+    }
+
+    .jf-process-quote-icon {
+        margin: 0 auto 12px !important;
+    }
+
+    .jf-process-intro p {
+        font-size: 12.5px !important;
+        line-height: 1.65 !important;
+
+        text-align: center !important;
+    }
+
+
+    /* Steps */
+
+    .jf-process-card {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+        padding-bottom: 42px !important;
+    }
+
+    .jf-process-icon {
+        width: 78px !important;
+        height: 78px !important;
+
+        min-width: 78px !important;
+        min-height: 78px !important;
+
+        border-width: 5px !important;
+
+        font-size: 22px !important;
+    }
+
+    .jf-process-number {
+        min-width: 40px !important;
+        height: 24px !important;
+
+        font-size: 10px !important;
+    }
+
+    .jf-process-card-content {
+        max-width: 310px !important;
+    }
+
+    .jf-process-card-content h3 {
+        font-size: 16px !important;
+        line-height: 1.4 !important;
+    }
+
+    .jf-process-card-content p {
+        font-size: 12.5px !important;
+        line-height: 1.6 !important;
+    }
+
+    .jf-process .jf-footnote {
+        margin-top: 20px !important;
+
+        font-size: 10.5px !important;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE 375px
+========================================================= */
+
+@media (max-width: 375px) {
+
+    .jf-process {
+        padding: 42px 12px !important;
+    }
+
+
+    .jf-process .jf-section-heading h2 {
+        font-size: 23px !important;
+    }
+
+    .jf-process .jf-section-heading p {
+        font-size: 12.5px !important;
+    }
+
+
+    .jf-process-intro {
+        padding: 16px 13px !important;
+
+        border-radius: 12px !important;
+    }
+
+    .jf-process-intro p {
+        font-size: 12px !important;
+    }
+
+
+    .jf-process-card {
+        padding-bottom: 38px !important;
+    }
+
+
+    .jf-process-icon {
+        width: 74px !important;
+        height: 74px !important;
+
+        min-width: 74px !important;
+        min-height: 74px !important;
+
+        font-size: 20px !important;
+    }
+
+
+    .jf-process-number {
+        min-width: 38px !important;
+        height: 23px !important;
+
+        font-size: 10px !important;
+    }
+
+
+    .jf-process-card-content {
+        max-width: 290px !important;
+    }
+
+
+    .jf-process-card-content h3 {
+        font-size: 15px !important;
+    }
+
+    .jf-process-card-content p {
+        font-size: 12px !important;
+    }
+
+
+    .jf-process-line {
+        top: 36px !important;
+        bottom: 36px !important;
+    }
+}
+
+
+/* =========================================================
+   EXTRA SMALL 320px
+========================================================= */
+
+@media (max-width: 320px) {
+
+    .jf-process {
+        padding: 38px 10px !important;
+    }
+
+
+    .jf-process .jf-section-heading h2 {
+        font-size: 21px !important;
+    }
+
+
+    .jf-process .jf-section-heading p {
+        font-size: 12px !important;
+    }
+
+
+    .jf-process-intro {
+        padding: 15px 12px !important;
+    }
+
+    .jf-process-intro p {
+        font-size: 11.5px !important;
+    }
+
+
+    .jf-process-icon {
+        width: 70px !important;
+        height: 70px !important;
+
+        min-width: 70px !important;
+        min-height: 70px !important;
+
+        font-size: 19px !important;
+    }
+
+
+    .jf-process-number {
+        min-width: 36px !important;
+        height: 22px !important;
+
+        font-size: 9px !important;
+    }
+
+
+    .jf-process-card-content {
+        max-width: 270px !important;
+    }
+
+
+    .jf-process-card-content h3 {
+        font-size: 14px !important;
+    }
+
+
+    .jf-process-card-content p {
+        font-size: 11.5px !important;
+    }
+
+
+    .jf-process-line {
+        top: 34px !important;
+        bottom: 34px !important;
+    }
+
+}
+/* =========================================================
+   HOME LOAN OVERVIEW - MOBILE RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    /* Main Section */
+    .home-section {
+        width: 100% !important;
+
+        display: block !important;
+
+        padding: 50px 15px !important;
+
+        margin: 0 !important;
+
+        overflow: hidden !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* Container */
+    .home-section .container-tab {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin: 0 auto !important;
+
+        padding: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* =====================================================
+       HEADING
+    ===================================================== */
+
+    .home-section-header {
+        width: 100% !important;
+
+        display: block !important;
+
+        margin: 0 auto 22px !important;
+
+        padding: 0 !important;
+
+        text-align: center !important;
+    }
+
+
+    .home-section-header .finserv-trusted {
+        width: 100% !important;
+
+        margin: 0 0 10px !important;
+
+        padding: 0 !important;
+
+        font-size: 26px !important;
+
+        line-height: 1.3 !important;
+
+        font-weight: 600 !important;
+
+        text-align: center !important;
+
+        word-break: normal !important;
+
+        overflow-wrap: normal !important;
+    }
+
+
+    .home-section-subtitle {
+        width: 100% !important;
+
+        margin: 0 auto !important;
+
+        padding: 0 5px !important;
+
+        font-size: 13px !important;
+
+        line-height: 1.55 !important;
+
+        text-align: center !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* =====================================================
+       INTRO TEXT
+    ===================================================== */
+
+    .home-overview-intro {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin: 0 auto 28px !important;
+
+        padding: 0 5px !important;
+
+        font-size: 13px !important;
+
+        line-height: 1.65 !important;
+
+        text-align: center !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* =====================================================
+       FEATURE CARDS
+       IMPORTANT: overrides inline grid-template-columns
+    ===================================================== */
+
+    .home-feature-cards {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        display: grid !important;
+
+        grid-template-columns: 1fr !important;
+
+        grid-template-rows: none !important;
+
+        gap: 16px !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* =====================================================
+       INDIVIDUAL CARD
+    ===================================================== */
+
+    .home-feature-card {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        display: block !important;
+
+        padding: 22px 18px !important;
+
+        margin: 0 !important;
+
+        text-align: center !important;
+
+        border-radius: 14px !important;
+
+        box-sizing: border-box !important;
+
+        overflow: hidden !important;
+    }
+
+
+    /* =====================================================
+       ICON
+    ===================================================== */
+
+    .home-feature-icon {
+        width: 58px !important;
+
+        height: 58px !important;
+
+        min-width: 58px !important;
+
+        margin: 0 auto 13px !important;
+
+        display: flex !important;
+
+        align-items: center !important;
+
+        justify-content: center !important;
+
+        font-size: 27px !important;
+
+        line-height: 1 !important;
+
+        border-radius: 50% !important;
+    }
+
+
+    /* =====================================================
+       CARD TITLE
+    ===================================================== */
+
+    .home-feature-title {
+        width: 100% !important;
+
+        margin: 0 0 8px !important;
+
+        padding: 0 !important;
+
+        font-size: 17px !important;
+
+        line-height: 1.4 !important;
+
+        text-align: center !important;
+
+        word-break: normal !important;
+
+        overflow-wrap: break-word !important;
+    }
+
+
+    /* =====================================================
+       CARD DESCRIPTION
+    ===================================================== */
+
+    .home-feature-description {
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        font-size: 13px !important;
+
+        line-height: 1.6 !important;
+
+        text-align: center !important;
+
+        word-break: normal !important;
+
+        overflow-wrap: break-word !important;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE - 575px
+========================================================= */
+
+@media (max-width: 575px) {
+
+    .home-section {
+        padding: 42px 14px !important;
+    }
+
+
+    .home-section-header {
+        margin-bottom: 19px !important;
+    }
+
+
+    .home-section-header .finserv-trusted {
+        font-size: 23px !important;
+
+        line-height: 1.3 !important;
+    }
+
+
+    .home-section-subtitle {
+        padding: 0 !important;
+
+        font-size: 12.5px !important;
+
+        line-height: 1.55 !important;
+    }
+
+
+    .home-overview-intro {
+        padding: 0 2px !important;
+
+        margin-bottom: 24px !important;
+
+        font-size: 12.5px !important;
+
+        line-height: 1.65 !important;
+    }
+
+
+    .home-feature-cards {
+        grid-template-columns: 1fr !important;
+
+        gap: 14px !important;
+    }
+
+
+    .home-feature-card {
+        padding: 20px 16px !important;
+
+        border-radius: 13px !important;
+    }
+
+
+    .home-feature-icon {
+        width: 54px !important;
+
+        height: 54px !important;
+
+        min-width: 54px !important;
+
+        margin-bottom: 11px !important;
+
+        font-size: 25px !important;
+    }
+
+
+    .home-feature-title {
+        font-size: 16px !important;
+
+        line-height: 1.4 !important;
+    }
+
+
+    .home-feature-description {
+        font-size: 12.5px !important;
+
+        line-height: 1.6 !important;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE - 375px
+========================================================= */
+
+@media (max-width: 375px) {
+
+    .home-section {
+        padding: 38px 12px !important;
+    }
+
+
+    .home-section-header .finserv-trusted {
+        font-size: 21px !important;
+    }
+
+
+    .home-section-subtitle {
+        font-size: 12px !important;
+    }
+
+
+    .home-overview-intro {
+        font-size: 12px !important;
+
+        line-height: 1.6 !important;
+    }
+
+
+    .home-feature-card {
+        padding: 18px 14px !important;
+    }
+
+
+    .home-feature-icon {
+        width: 50px !important;
+
+        height: 50px !important;
+
+        min-width: 50px !important;
+
+        font-size: 23px !important;
+    }
+
+
+    .home-feature-title {
+        font-size: 15px !important;
+    }
+
+
+    .home-feature-description {
+        font-size: 11.5px !important;
+    }
+
+}
+
+
+/* =========================================================
+   EXTRA SMALL - 320px
+========================================================= */
+
+@media (max-width: 320px) {
+
+    .home-section {
+        padding: 34px 10px !important;
+    }
+
+
+    .home-section-header .finserv-trusted {
+        font-size: 20px !important;
+    }
+
+
+    .home-section-subtitle {
+        font-size: 11.5px !important;
+    }
+
+
+    .home-overview-intro {
+        font-size: 11.5px !important;
+    }
+
+
+    .home-feature-cards {
+        gap: 12px !important;
+    }
+
+
+    .home-feature-card {
+        padding: 17px 12px !important;
+    }
+
+
+    .home-feature-icon {
+        width: 48px !important;
+
+        height: 48px !important;
+
+        min-width: 48px !important;
+
+        font-size: 21px !important;
+    }
+
+
+    .home-feature-title {
+        font-size: 14px !important;
+    }
+
+
+    .home-feature-description {
+        font-size: 11px !important;
+
+        line-height: 1.55 !important;
+    }
+
+}
+
+</style>
+    </style>
 
     {{-- HERO SECTION --}}
     
@@ -57,7 +1115,7 @@
                     <div class="about-image-wrapper">
                         <img
                             src="https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-                            alt="Home Loan"
+                            alt="Modern residential house for home purchase"
                         >
                     </div>
                 </div>

@@ -235,6 +235,14 @@
             </a>
             @endif
 
+                        @if($role_id == 4)
+            <a href="
+            {{ route('blogs.index') }}" class="nav-item">
+                <i class="fas fa-user-tie"></i>
+                <span>Blogs</span>
+            </a>
+            @endif
+
 
             @if($role_id == 4)
     <a href="{{ route('admin.lead-referral.index') }}" class="nav-item">
@@ -300,6 +308,13 @@
         <span>MIS</span>
     </a>
 @endif
+ @if(in_array($role_id, [2, 4,1]))
+    <a href="{{ route('tickets.index') }}" class="nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>My Queries</span>
+    </a>
+@endif
+
 
 
 

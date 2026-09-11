@@ -416,11 +416,13 @@ $nearby = !empty($v->nearby_locations) ? json_decode($v->nearby_locations, true)
                     <input type="text" name="rera" class="form-control" placeholder="Rera No." value="{{ $v->rera }}" />
                 </div>
                 <div class="card-body">
-    <h3 class="h6">Add Multiple Images</h3>
+    <!-- <h3 class="h6">Add Multiple Images</h3> -->
+    <label class="form-label">Add Multiple Images</label>
     <input type="file" name="additional_images[]" multiple class="form-control">
 </div>
                 <div class="card-body">
-                    <h3 class="h6">Property Boucher</h3>
+                    <!-- <h3 class="h6">Property Boucher</h3> -->
+                    <label class="form-label">Property Boucher</label>
                     <a href = "{{ $boucher }}">Boucher URL </a>
                     <input class="form-control" type="file" accept=".pdf" name="property_voucher"  />
                 </div>

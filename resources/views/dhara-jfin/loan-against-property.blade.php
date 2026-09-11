@@ -2,6 +2,8 @@
 
 
 <main>
+
+
         <section class="video-hero">
         <video id="videobcg" preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
         <source src="{{ asset('theme/dhara-jfin/videos/loan_against_property.mp4') }}" type="video/mp4">
@@ -39,7 +41,7 @@
                     </div>
                     <div class="about-content-right">
                         <div class="about-image-wrapper">
-                            <img src="{{ asset('theme/dhara-jfin/img/property_loan_page.jpg') }}" alt="Project Loan">
+                            <img src="{{ asset('theme/dhara-jfin/img/property_loan_page.jpg') }}" alt="Property loan solutions from JF Finserve">
                         </div>
                     </div>
                 </div>

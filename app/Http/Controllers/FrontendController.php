@@ -200,60 +200,67 @@ public function showBlog($slug)
     public function userLogin(Request $request)
     {
         $login_type = $request->input('login_type');
+if ($login_type == 'email') {
 
-        if ($login_type == 'email') {
-            // Validation for email and password login
-            $validated = $request->validate([
-                'email' => 'required|email',
-                'password' => 'required|string|min:6',
-            ]);
+    $validated = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string|min:6',
+    ]);
 
-            $user = User::where('email_id', $request->email)->first();
+    $user = User::where('email_id', $request->email)->first();
 
-            if (!$user) {
-                return back()->withErrors(['email' => 'The provided credentials do not match our records.'])
-                    ->withInput($request->only('email'));
-            }
+    if (!$user) {
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.'
+        ])->withInput($request->only('email'));
+    }
 
-            if (!Hash::check($request->password, $user->password)) {
-                return back()->withErrors(['password' => 'Incorrect password.'])
-                    ->withInput($request->only('email'));
-            }
+    // CHECK ACTIVE / INACTIVE STATUS
+    if ((int) $user->status !== 1) {
+        return back()->withErrors([
+            'email' => 'Your account is inactive. Please contact the administrator.'
+        ])->withInput($request->only('email'));
+    }
 
-            if (!$user->is_email_verify) {
-                return redirect()->back()
-                    ->withErrors(['email' => 'Please verify your email address before logging in.'])
-                    ->withInput($request->only('email'));
-            }
+    if (!Hash::check($request->password, $user->password)) {
+        return back()->withErrors([
+            'password' => 'Incorrect password.'
+        ])->withInput($request->only('email'));
+    }
 
+    if (!$user->is_email_verify) {
+        return redirect()->back()
+            ->withErrors([
+                'email' => 'Please verify your email address before logging in.'
+            ])
+            ->withInput($request->only('email'));
+    }
 
-            Auth::login($user);
+    Auth::login($user);
 
-            $sessionData = [
-                'username' => $user->name,
-                'role_name' => $user->role_name,
-                'user_id' => $user->id,
-                'role_id' => $user->role_id,
-                'email' => $user->email_id,
-            ];
+    $sessionData = [
+        'username' => $user->name,
+        'role_name' => $user->role_name,
+        'user_id' => $user->id,
+        'role_id' => $user->role_id,
+        'email' => $user->email_id,
+    ];
 
-            Session::put($sessionData);
+    Session::put($sessionData);
 
+    $redirectRoutes = [
+        5 => 'allLoansApplications',
+        4 => 'dashboard',
+        2 => 'agentDashboard',
+        3 => 'partnerDashboard',
+        6 => 'dsa.dashboard',
+        1 => 'loans.loans-list',
+    ];
 
-
-$redirectRoutes = [
-    5 => 'allLoansApplications',
-    4 => 'dashboard',
-    2 => 'agentDashboard',
-    3 => 'partnerDashboard',
-    6 => 'dsa.dashboard', // ✅ updated
-    1 => 'loans.loans-list',
-];
-
-            if (array_key_exists($user->role_id, $redirectRoutes)) {
-                return redirect()->route($redirectRoutes[$user->role_id]);
-            }
-        } elseif ($login_type == 'mobile') {
+    if (array_key_exists($user->role_id, $redirectRoutes)) {
+        return redirect()->route($redirectRoutes[$user->role_id]);
+    }
+} elseif ($login_type == 'mobile') {
             // Validation for mobile number login (OTP)
             $validated = $request->validate([
                 'mobile_no' => 'required|digits:10',
@@ -920,157 +927,204 @@ public function PropDetailsView($slugAndId)
 
 //     return view('dhara-jfin.properties', compact('data'));
 // }
-public function properties(Request $request)
-{
-    /* ================= MAIN QUERY ================= */
+  public function properties(Request $request)
+    {
+        /* ================= MAIN QUERY ================= */
 
-    $query = DB::table('properties')
-        ->join('price_range', 'properties.price_range_id', '=', 'price_range.range_id')
-        ->join('property_category', 'properties.property_type_id', '=', 'property_category.pid')
-        ->where('properties.is_active', 1)
-        ->select(
-            'properties.properties_id',
-            'properties.slug',
-            'properties.title',
-            'properties.property_type_id',
-            'properties.builder_name',
-            'properties.select_bhk',
-            'properties.address',
-            'properties.facilities',
-            'properties.beds',
-            'properties.baths',
-            'properties.balconies',
-            'properties.parking',
-            'properties.contact',
-            'price_range.from_price',
-            'price_range.to_price',
-            'property_category.category_name',
-            'properties.property_details',
-            'properties.localities',
-            'properties.city',
-            'properties.area',
-            'properties.is_featured',
-            'properties.s_price',
-            DB::raw("IFNULL(properties.image, 'default.jpg') as image") // 🔥 IMPORTANT
-        );
+        $query = DB::table('properties')
+            ->join('price_range', 'properties.price_range_id', '=', 'price_range.range_id')
+            ->join('property_category', 'properties.property_type_id', '=', 'property_category.pid')
+            ->where('properties.is_active', 1)
+            ->select(
+                'properties.properties_id',
+                'properties.slug',
+                'properties.title',
+                'properties.property_type_id',
+                'properties.builder_name',
+                'properties.select_bhk',
+                'properties.address',
+                'properties.facilities',
+                'properties.beds',
+                'properties.baths',
+                'properties.balconies',
+                'properties.parking',
+                'properties.contact',
+                'price_range.from_price',
+                'price_range.to_price',
+                'property_category.category_name',
+                'properties.property_details',
+                'properties.localities',
+                'properties.city',
+                'properties.area',
+                'properties.is_featured',
+                'properties.s_price',
+                DB::raw("IFNULL(properties.image, 'default.jpg') as image")
+            );
 
-    /* ================= FILTERS ================= */
+        /* ================= FILTERS ================= */
 
-  /* ================= FILTERS ================= */
+        // 🔍 SEARCH
+        if ($request->filled('search')) {
+            $search = trim($request->search);
 
-// 🔍 SEARCH
-if ($request->filled('search')) {
-    $search = trim($request->search);
-
-    $query->where(function ($q) use ($search) {
-        $q->where('properties.title', 'LIKE', "%{$search}%")
-          ->orWhere('properties.builder_name', 'LIKE', "%{$search}%")
-          ->orWhere('properties.localities', 'LIKE', "%{$search}%")
-          ->orWhere('properties.city', 'LIKE', "%{$search}%");
-    });
-}
-
-// 🏢 TYPE (Residential / Commercial / Rent)
-if ($request->filled('type')) {
-    $query->whereRaw("LOWER(property_category.category_name) = ?", [strtolower($request->type)]);
-}
-// 🏠 BHK (FIXED → use LIKE for flexible values)
-if ($request->filled('bhk')) {
-    $query->where('properties.select_bhk', 'LIKE', "%{$request->bhk}%");
-}
-
-// 💰 DYNAMIC BUDGET (IMPORTANT FIX 🔥)
-if ($request->filled('budget')) {
-
-    $range = DB::table('price_range')
-                ->where('range_id', $request->budget)
-                ->first();
-
-    if ($range) {
-        $query->where(function ($q) use ($range) {
-
-            // ✅ FULL OVERLAP LOGIC (IMPORTANT)
-            $q->whereBetween('price_range.from_price', [
-                $range->from_price,
-                $range->to_price
-            ])
-            ->orWhereBetween('price_range.to_price', [
-                $range->from_price,
-                $range->to_price
-            ])
-            ->orWhere(function ($q2) use ($range) {
-                $q2->where('price_range.from_price', '<=', $range->from_price)
-                   ->where('price_range.to_price', '>=', $range->to_price);
+            $query->where(function ($q) use ($search) {
+                $q->where('properties.title', 'LIKE', "%{$search}%")
+                  ->orWhere('properties.builder_name', 'LIKE', "%{$search}%")
+                  ->orWhere('properties.localities', 'LIKE', "%{$search}%")
+                  ->orWhere('properties.city', 'LIKE', "%{$search}%");
             });
+        }
 
-        });
-    }
-}
-    /* ================= PAGINATION ================= */
+        // 🏢 TYPE (Residential / Commercial / Rent)
+        if ($request->filled('type')) {
+            $query->whereRaw("LOWER(property_category.category_name) = ?", [strtolower($request->type)]);
+        }
 
-    $data['allProperties'] = $query->get();
-    $data['priceRanges'] = DB::table('price_range')->get();
-    $data['bhks'] = DB::table('bhks')
-                    ->orderBy('bhk_name','asc')
+        // ========================================
+        // 🔥 FIXED: BHK FILTER (IMPORTANT)
+        // ========================================
+        if ($request->filled('bhk')) {
+            $bhk = $request->bhk;
+            
+            // Try multiple matching patterns
+            $query->where(function ($q) use ($bhk) {
+                $q->where('properties.select_bhk', 'LIKE', "%{$bhk} BHK%")    // "2 BHK"
+                  ->orWhere('properties.select_bhk', 'LIKE', "%{$bhk}BHK%")     // "2BHK"
+                  ->orWhere('properties.select_bhk', 'LIKE', "%{$bhk} %")       // "2 "
+                  ->orWhere('properties.select_bhk', 'LIKE', "% {$bhk}%")       // " 2"
+                  ->orWhere('properties.select_bhk', '=', $bhk)                 // Exact "2"
+                  ->orWhere('properties.select_bhk', 'LIKE', "%{$bhk}");        // Ends with "2"
+            });
+        }
+
+        // ========================================
+        // 🔥 FIXED: SQ FT FILTER WITH RANGE
+        // ========================================
+        if ($request->filled('sqft')) {
+            $sqft = (int)$request->sqft;
+            
+            if ($sqft == 500) {
+                $query->where('properties.area', '<=', 500);
+            } elseif ($sqft == 1000) {
+                $query->where('properties.area', '>', 500)->where('properties.area', '<=', 1000);
+            } elseif ($sqft == 1500) {
+                $query->where('properties.area', '>', 1000)->where('properties.area', '<=', 1500);
+            } elseif ($sqft == 2000) {
+                $query->where('properties.area', '>', 1500)->where('properties.area', '<=', 2000);
+            } elseif ($sqft == 2500) {
+                $query->where('properties.area', '>', 2000)->where('properties.area', '<=', 2500);
+            } elseif ($sqft == 3000) {
+                $query->where('properties.area', '>', 2500)->where('properties.area', '<=', 3000);
+            } else {
+                $query->where('properties.area', '>=', $sqft);
+            }
+        }
+
+        // 💰 DYNAMIC BUDGET
+        if ($request->filled('budget')) {
+
+            $range = DB::table('price_range')
+                        ->where('range_id', $request->budget)
+                        ->first();
+
+            if ($range) {
+                $query->where(function ($q) use ($range) {
+                    $q->whereBetween('price_range.from_price', [
+                        $range->from_price,
+                        $range->to_price
+                    ])
+                    ->orWhereBetween('price_range.to_price', [
+                        $range->from_price,
+                        $range->to_price
+                    ])
+                    ->orWhere(function ($q2) use ($range) {
+                        $q2->where('price_range.from_price', '<=', $range->from_price)
+                           ->where('price_range.to_price', '>=', $range->to_price);
+                    });
+                });
+            }
+        }
+
+        /* ================= GET RESULTS ================= */
+
+        $data['allProperties'] = $query->get();
+        $data['priceRanges'] = DB::table('price_range')->get();
+        $data['bhks'] = DB::table('bhks')
+                        ->orderBy('bhk_name','asc')
+                        ->get();
+
+        /* ================= CATEGORY ================= */
+
+        $data['category'] = DB::table('property_category')->get();
+
+        /* ================= FEATURED ================= */
+
+        // Only show featured when no filters are applied
+        if (!$request->filled('search') && 
+            !$request->filled('bhk') && 
+            !$request->filled('budget') && 
+            !$request->filled('type') && 
+            !$request->filled('sqft')) {
+
+            $data['featuredProperties'] = DB::table('properties')
+                ->join('price_range', 'properties.price_range_id', '=', 'price_range.range_id')
+                ->join('property_category', 'properties.property_type_id', '=', 'property_category.pid')
+                ->where('properties.is_featured',1)
+                ->where('properties.is_active',1)
+                ->select(
+                    'properties.properties_id',
+                    'properties.slug',
+                    'properties.title',
+                    'properties.builder_name',
+                    'properties.localities',
+                    'properties.city',
+                    'properties.select_bhk',
+                    'properties.area',
+                    'property_category.category_name',
+                    'price_range.from_price',
+                    'price_range.to_price',
+                    DB::raw("IFNULL(properties.image, 'default.jpg') as image")
+                )
+                ->get();
+        } else {
+            $data['featuredProperties'] = collect();
+        }
+
+        /* ================= LOCALITIES ================= */
+        // Only show localities when no search filter is applied
+        if (!$request->filled('search')) {
+            $selectedLocalities = DB::table('localities')
+                ->limit(6)
+                ->get();
+
+            $data['selectedLocalities'] = [];
+
+            foreach ($selectedLocalities as $locality) {
+
+                $properties = DB::table('properties')
+                    ->where('locality_id', $locality->id)
+                    ->where('is_active', 1)
+                    ->select(
+                        'properties_id',
+                        'title',
+                        'builder_name',
+                        'slug',
+                        DB::raw("IFNULL(image, 'default.jpg') as image")
+                    )
+                    ->limit(2)
                     ->get();
 
-    /* ================= CATEGORY ================= */
+                $data['selectedLocalities'][] = [
+                    'locality' => $locality->name,
+                    'properties' => $properties
+                ];
+            }
+        } else {
+            $data['selectedLocalities'] = [];
+        }
 
-    $data['category'] = DB::table('property_category')->get();
-
-    /* ================= FEATURED ================= */
-
-   $data['featuredProperties'] = DB::table('properties')
-    ->join('price_range', 'properties.price_range_id', '=', 'price_range.range_id')
-    ->join('property_category', 'properties.property_type_id', '=', 'property_category.pid')
-    ->where('properties.is_featured',1)
-    ->where('properties.is_active',1)
-    ->select(
-        'properties.properties_id',
-        'properties.slug',
-        'properties.title',
-        'properties.builder_name',
-        'properties.localities',
-        'properties.city',
-        'properties.select_bhk',
-        'properties.area',
-        'property_category.category_name',
-        'price_range.from_price',   // ✅ ADD
-        'price_range.to_price',     // ✅ ADD
-        DB::raw("IFNULL(properties.image, 'default.jpg') as image")
-    )
-    ->get();
-
-    /* ================= LOCALITIES ================= */
-$selectedLocalities = DB::table('localities')
-    ->limit(6)
-    ->get();
-
-$data['selectedLocalities'] = [];
-
-foreach ($selectedLocalities as $locality) {
-
-    $properties = DB::table('properties')
-        ->where('locality_id', $locality->id) // ✅ FIX
-        ->where('is_active', 1)
-        ->select(
-            'properties_id',
-            'title',
-            'builder_name',
-            'slug',
-            DB::raw("IFNULL(image, 'default.jpg') as image")
-        )
-        ->limit(2)
-        ->get();
-
-    $data['selectedLocalities'][] = [
-        'locality' => $locality->name,
-        'properties' => $properties
-    ];
-}
-
-    return view('dhara-jfin.properties', compact('data'));
-}
+        return view('dhara-jfin.properties', compact('data'));
+    }
 public function propertyBySlug($slug)
 {
     // Get property using slug

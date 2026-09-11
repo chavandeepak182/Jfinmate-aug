@@ -4,7 +4,10 @@
     @parent
     Edit Loan
 @endsection
-
+@php
+    $isDisbursed = strtolower(trim($loan->status ?? '')) === 'disbursed';
+    $roleId = session('role_id');
+@endphp
 @section('content')
     @parent
     <div class="card-header py-3">
@@ -38,8 +41,10 @@
 
     <div class="bg-white">
         <!-- <form id="editLoanForm" method="post" action="{{ route('updateLoan') }}"> -->
-            <form id="editLoanForm" method="post" action="{{ route('admin.updateLoan') }}"
- enctype="multipart/form-data">
+  <form id="editLoanForm"
+      method="post"
+      action="{{ $roleId == 6 ? route('admin.updateLoan') : route('admin.updateLoan') }}"
+      enctype="multipart/form-data">
 
             @csrf
             <input type="hidden" name="loan_id" value="{{ old('loan_id', $loan->loan_id ?? '') }}">
@@ -197,29 +202,56 @@
                     <div class="section mb-4">
                         <h3 class="h4 mb-2"><strong>Loan Information</strong></h4>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="status">Loan Status:</label>
-                                        <select name="status" class="form-control" id="status" required
-                                            onchange="toggleRemarkBox(this.value)">
-                                            <option value="approved"
-                                                {{ old('status', $loan->status ?? '') == 'approved' ? 'selected' : '' }}>
-                                                Approved</option>
-                                            <option value="rejected"
-                                                {{ old('status', $loan->status ?? '') == 'rejected' ? 'selected' : '' }}>
-                                                Rejected</option>
-                                            <option value="in process"
-                                                {{ old('status', $loan->status ?? '') == 'in process' ? 'selected' : '' }}>
-                                                In Process</option>
-                                            <option value="disbursed"
-                                                {{ old('status', $loan->status ?? '') == 'disbursed' ? 'selected' : '' }}>
-                                                Disbursed</option>
-                                            <option value="document pending"
-                                                {{ old('status', $loan->status ?? '') == 'document pending' ? 'selected' : '' }}>
-                                                Document Pending</option>
-                                        </select>
-                                    </div>
-                                </div>
+                               <div class="col-md-6">
+    <div class="form-group">
+        <label for="status">Loan Status:</label>
+
+        <select name="status"
+                class="form-control"
+                id="status"
+                required
+                onchange="toggleRemarkBox(this.value)"
+                {{ strtolower(trim($loan->status ?? '')) === 'disbursed' ? 'disabled' : '' }}>
+
+            <option value="approved"
+                {{ old('status', $loan->status ?? '') == 'approved' ? 'selected' : '' }}>
+                Approved
+            </option>
+
+            <option value="rejected"
+                {{ old('status', $loan->status ?? '') == 'rejected' ? 'selected' : '' }}>
+                Rejected
+            </option>
+
+            <option value="in process"
+                {{ old('status', $loan->status ?? '') == 'in process' ? 'selected' : '' }}>
+                In Process
+            </option>
+
+            <option value="disbursed"
+                {{ old('status', $loan->status ?? '') == 'disbursed' ? 'selected' : '' }}>
+                Disbursed
+            </option>
+
+            <option value="document pending"
+                {{ old('status', $loan->status ?? '') == 'document pending' ? 'selected' : '' }}>
+                Document Pending
+            </option>
+
+        </select>
+
+        {{-- Disabled select is not submitted, so keep disbursed value --}}
+        @if(strtolower(trim($loan->status ?? '')) === 'disbursed')
+            <input type="hidden" name="status" value="disbursed">
+
+            <small class="text-danger">
+                <i class="fas fa-lock"></i>
+                This loan is disbursed and its status cannot be changed.
+            </small>
+        @endif
+
+    </div>
+</div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="loan_category_id">Loan Category:</label>
@@ -302,21 +334,7 @@
                         >
                         <small id="amountError" class="text-danger"></small>
                     </div>
-                    <script>
-document.querySelector("form").addEventListener("submit", function(e) {
 
-    let approved = parseFloat(document.getElementById("amountApproved").value);
-    let maxAmount = {{ $loan->amount ?? 0 }};
-
-    if (isNaN(approved)) return;
-
-    if (approved > maxAmount) {
-        e.preventDefault();
-        document.getElementById("amountError").innerText =
-            "Approved amount cannot exceed loan amount";
-    }
-});
-</script>
 
                     <div class="form-group" id="remark-box" style="display: none;">
                         <label for="remark">Remark:</label>
@@ -330,44 +348,472 @@ document.querySelector("form").addEventListener("submit", function(e) {
                     </div>
                 </div>
 
-                <!-- Right Section: Documents -->
-                <div class="col-md-4 bg-light p-5">
-                    <div class="section mb-4">
-                        <h3 class="h4 mb-2"><strong>Documents</strong></h4>
-                            <!-- Documents -->
-                            <h6>Uploaded:</h6>
-                                                            @foreach ($documents as $doc)
-                                                                <div class="col-md-12 mb-3">
-                                                                <div class="document-wrapper">
-                                    <a href="{{ Storage::url($doc->file_path) }}" target="_blank" style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="{{ Storage::url($doc->file_path) }}" 
-                                            alt="{{ $doc->document_name }}" 
-                                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
-                                        <span>{{ $doc->document_name }}</span>
-                                    </a>
+            <!-- Right Section: Documents -->
+<div class="col-md-4 bg-light p-4">
+    <div class="document-section">
+
+        <!-- Header -->
+        <div class="document-header">
+            <div>
+                <h3 class="document-title">
+                    <i class="fas fa-folder-open"></i>
+                    Documents
+                </h3>
+                <p class="document-subtitle">Uploaded and required documents</p>
+            </div>
+        </div>
+
+        <!-- Uploaded Documents -->
+        <div class="document-list-section">
+
+            <h6 class="document-label">
+                <i class="fas fa-file-alt"></i>
+                Uploaded Documents
+            </h6>
+
+            @if($documents && $documents->count() > 0)
+
+                <div class="document-list">
+
+                    @foreach ($documents as $doc)
+
+                        @php
+                            $fileUrl = Storage::url($doc->file_path);
+                            $extension = strtolower(pathinfo($doc->file_path, PATHINFO_EXTENSION));
+
+                            $iconClass = 'fa-file';
+                            $iconColor = 'file-default';
+
+                            if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                                $iconClass = 'fa-file-image';
+                                $iconColor = 'file-image';
+                            } elseif ($extension === 'pdf') {
+                                $iconClass = 'fa-file-pdf';
+                                $iconColor = 'file-pdf';
+                            } elseif (in_array($extension, ['doc', 'docx'])) {
+                                $iconClass = 'fa-file-word';
+                                $iconColor = 'file-word';
+                            } elseif (in_array($extension, ['xls', 'xlsx'])) {
+                                $iconClass = 'fa-file-excel';
+                                $iconColor = 'file-excel';
+                            } elseif (in_array($extension, ['zip', 'rar'])) {
+                                $iconClass = 'fa-file-zipper';
+                                $iconColor = 'file-zip';
+                            }
+                        @endphp
+
+                        <div class="document-card">
+
+                            <!-- File Icon -->
+                            <div class="document-icon {{ $iconColor }}">
+                                <i class="fas {{ $iconClass }}"></i>
+                            </div>
+
+                            <!-- Document Information -->
+                            <div class="document-info">
+
+                                <div class="document-name"
+                                     title="{{ $doc->document_name }}">
+                                    {{ $doc->document_name }}
                                 </div>
 
+                                <div class="document-type">
+                                    {{ strtoupper($extension) }} File
                                 </div>
-                            @endforeach
-                            <!-- Document Upload -->
-                            <h6>Upload New Documents:</h6>
-                            <div id="document-upload-section">
-                                <div class="document-upload-row mb-3">
-                                    <div class="row">
-                                        <div class="col-md-12 mb-2">
-                                            <input type="text" name="document_name[]" class="form-control"
-                                                placeholder="Document Name">
-                                        </div>
-                                        <div class="col-md-12">
-                                            <input type="file" name="documents[]" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
+
                             </div>
-                            <button type="button" class="btn btn-primary" onclick="addDocumentUploadRow()">Add Another
-                                Document</button>
+
+                            <!-- Actions -->
+                            <div class="document-actions">
+
+                                <!-- View -->
+                                <a href="{{ $fileUrl }}"
+                                   target="_blank"
+                                   class="document-action view-document"
+                                   title="View Document">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                <!-- Download -->
+                                <a href="{{ $fileUrl }}"
+                                   download
+                                   class="document-action download-document"
+                                   title="Download Document">
+                                    <i class="fas fa-download"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                <div class="no-documents">
+                    <i class="fas fa-folder-open"></i>
+                    <p>No documents uploaded yet.</p>
+                </div>
+
+            @endif
+
+        </div>
+
+
+        <!-- Upload New Documents -->
+        <div class="document-upload-section">
+
+            <h6 class="document-label">
+                <i class="fas fa-cloud-upload-alt"></i>
+                Upload New Documents
+            </h6>
+
+            <div id="document-upload-section">
+
+                <div class="document-upload-row mb-3">
+
+                    <div class="row">
+
+                        <div class="col-md-12 mb-2">
+                            <input type="text"
+                                   name="document_name[]"
+                                   class="form-control document-input"
+                                   placeholder="Document Name">
+                        </div>
+
+                        <div class="col-md-12">
+                            <input type="file"
+                                   name="documents[]"
+                                   class="form-control document-input">
+                        </div>
+
                     </div>
 
+                </div>
+
+            </div>
+
+            <button type="button"
+                    class="btn btn-primary add-document-btn"
+                    onclick="addDocumentUploadRow()">
+
+                <i class="fas fa-plus"></i>
+                Add Another Document
+
+            </button>
+
+        </div>
+
+    </div>
+</div>
+<style>
+    /* =========================================
+   DOCUMENT SECTION
+========================================= */
+
+.document-section {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Header */
+
+.document-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.document-title {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.document-title i {
+    margin-right: 7px;
+    color: #2563eb;
+}
+
+.document-subtitle {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Labels */
+
+.document-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 12px;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.document-label i {
+    color: #2563eb;
+}
+
+/* Document List */
+
+.document-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Document Card */
+
+.document-card {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 76px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    transition: all 0.2s ease;
+}
+
+.document-card:hover {
+    border-color: #bfdbfe;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.08);
+}
+
+/* File Icon */
+
+.document-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 21px;
+    margin-right: 11px;
+}
+
+.file-pdf {
+    color: #dc2626;
+    background: #fee2e2;
+}
+
+.file-image {
+    color: #7c3aed;
+    background: #ede9fe;
+}
+
+.file-word {
+    color: #2563eb;
+    background: #dbeafe;
+}
+
+.file-excel {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.file-zip {
+    color: #ca8a04;
+    background: #fef9c3;
+}
+
+.file-default {
+    color: #4b5563;
+    background: #f3f4f6;
+}
+
+/* Document Information */
+
+.document-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.document-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.document-type {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #9ca3af;
+    text-transform: uppercase;
+}
+
+/* Actions */
+
+.document-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 8px;
+}
+
+.document-action {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+    text-decoration: none !important;
+
+    transition: all 0.2s ease;
+}
+
+.view-document {
+    color: #2563eb;
+    background: #eff6ff;
+}
+
+.view-document:hover {
+    color: #fff;
+    background: #2563eb;
+}
+
+.download-document {
+    color: #16a34a;
+    background: #f0fdf4;
+}
+
+.download-document:hover {
+    color: #fff;
+    background: #16a34a;
+}
+
+/* No Documents */
+
+.no-documents {
+    text-align: center;
+    padding: 25px 10px;
+    border: 1px dashed #d1d5db;
+    border-radius: 8px;
+    color: #9ca3af;
+}
+
+.no-documents i {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.no-documents p {
+    margin: 0;
+    font-size: 13px;
+}
+
+/* Upload Section */
+
+.document-upload-section {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.document-input {
+    height: 42px;
+    font-size: 13px;
+    border-radius: 7px;
+}
+
+.add-document-btn {
+    width: 100%;
+    margin-top: 5px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 15px;
+}
+
+.add-document-btn i {
+    margin-right: 5px;
+}
+
+
+/* =========================================
+   MOBILE RESPONSIVE
+========================================= */
+
+@media (max-width: 767px) {
+
+    .document-section {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .document-title {
+        font-size: 18px;
+    }
+
+    .document-subtitle {
+        font-size: 12px;
+    }
+
+    .document-card {
+        min-height: 68px;
+        padding: 8px;
+    }
+
+    .document-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        font-size: 18px;
+        margin-right: 9px;
+    }
+
+    .document-name {
+        font-size: 13px;
+    }
+
+    .document-type {
+        font-size: 10px;
+    }
+
+    .document-actions {
+        gap: 4px;
+        margin-left: 5px;
+    }
+
+    .document-action {
+        width: 31px;
+        height: 31px;
+        font-size: 12px;
+    }
+
+    .document-label {
+        font-size: 13px;
+    }
+}
+/* Sticky Documents Section */
+@media (min-width: 768px) {
+    .document-section {
+        position: sticky;
+        top: 20px;
+        z-index: 10;
+    }
+}
+</style>
                     <!-- Education Information -->
                     <!-- <div class="section mb-4 mt-5">
                         <h3 class="h4 mb-2"><strong>Education Information</strong></h4>
@@ -471,62 +917,111 @@ document.querySelector("form").addEventListener("submit", function(e) {
 $(document).ready(function () {
 
     $('#editLoanForm').on('submit', function (e) {
+
         e.preventDefault();
 
-        const status = $('#status').val();
-        const newFile = $('#sanction_letter').val();
-        const hasExistingFile = "{{ $loan->sanction_letter ? 'yes' : '' }}";
+        let form = this;
+        let formData = new FormData(form);
+        let btn = $(form).find('button[type="submit"]');
 
-        // ✅ ONLY WHEN DISBURSED
-        if (
-            status === 'disbursed' &&
-            !newFile &&
-            !hasExistingFile
-        ) {
-            $('#sanctionLetterError').removeClass('d-none');
-            $('#sanction_letter').focus();
-            return false; // ⛔ stop submit
-        } else {
-            $('#sanctionLetterError').addClass('d-none');
-        }
-
-        let formData = new FormData(this);
-        let btn = $(this).find('button[type="submit"]');
-
+        // Disable button
         btn.prop('disabled', true);
 
         $.ajax({
-            url: $(this).attr('action'),
+            url: $(form).attr('action'),
             type: 'POST',
             data: formData,
+
             processData: false,
             contentType: false,
 
-            success: function (response) {
-                Swal.fire({
-                    title: response.msg || 'Loan updated successfully',
+            headers: {
+                'Accept': 'application/json'
+            },
 
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.href = "{{ route('admin.loans') }}";
+        success: function (response) {
+
+    console.log('SUCCESS:', response);
+
+    Swal.fire({
+        icon: 'success',
+        title: response.msg || 'Loan Updated Successfully',
+        confirmButtonText: 'OK'
+    }).then(function () {
+
+        @if(session('role_id') == 6)
+
+            // DSA
+            window.location.href = "{{ route('dsa.loans') }}";
+
+        @elseif(session('role_id') == 4)
+
+            // Admin
+            window.location.href = "{{ route('admin.loans') }}";
+
+        @else
+
+            // Fallback
+            window.location.href = "{{ route('dashboard') }}";
+
+        @endif
+
+    });
+},
+            error: function (xhr) {
+
+                console.log('STATUS:', xhr.status);
+                console.log('RESPONSE:', xhr.responseText);
+                console.log('JSON:', xhr.responseJSON);
+
+                let msg = 'Something went wrong';
+
+                // Laravel validation error
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+
+                    msg = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('<br>');
+
+                }
+
+                // Controller error
+                else if (xhr.responseJSON && xhr.responseJSON.msg) {
+
+                    msg = xhr.responseJSON.msg;
+
+                }
+
+                // If Laravel returned HTML
+                else if (xhr.responseText) {
+
+                    console.error(xhr.responseText);
+
+                    if (xhr.status === 419) {
+                        msg = 'Page expired. Please refresh the page and try again.';
+                    }
+                    else if (xhr.status === 404) {
+                        msg = 'Update Loan route not found.';
+                    }
+                    else if (xhr.status === 500) {
+                        msg = 'Server error occurred. Check Laravel log.';
+                    }
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    html: msg
                 });
             },
 
-            error: function (xhr) {
-                let msg = 'Something went wrong';
-                if (xhr.responseJSON?.msg) {
-                    msg = xhr.responseJSON.msg;
-                }
-                Swal.fire('Error', msg, 'error');
-            },
-
             complete: function () {
+
                 btn.prop('disabled', false);
+
             }
         });
 
-        return false;
     });
 
 });

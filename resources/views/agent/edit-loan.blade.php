@@ -463,14 +463,36 @@ $(document).ready(function () {
 
             error: function (xhr) {
 
-                let msg = 'Something went wrong';
+    let msg = 'Something went wrong';
 
-                if (xhr.responseJSON?.msg) {
-                    msg = xhr.responseJSON.msg;
-                }
+    // Laravel validation errors
+    if (xhr.responseJSON?.errors) {
 
-                Swal.fire('Error', msg, 'error');
-            },
+        let errors = xhr.responseJSON.errors;
+
+        msg = Object.values(errors)
+            .flat()
+            .join('<br>');
+
+    }
+    // Controller custom error
+    else if (xhr.responseJSON?.msg) {
+
+        msg = xhr.responseJSON.msg;
+
+    }
+    // Normal response
+    else if (xhr.responseText) {
+
+        console.log(xhr.responseText);
+    }
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        html: msg
+    });
+},
 
             complete: function () {
                 btn.prop('disabled', false);
