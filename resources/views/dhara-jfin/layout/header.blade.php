@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+        <!-- <link rel="icon" type="image/jpeg" href="{{ asset('theme/dhara-jfin/img/logo.jpg') }}"> -->
+
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6MXC2Y0NT7"></script>
 <script>
