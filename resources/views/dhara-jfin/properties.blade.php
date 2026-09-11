@@ -1493,7 +1493,7 @@ document.addEventListener("DOMContentLoaded", function(){
             </div>
 
             <div class="service-card">
-                <img class="service-image" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=400&fit=crop" alt="Property Management">
+                <img class="service-image" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=400&fit=crop" alt="Financial planning and loan consultation services">
                 <div class="service-content">
                     <h3>Property Management</h3>
                     <p>We simplify construction financing with our value add and we only online application, offering tailored financing solutions, streamlined approval and fast funding process.</p>
@@ -1501,7 +1501,7 @@ document.addEventListener("DOMContentLoaded", function(){
             </div>
 
             <div class="service-card">
-                <img class="service-image" src="https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?w=600&h=400&fit=crop" alt="Investor Deals">
+                <img class="service-image" src="https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?w=600&h=400&fit=crop" alt="Financial services and loan consultation">
                 <div class="service-content">
                     <h3>Investor Deals</h3>
                     <p>Allows offers Loan Against Property with flexible repayment options, executed by our property team. Check your eligibility and apply accurate add-on is tax benefits.</p>
@@ -1509,7 +1509,7 @@ document.addEventListener("DOMContentLoaded", function(){
             </div>
 
             <div class="service-card">
-                <img class="service-image" src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&h=400&fit=crop" alt="Loan Assistance">
+                <img class="service-image" src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&h=400&fit=crop" alt="Financial documents and business planning">
                 <div class="service-content">
                     <h3>Loan Assistance</h3>
                     <p>Allows offers Loan Against Property with flexible repayment options, executed by our property team. Check your eligibility and apply accurate add-on is tax benefits.</p>
@@ -1517,7 +1517,7 @@ document.addEventListener("DOMContentLoaded", function(){
             </div>
 
             <div class="service-card">
-                <img class="service-image" src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=400&fit=crop" alt="Group Booking">
+                <img class="service-image" src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=400&fit=crop" alt="Business meeting and financial consultation">
                 <div class="service-content">
                     <h3>Group Booking</h3>
                     <p>This service meets the diverse needs of short and medium businesses. Whether you're expanding, Investing in equipment, or increasing capital.</p>

@@ -223,7 +223,7 @@
             </div>
 
             <!-- ================= ROW 4 : RECENT ACTIVITY ================= -->
-            <div class="row mb-5" style="margin-top: -333px;">
+            <!-- <div class="row mb-5" style="margin-top: -333px;">
                 <div class="col-md-4 offset-md-8">
                      <div class="activity-card">
                         <h3>Recent Activity</h3>
@@ -271,7 +271,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>

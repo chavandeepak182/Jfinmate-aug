@@ -35,7 +35,7 @@
                         <div class="row g-4 justify-content-center">
                             <div class="col-12">
                                 <div class="rounded">
-                                    <img src="{{ asset('theme') }}/frontend/img/referral_inner.jpg" class="img-fluid rounded w-100" alt="">
+                                    <img src="{{ asset('theme') }}/frontend/img/referral_inner.jpg" class="img-fluid rounded w-100" alt="JF Finserve referral program">
                                 </div>
                             </div>
                             <!-- <div class="col-sm-12">
@@ -182,7 +182,7 @@
                         </div>
                     </div>
                     <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.4s">
-                        <img src="{{ asset('theme') }}/frontend/img/carousel-2.png" class="img-fluid w-100" alt="">
+                        <img src="{{ asset('theme') }}/frontend/img/carousel-2.png" class="img-fluid w-100" alt="JF Finserve financial services and loan solutions">
                     </div>
                 </div>
             </div>

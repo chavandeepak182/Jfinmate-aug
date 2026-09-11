@@ -27,7 +27,17 @@ Edit MIS Record
             <div class="row">
                 <div class="form-group col-lg-6">
                     <label for="contact" class="col-form-label">Contact:</label>
-                    <input type="text" class="form-control" id="contact" name="contact" value="{{ $misRecord->contact }}" required>
+                    
+                   <input type="text"
+       class="form-control"
+       id="contact"
+       name="contact"
+       value="{{ $misRecord->contact }}"
+       maxlength="10"
+       inputmode="numeric"
+       required>
+
+<small id="contactError" class="text-danger"></small>
                 </div>
                 <!-- <div class="form-group col-lg-6">
                     <label for="office_contact" class="col-form-label">Office Contact:</label>
@@ -149,4 +159,107 @@ Edit MIS Record
         </form>
     </div>
 </div>
+<script>
+$(document).ready(function () {
+
+    // ==========================================
+    // MIS CONTACT / MOBILE VALIDATION
+    // ONLY NUMBERS ALLOWED
+    // ==========================================
+
+    $('#contact').on('input', function () {
+
+        // Remove alphabets and special characters
+        this.value = this.value.replace(/[^0-9]/g, '');
+
+        // Maximum 10 digits
+        if (this.value.length > 10) {
+            this.value = this.value.substring(0, 10);
+        }
+
+        // Validation
+        if (this.value.length !== 10) {
+
+            $('#contactError').text(
+                'Mobile number must be exactly 10 digits.'
+            );
+
+            $(this).addClass('is-invalid');
+
+        } else {
+
+            $('#contactError').text('');
+
+            $(this).removeClass('is-invalid');
+        }
+
+    });
+
+
+    // ==========================================
+    // BLOCK ALPHABETS WHILE TYPING
+    // ==========================================
+
+    $('#contact').on('keydown', function (e) {
+
+        // Allow backspace, delete, tab and arrow keys
+        if (
+            e.key === 'Backspace' ||
+            e.key === 'Delete' ||
+            e.key === 'Tab' ||
+            e.key === 'ArrowLeft' ||
+            e.key === 'ArrowRight' ||
+            e.key === 'Home' ||
+            e.key === 'End'
+        ) {
+            return;
+        }
+
+        // Only allow numbers 0-9
+        if (!/^[0-9]$/.test(e.key)) {
+            e.preventDefault();
+        }
+
+        // Don't allow more than 10 digits
+        if (
+            this.value.length >= 10 &&
+            /^[0-9]$/.test(e.key)
+        ) {
+            e.preventDefault();
+        }
+
+    });
+
+
+    // ==========================================
+    // PREVENT INVALID FORM SUBMISSION
+    // ==========================================
+
+    $('form').on('submit', function (e) {
+
+        let contact = $('#contact').val();
+
+        // Only digits + exactly 10 digits
+        if (!/^[0-9]{10}$/.test(contact)) {
+
+            e.preventDefault();
+
+            $('#contactError').text(
+                'Mobile number must contain exactly 10 digits.'
+            );
+
+            $('#contact')
+                .addClass('is-invalid')
+                .focus();
+
+            return false;
+        }
+
+        $('#contactError').text('');
+        $('#contact').removeClass('is-invalid');
+
+    });
+
+});
+</script>
 @endsection

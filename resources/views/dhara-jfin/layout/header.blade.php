@@ -36,7 +36,7 @@
     <nav class="container">
         <div class="logo">
             <a href="{{ url('/') }}">
-                <img src="{{ asset('theme/dhara-jfin/img/logo.jpg') }}" alt="Jfinserv Logo">
+                <img src="{{ asset('theme/dhara-jfin/img/logo.jpg') }}" alt="JF Finserve logo.">
             </a>
         </div>
 
@@ -56,8 +56,9 @@
                     <li><a href="{{ url('/lease-rental-discounting') }}">Lease Rental Discounting</a></li>
                 </ul>
             </li>
-             <li><a href="{{ url('/referearn') }}">Refer & Earn </a></li>
+             <li><a href="{{ url('/refer-earn') }}">Refer & Earn </a></li>
             <li><a href="{{ url('/properties') }}">Properties</a></li>
+            <li><a href="{{ url('/blogs') }}">Blogs</a></li>
             <li><a href="{{ url('/eligibility-calculator') }}">Calculator</a></li>
             <li><a href="{{ url('/contact') }}">Contact</a></li>
         </ul>
@@ -216,7 +217,9 @@
                 <li><a href="{{ url('/lease-rental-discounting') }}">Lease Rental Discounting</a></li>
             </ul>
         </li>
+        <li><a href="{{ url('/refer-earn') }}">Refer & Earn</a></li>
         <li><a href="{{ url('/properties') }}">Properties</a></li>
+         <li><a href="{{ url('/blogs') }}">Blog</a></li>
         <li><a href="{{ url('/eligibility-calculator') }}">Calculator</a></li>
         <li><a href="{{ url('/contact') }}">Contact</a></li>
     </ul>

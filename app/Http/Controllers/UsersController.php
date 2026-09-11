@@ -36,84 +36,84 @@ class UsersController extends Controller
         return view('admin.addUser');
     }
 
-public function adminCustomer(Request $request)
-{
-    $states = DB::table('states')->orderBy('name')->get();
+// public function adminCustomer(Request $request)
+// {
+//     $states = DB::table('states')->orderBy('name')->get();
 
-    /* ===================== COUNTS ===================== */
-    $totalCustomers = DB::table('users')
-        ->where('role_id', 1)
-        ->whereNull('deleted_at')
-        ->count();
+//     /* ===================== COUNTS ===================== */
+//     $totalCustomers = DB::table('users')
+//         ->where('role_id', 1)
+//         ->whereNull('deleted_at')
+//         ->count();
 
-    $totalEmployees = DB::table('users')
-        ->where('role_id', 2)
-        ->whereNull('deleted_at')
-        ->count();
+//     $totalEmployees = DB::table('users')
+//         ->where('role_id', 2)
+//         ->whereNull('deleted_at')
+//         ->count();
         
 
-    $totalChannelPartners = DB::table('users')
-        ->where('role_id', 3)
-        ->whereNull('deleted_at')
-        ->count();
-        $activeCustomers = DB::table('loans')
-    ->where('status', '!=', 'disbursed')
-    ->whereNull('deleted_at')
-    ->distinct()
-    ->count('user_id');
-    $ourCustomers = DB::table('loans')
-    ->where('status', 'disbursed')
-    ->whereNull('deleted_at')
-    ->distinct()
-    ->count('user_id');
+//     $totalChannelPartners = DB::table('users')
+//         ->where('role_id', 3)
+//         ->whereNull('deleted_at')
+//         ->count();
+//         $activeCustomers = DB::table('loans')
+//     ->where('status', '!=', 'disbursed')
+//     ->whereNull('deleted_at')
+//     ->distinct()
+//     ->count('user_id');
+//     $ourCustomers = DB::table('loans')
+//     ->where('status', 'disbursed')
+//     ->whereNull('deleted_at')
+//     ->distinct()
+//     ->count('user_id');
     
 
-    /* ===================== FILTERS ===================== */
-    $search = $request->search;
-    $status = $request->status;
+//     /* ===================== FILTERS ===================== */
+//     $search = $request->search;
+//     $status = $request->status;
 
-    $users = User::with('profile')
-        ->where('role_id', 1)
-        ->whereNull('deleted_at')
+//     $users = User::with('profile')
+//         ->where('role_id', 1)
+//         ->whereNull('deleted_at')
 
-        /* 🔍 SEARCH FILTER */
-        ->when($search, function ($q) use ($search) {
-            $q->where(function ($qq) use ($search) {
-                $qq->where('name', 'like', "%{$search}%")
-                   ->orWhere('email_id', 'like', "%{$search}%")
-                   ->orWhere('id', 'like', "%{$search}%");
-            });
-        })
+//         /* 🔍 SEARCH FILTER */
+//         ->when($search, function ($q) use ($search) {
+//             $q->where(function ($qq) use ($search) {
+//                 $qq->where('name', 'like', "%{$search}%")
+//                    ->orWhere('email_id', 'like', "%{$search}%")
+//                    ->orWhere('id', 'like', "%{$search}%");
+//             });
+//         })
 
-        /* 🟢 ACTIVE / 🔴 INACTIVE FILTER */
-       ->when($status !== null && $status !== '', function ($q) use ($status) {
-    if ($status === 'active') {
-        $q->where('otp_verify', 1);
-    } elseif ($status === 'inactive') {
-        $q->where('otp_verify', 0);
-    }
-})
+//         /* 🟢 ACTIVE / 🔴 INACTIVE FILTER */
+//        ->when($status !== null && $status !== '', function ($q) use ($status) {
+//     if ($status === 'active') {
+//         $q->where('otp_verify', 1);
+//     } elseif ($status === 'inactive') {
+//         $q->where('otp_verify', 0);
+//     }
+// })
 
 
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+//         ->orderBy('created_at', 'desc')
+//         ->paginate(10);
 
-    /* ===================== AJAX RESPONSE ===================== */
-    if ($request->ajax()) {
-        return view('admin.partials.users-table', compact('users'))->render();
-    }
+//     /* ===================== AJAX RESPONSE ===================== */
+//     if ($request->ajax()) {
+//         return view('admin.partials.users-table', compact('users'))->render();
+//     }
 
-    /* ===================== NORMAL VIEW ===================== */
-    return view('admin.admin-users', compact(
-        'totalCustomers',
-        'totalEmployees',
-        'totalChannelPartners',
-        'activeCustomers',
-        'ourCustomers',
-        'users',
-        'states'  
-    ));
-}
+//     /* ===================== NORMAL VIEW ===================== */
+//     return view('admin.admin-users', compact(
+//         'totalCustomers',
+//         'totalEmployees',
+//         'totalChannelPartners',
+//         'activeCustomers',
+//         'ourCustomers',
+//         'users',
+//         'states'  
+//     ));
+// }
 
 
 
@@ -148,7 +148,168 @@ public function adminCustomer(Request $request)
 //     );
 // }
 
-    
+public function adminCustomer(Request $request)
+{
+    /* ===================== STATES ===================== */
+
+    $states = DB::table('states')
+        ->orderBy('name')
+        ->get();
+
+
+    /* ===================== TOTAL CUSTOMERS ===================== */
+
+    $totalCustomers = DB::table('users')
+        ->where('users.role_id', 1)
+        ->whereNull('users.deleted_at')
+
+        // Exclude DSA customers
+        ->whereNotExists(function ($q) {
+            $q->select(DB::raw(1))
+                ->from('dsa_customers')
+                ->whereColumn(
+                    'dsa_customers.user_id',
+                    'users.id'
+                );
+        })
+
+        ->count();
+
+
+    /* ===================== TOTAL EMPLOYEES ===================== */
+
+    $totalEmployees = DB::table('users')
+        ->where('role_id', 2)
+        ->whereNull('deleted_at')
+        ->count();
+
+
+    /* ===================== TOTAL CHANNEL PARTNERS ===================== */
+
+    $totalChannelPartners = DB::table('users')
+        ->where('role_id', 3)
+        ->whereNull('deleted_at')
+        ->count();
+
+
+    /* ===================== ACTIVE CUSTOMERS ===================== */
+
+    $activeCustomers = DB::table('loans')
+        ->where('status', '!=', 'disbursed')
+        ->whereNull('deleted_at')
+        ->distinct()
+        ->count('user_id');
+
+
+    /* ===================== OUR CUSTOMERS ===================== */
+
+    $ourCustomers = DB::table('loans')
+        ->where('status', 'disbursed')
+        ->whereNull('deleted_at')
+        ->distinct()
+        ->count('user_id');
+
+
+    /* ===================== FILTERS ===================== */
+
+    $search = $request->search;
+    $status = $request->status;
+
+
+    /* ===================== CUSTOMER LIST ===================== */
+
+    $users = User::with('profile')
+
+        // Only customers
+        ->where('users.role_id', 1)
+
+        // Not deleted
+        ->whereNull('users.deleted_at')
+
+        // 🔥 VERY IMPORTANT:
+        // Exclude users that exist in dsa_customers
+        ->whereNotExists(function ($q) {
+            $q->select(DB::raw(1))
+                ->from('dsa_customers')
+                ->whereColumn(
+                    'dsa_customers.user_id',
+                    'users.id'
+                );
+        })
+
+
+        /* ===================== SEARCH ===================== */
+
+        ->when($search, function ($q) use ($search) {
+
+            $q->where(function ($qq) use ($search) {
+
+                $qq->where('users.name', 'like', "%{$search}%")
+                    ->orWhere('users.email_id', 'like', "%{$search}%")
+                    ->orWhere('users.id', 'like', "%{$search}%");
+
+            });
+
+        })
+
+
+        /* ===================== STATUS ===================== */
+
+        ->when(
+            $status !== null && $status !== '',
+            function ($q) use ($status) {
+
+                if ($status === 'active') {
+
+                    $q->where('users.otp_verify', 1);
+
+                } elseif ($status === 'inactive') {
+
+                    $q->where('users.otp_verify', 0);
+
+                }
+
+            }
+        )
+
+
+        /* ===================== ORDER ===================== */
+
+        ->orderBy('users.created_at', 'desc')
+
+
+        /* ===================== PAGINATION ===================== */
+
+        ->paginate(10);
+
+
+    /* ===================== AJAX ===================== */
+
+    if ($request->ajax()) {
+
+        return view(
+            'admin.partials.users-table',
+            compact('users')
+        )->render();
+
+    }
+
+
+    /* ===================== NORMAL VIEW ===================== */
+
+    return view(
+        'admin.admin-users',
+        compact(
+            'totalCustomers',
+            'totalEmployees',
+            'totalChannelPartners',
+            'activeCustomers',
+            'ourCustomers',
+            'users',
+            'states'
+        )
+    );
+}
 public function allUsers(Request $request)
 {
     // 🔹 type = customers | employees | partners
@@ -166,11 +327,15 @@ public function allUsers(Request $request)
     }
 
     // 🔹 MAIN USERS QUERY (USED BY ALL)
-    $users = User::with('profile')
-        ->where('role_id', $roleMap[$type])
-        ->whereNull('deleted_at')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+   $users = User::with('profile')
+    ->where('role_id', $roleMap[$type])
+    ->whereNull('deleted_at')
+    ->where(function ($q) {
+        $q->whereNull('dsa_code')
+          ->orWhere('dsa_code', '');
+    })
+    ->orderBy('created_at', 'desc')
+    ->paginate(10);
 
     // 🔹 COUNTS FOR CARDS
     $totalCustomers = User::where('role_id', 1)->count();
@@ -193,17 +358,24 @@ public function allUsers(Request $request)
 }
 
 public function updateUserStatus(Request $request)
-    {
-         User::where('id', $request->user_id)
-        ->update([
-            'otp_verify' => $request->status
-        ]);
+{
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'status'  => 'required|in:0,1',
+    ]);
+
+    $user = User::findOrFail($request->user_id);
+
+    $user->status = (int) $request->status;
+    $user->save();
 
     return response()->json([
         'status' => 1,
-        'msg' => 'Status updated successfully'
+        'msg' => $user->status == 1
+            ? 'User activated successfully'
+            : 'User deactivated successfully'
     ]);
-    }
+}
 
     
 
@@ -952,17 +1124,20 @@ public function loadListByType(Request $request)
 
     if ($type === 'active') {
 
-    
         $users = User::leftJoin('profile', 'users.id', '=', 'profile.user_id')
             ->whereIn('users.id', function ($q) {
                 $q->select('user_id')
-                  ->from('loans')
-                  ->where('status', '!=', 'disbursed');
+                    ->from('loans')
+                    ->where('status', '!=', 'disbursed');
             })
-            ->where(function($q) {
-    $q->whereNull('users.dsa_code')
-      ->orWhere('users.dsa_code', '');
-})
+
+            // Exclude DSA customers
+            ->whereNotExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('dsa_customers')
+                    ->whereColumn('dsa_customers.user_id', 'users.id');
+            })
+
             ->whereNull('users.deleted_at')
             ->select(
                 'users.*',
@@ -972,53 +1147,71 @@ public function loadListByType(Request $request)
             ->orderBy('users.created_at', 'desc')
             ->paginate(10);
 
-    } 
-    elseif ($type === 'our') {
+    } elseif ($type === 'our') {
 
-    $users = User::leftJoin('profile', 'users.id', '=', 'profile.user_id')
-        ->whereIn('users.id', function ($q) {
-            $q->select('user_id')
-              ->from('loans')
-              ->where('status', 'disbursed');
-        })
-        ->whereNull('users.deleted_at')
-        ->select(
-            'users.*',
-            'profile.mobile_no',
-            'profile.pan_number'
-        )
-        ->distinct()
-        ->orderBy('users.created_at', 'desc')
-        ->paginate(10);
+        $users = User::leftJoin('profile', 'users.id', '=', 'profile.user_id')
+            ->whereIn('users.id', function ($q) {
+                $q->select('user_id')
+                    ->from('loans')
+                    ->where('status', 'disbursed');
+            })
 
-}
-    else {
-        
+            // Exclude DSA customers
+            ->whereNotExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('dsa_customers')
+                    ->whereColumn('dsa_customers.user_id', 'users.id');
+            })
+
+            ->whereNull('users.deleted_at')
+            ->select(
+                'users.*',
+                'profile.mobile_no',
+                'profile.pan_number'
+            )
+            ->distinct()
+            ->orderBy('users.created_at', 'desc')
+            ->paginate(10);
+
+    } else {
 
         $users = User::leftJoin('profile', 'users.id', '=', 'profile.user_id')
             ->where('users.role_id', $roleId)
 
-->where(function($q) {
-    $q->whereNull('users.dsa_code')
-      ->orWhere('users.dsa_code', '');
-})
-
-->whereNull('users.deleted_at')
-
-            ->when($search, function ($q) use ($search) {
-                $q->where(function ($qq) use ($search) {
-                    $qq->where('users.id', 'like', "%{$search}%")
-                       ->orWhere('users.name', 'like', "%{$search}%")
-                       ->orWhere('users.email_id', 'like', "%{$search}%")
-                       ->orWhere('profile.mobile_no', 'like', "%{$search}%");
+            // Exclude DSA customers
+            ->when($roleId == 1, function ($q) {
+                $q->whereNotExists(function ($qq) {
+                    $qq->select(DB::raw(1))
+                        ->from('dsa_customers')
+                        ->whereColumn(
+                            'dsa_customers.user_id',
+                            'users.id'
+                        );
                 });
             })
 
+            ->whereNull('users.deleted_at')
+
+            /* ================= SEARCH ================= */
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($qq) use ($search) {
+                    $qq->where('users.id', 'like', "%{$search}%")
+                        ->orWhere('users.name', 'like', "%{$search}%")
+                        ->orWhere('users.email_id', 'like', "%{$search}%")
+                        ->orWhere('profile.mobile_no', 'like', "%{$search}%");
+                });
+            })
+
+            /* ================= STATUS FILTER ================= */
             ->when($status !== null && $status !== '', function ($q) use ($status) {
+
                 if ($status === 'active') {
-                    $q->where('users.otp_verify', 1);
+
+                    $q->where('users.status', 1);
+
                 } elseif ($status === 'inactive') {
-                    $q->where('users.otp_verify', 0);
+
+                    $q->where('users.status', 0);
                 }
             })
 
@@ -1036,6 +1229,7 @@ public function loadListByType(Request $request)
     $html = '';
 
     if ($users->count() === 0) {
+
         $html .= '
             <tr>
                 <td colspan="7" class="text-center text-muted">
@@ -1050,42 +1244,47 @@ public function loadListByType(Request $request)
 
         $html .= '
         <tr>
-           <td>'.$srNo++.'</td>
-            <td>'.$user->name.'</td>
-            <td>'.$user->email_id.'</td>
-            <td>'.($user->mobile_no ?? '-').'</td>
-            <td>'.($user->pan_number ?? '-').'</td>
+            <td>' . $srNo++ . '</td>
+
+            <td>' . $user->name . '</td>
+
+            <td>' . $user->email_id . '</td>
+
+            <td>' . ($user->mobile_no ?? '-') . '</td>
+
+            <td>' . ($user->pan_number ?? '-') . '</td>
+
             <td>
-                '.($user->is_email_verify
+                ' . ($user->status == 1
                     ? '<span class="badge bg-success">Active</span>'
-                    : '<span class="badge bg-danger">Inactive</span>').'
+                    : '<span class="badge bg-danger">Inactive</span>') . '
             </td>
+
             <td>';
-            
 
         /* ================= ACTION BUTTONS ================= */
 
-        if($type !== 'active'){
+        if ($type !== 'active') {
 
             $html .= '
 
                 <button class="btn btn-primary btn-xs edit-user"
-                        data-id="'.$user->id.'">
+                        data-id="' . $user->id . '">
                     <i class="fa fa-edit"></i>
                 </button>
 
                 <button class="btn btn-warning btn-xs reset-password"
-                        data-id="'.$user->id.'">
+                        data-id="' . $user->id . '">
                     <i class="fa fa-key"></i>
                 </button>
-                 <button class="btn btn-danger btn-xs delete-user"
-                data-id="'.$user->id.'">
-            <i class="fa fa-trash"></i>
-        </button>';
-                
+
+                <button class="btn btn-danger btn-xs delete-user"
+                        data-id="' . $user->id . '">
+                    <i class="fa fa-trash"></i>
+                </button>';
         }
 
-        /* ================= EMPLOYEE STATUS ================= */
+        /* ================= ACCOUNT STATUS ================= */
 
         if ($roleId == 2) {
 
@@ -1093,42 +1292,45 @@ public function loadListByType(Request $request)
 
                 <label class="ms-2">
                     <input type="radio"
-                           name="status_'.$user->id.'"
+                           name="status_' . $user->id . '"
                            value="1"
-                           '.($user->is_email_verify ? 'checked' : '').'
-                           onclick="updateStatus('.$user->id.',1)"> Active
+                           ' . ($user->status == 1 ? 'checked' : '') . '
+                           onclick="updateStatus(' . $user->id . ',1)">
+                    Active
                 </label>
 
                 <label>
                     <input type="radio"
-                           name="status_'.$user->id.'"
+                           name="status_' . $user->id . '"
                            value="0"
-                           '.(!$user->is_email_verify ? 'checked' : '').'
-                           onclick="updateStatus('.$user->id.',0)"> Inactive
+                           ' . ($user->status == 0 ? 'checked' : '') . '
+                           onclick="updateStatus(' . $user->id . ',0)">
+                    Inactive
                 </label>';
 
         } else {
 
-            if($type !== 'active'){
+            if ($type !== 'active') {
 
                 $html .= '
-                    <label>
-<input type="radio"
-       name="status_'.$user->id.'"
-       value="1"
-       '.($user->is_email_verify ? 'checked' : '').'
-       onclick="updateStatus('.$user->id.',1)">
-Active
-</label>
 
-<label>
-<input type="radio"
-       name="status_'.$user->id.'"
-       value="0"
-       '.(!$user->is_email_verify ? 'checked' : '').'
-       onclick="updateStatus('.$user->id.',0)">
-Inactive
-</label>';
+                    <label>
+                        <input type="radio"
+                               name="status_' . $user->id . '"
+                               value="1"
+                               ' . ($user->status == 1 ? 'checked' : '') . '
+                               onclick="updateStatus(' . $user->id . ',1)">
+                        Active
+                    </label>
+
+                    <label>
+                        <input type="radio"
+                               name="status_' . $user->id . '"
+                               value="0"
+                               ' . ($user->status == 0 ? 'checked' : '') . '
+                               onclick="updateStatus(' . $user->id . ',0)">
+                        Inactive
+                    </label>';
             }
         }
 
@@ -1143,6 +1345,7 @@ Inactive
         'total'      => $users->total()
     ]);
 }
+
 
 // public function loadListByType(Request $request)
 // {
@@ -1700,58 +1903,58 @@ public function updateUser(Request $request)
 
 
     //send an email
-    function temail($email, $firstname, $msg, $temp_id)
-    {
-        $ch = curl_init();
+    // function temail($email, $firstname, $msg, $temp_id)
+    // {
+    //     $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, 'https://api.sendinblue.com/v3/smtp/email');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            "to" => [
-                [
-                    "email" => $email,
-                    "name" => $firstname
-                ]
-            ],
-            "templateId" => $temp_id,
-            "params" => [
-                "name" => $firstname,
-                "email" => $email,
-                "url" => $msg
-            ],
-            "headers" => [
-                "X-Mailin-custom" => "custom_header_1:custom_value_1|custom_header_2:custom_value_2|custom_header_3:custom_value_3",
-                "charset" => "iso-8859-1"
-            ]
-        ]));
+    //     curl_setopt($ch, CURLOPT_URL, 'https://api.sendinblue.com/v3/smtp/email');
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    //     curl_setopt($ch, CURLOPT_POST, 1);
+    //     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+    //         "to" => [
+    //             [
+    //                 "email" => $email,
+    //                 "name" => $firstname
+    //             ]
+    //         ],
+    //         "templateId" => $temp_id,
+    //         "params" => [
+    //             "name" => $firstname,
+    //             "email" => $email,
+    //             "url" => $msg
+    //         ],
+    //         "headers" => [
+    //             "X-Mailin-custom" => "custom_header_1:custom_value_1|custom_header_2:custom_value_2|custom_header_3:custom_value_3",
+    //             "charset" => "iso-8859-1"
+    //         ]
+    //     ]));
 
-        $headers = [
-            'Accept: application/json',
-            'Content-Type: application/json'
-        ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    //     $headers = [
+    //         'Accept: application/json',
+    //         'Content-Type: application/json'
+    //     ];
+    //     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        // Execute curl request and fetch response
-        $result = curl_exec($ch);
+    //     // Execute curl request and fetch response
+    //     $result = curl_exec($ch);
 
-        // Check for curl errors
-        if (curl_errno($ch)) {
-            $error = curl_error($ch);
-            Log::error('Sendinblue Email Error: ' . $error);
-            echo 'Error: ' . $error;
-        } else {
-            // Decode the response and log the result
-            $response = json_decode($result, true);
-            if (isset($response['messageId'])) {
-                Log::info('Email sent successfully to ' . $email . ' with Message ID: ' . $response['messageId']);
-            } else {
-                Log::error('Email sending failed for ' . $email . '. Response: ' . $result);
-            }
-        }
+    //     // Check for curl errors
+    //     if (curl_errno($ch)) {
+    //         $error = curl_error($ch);
+    //         Log::error('Sendinblue Email Error: ' . $error);
+    //         echo 'Error: ' . $error;
+    //     } else {
+    //         // Decode the response and log the result
+    //         $response = json_decode($result, true);
+    //         if (isset($response['messageId'])) {
+    //             Log::info('Email sent successfully to ' . $email . ' with Message ID: ' . $response['messageId']);
+    //         } else {
+    //             Log::error('Email sending failed for ' . $email . '. Response: ' . $result);
+    //         }
+    //     }
 
-        curl_close($ch);
-    }
+    //     curl_close($ch);
+    // }
 
     //customer profile
 //    public function showProfile(Request $request)

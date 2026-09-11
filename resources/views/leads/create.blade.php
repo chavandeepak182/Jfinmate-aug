@@ -158,16 +158,40 @@
 </div>
 
 {{-- DATES --}}
+{{-- DATES --}}
 <div class="col-md-3">
     <label>Follow-up Date</label>
-    <input type="date" name="follow_up_date"
-           value="{{ old('follow_up_date') }}" class="form-control">
+
+    <input
+        type="date"
+        name="follow_up_date"
+        value="{{ old('follow_up_date') }}"
+        min="{{ now()->format('Y-m-d') }}"
+        class="form-control @error('follow_up_date') is-invalid @enderror"
+    >
+
+    @error('follow_up_date')
+        <small class="text-danger">
+            {{ $message }}
+        </small>
+    @enderror
 </div>
 
 <div class="col-md-3">
     <label>Expected Closing Date</label>
-    <input type="date" name="closing_date"
-           value="{{ old('closing_date') }}" class="form-control">
+
+    <input
+        type="date"
+        name="closing_date"
+        value="{{ old('closing_date') }}"
+        class="form-control @error('closing_date') is-invalid @enderror"
+    >
+
+    @error('closing_date')
+        <small class="text-danger">
+            {{ $message }}
+        </small>
+    @enderror
 </div>
 
 {{-- SCORE --}}
@@ -226,6 +250,35 @@ document.querySelectorAll('input[name="phone"], input[name="alternate_phone"]').
     input.addEventListener('input', function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
+});
+</script>
+<script>
+// Existing phone validation...
+
+// Closing date validation
+document.querySelector('input[name="closing_date"]').addEventListener('change', function() {
+    const followUpDate = document.querySelector('input[name="follow_up_date"]').value;
+    const closingDate = this.value;
+    
+    if (followUpDate && closingDate && closingDate < followUpDate) {
+        this.setCustomValidity('Closing date must be on or after the follow-up date');
+        this.reportValidity();
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+// Follow-up date validation
+document.querySelector('input[name="follow_up_date"]').addEventListener('change', function() {
+    const closingDate = document.querySelector('input[name="closing_date"]').value;
+    const followUpDate = this.value;
+    
+    if (followUpDate && closingDate && closingDate < followUpDate) {
+        document.querySelector('input[name="closing_date"]').setCustomValidity('Closing date must be on or after the follow-up date');
+        document.querySelector('input[name="closing_date"]').reportValidity();
+    } else {
+        document.querySelector('input[name="closing_date"]').setCustomValidity('');
+    }
 });
 </script>
 

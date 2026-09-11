@@ -1688,6 +1688,7 @@ function saveToLibrary() {
         fullName: document.getElementById('fullName')?.value || 'Unnamed Form',
         phone: document.getElementById('phone')?.value || 'N/A',
         email: document.getElementById('email')?.value || 'N/A',
+        dob: document.getElementById('dob')?.value || 'N/A',
         applicantType: document.querySelector('input[name="applicant_type"]:checked')?.value || 'N/A',
         totalIncome: document.getElementById('resultTotalIncome')?.textContent || '₹0.00',
         remainingIncome: document.getElementById('resultRemainingIncome')?.textContent || '₹0.00',
@@ -1808,6 +1809,9 @@ function viewRecord(index) {
                     <strong>Email:</strong> ${record.email}
                 </div>
                 <div class="p-2 border-bottom">
+                    <strong>DOB:</strong> ${record.dob || 'N/A'}
+                </div>
+                <div class="p-2 border-bottom">
                     <strong>Applicant Type:</strong> ${record.applicantType}
                 </div>
                 <div class="p-2 border-bottom">
@@ -1847,7 +1851,7 @@ function viewRecord(index) {
     }, { once: true });
 }
 
-// ================= EDIT RECORD =================
+// ================= EDIT RECORD WITH VALIDATION =================
 function editRecord(index) {
     currentEditIndex = index;
     const record = savedRecords[index];
@@ -1855,54 +1859,104 @@ function editRecord(index) {
     const html = `
         <div class="row">
             <div class="col-md-6">
-                <div class="mb-2">
-                    <label><strong>Full Name</strong></label>
-                    <input type="text" class="form-control" id="editFullName" value="${record.fullName}">
+                <div class="mb-3">
+                    <label><strong>Full Name</strong> <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control edit-field" id="editFullName" 
+                           value="${record.fullName}" 
+                           placeholder="Enter full name"
+                           pattern="[A-Za-z\\s]+"
+                           oninput="validateEditName(this)">
+                    <small class="text-muted">Only letters and spaces allowed</small>
+                    <div class="invalid-feedback">Name should contain only letters and spaces</div>
                 </div>
-                <div class="mb-2">
-                    <label><strong>Phone</strong></label>
-                    <input type="text" class="form-control" id="editPhone" value="${record.phone}">
+                <div class="mb-3">
+                    <label><strong>Phone</strong> <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control edit-field" id="editPhone" 
+                           value="${record.phone}" 
+                           placeholder="Enter 10 digit phone number"
+                           pattern="[0-9]{10}"
+                           maxlength="10"
+                           oninput="validateEditPhone(this)">
+                    <small class="text-muted">Enter exactly 10 digits</small>
+                    <div class="invalid-feedback">Phone number must be exactly 10 digits</div>
                 </div>
-                <div class="mb-2">
-                    <label><strong>Email</strong></label>
-                    <input type="email" class="form-control" id="editEmail" value="${record.email}">
+                <div class="mb-3">
+                    <label><strong>Email</strong> <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control edit-field" id="editEmail" 
+                           value="${record.email}" 
+                           placeholder="Enter email address"
+                           oninput="validateEditEmail(this)">
+                    <div class="invalid-feedback">Please enter a valid email address</div>
                 </div>
-                <div class="mb-2">
+                <div class="mb-3">
+                    <label><strong>DOB</strong></label>
+                    <input type="date" class="form-control edit-field" id="editDob" 
+                           value="${record.dob || ''}">
+                </div>
+                <div class="mb-3">
                     <label><strong>Applicant Type</strong></label>
-                    <select class="form-control" id="editApplicantType">
+                    <select class="form-control edit-field" id="editApplicantType">
                         <option value="Salaried" ${record.applicantType === 'Salaried' ? 'selected' : ''}>Salaried</option>
                         <option value="Business" ${record.applicantType === 'Business' ? 'selected' : ''}>Business</option>
                     </select>
                 </div>
-                <div class="mb-2">
+                <div class="mb-3">
                     <label><strong>Bank</strong></label>
-                    <input type="text" class="form-control" id="editBank" value="${record.bank}">
+                    <input type="text" class="form-control edit-field" id="editBank" 
+                           value="${record.bank}">
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="mb-2">
-                    <label><strong>Total Monthly Income</strong></label>
-                    <input type="text" class="form-control" id="editTotalIncome" value="${record.totalIncome.replace('₹', '').trim()}">
+                <div class="mb-3">
+                    <label><strong>Total Monthly Income</strong> <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control edit-field" id="editTotalIncome" 
+                           value="${record.totalIncome.replace('₹', '').trim()}" 
+                           min="0"
+                           step="0.01"
+                           oninput="validateEditNumber(this)">
+                    <div class="invalid-feedback">Please enter a valid positive number</div>
                 </div>
-                <div class="mb-2">
-                    <label><strong>Remaining Income After Tax</strong></label>
-                    <input type="text" class="form-control" id="editRemainingIncome" value="${record.remainingIncome.replace('₹', '').trim()}">
+                <div class="mb-3">
+                    <label><strong>Remaining Income After Tax</strong> <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control edit-field" id="editRemainingIncome" 
+                           value="${record.remainingIncome.replace('₹', '').trim()}" 
+                           min="0"
+                           step="0.01"
+                           oninput="validateEditNumber(this)">
+                    <div class="invalid-feedback">Please enter a valid positive number</div>
                 </div>
-                <div class="mb-2">
-                    <label><strong>Tax Amount (Monthly)</strong></label>
-                    <input type="text" class="form-control" id="editTaxAmount" value="${record.taxAmount.replace('₹', '').trim()}">
+                <div class="mb-3">
+                    <label><strong>Tax Amount (Monthly)</strong> <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control edit-field" id="editTaxAmount" 
+                           value="${record.taxAmount.replace('₹', '').trim()}" 
+                           min="0"
+                           step="0.01"
+                           oninput="validateEditNumber(this)">
+                    <div class="invalid-feedback">Please enter a valid positive number</div>
                 </div>
-                <div class="mb-2">
-                    <label><strong>Proposed EMI</strong></label>
-                    <input type="text" class="form-control" id="editProposedEMI" value="${record.proposedEMI.replace('₹', '').trim()}">
+                <div class="mb-3">
+                    <label><strong>Proposed EMI</strong> <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control edit-field" id="editProposedEMI" 
+                           value="${record.proposedEMI.replace('₹', '').trim()}" 
+                           min="0"
+                           step="0.01"
+                           oninput="validateEditNumber(this)">
+                    <div class="invalid-feedback">Please enter a valid positive number</div>
                 </div>
-                <div class="mb-2">
+                <div class="mb-3">
                     <label><strong>FOIR (%)</strong></label>
-                    <input type="text" class="form-control" id="editFOIR" value="${record.foir}">
+                    <input type="number" class="form-control edit-field" id="editFOIR" 
+                           value="${record.foir}" 
+                           min="0"
+                           max="100"
+                           step="0.01"
+                           oninput="validateEditFOIR(this)">
+                    <small class="text-muted">Value between 0 and 100</small>
+                    <div class="invalid-feedback">FOIR must be between 0 and 100</div>
                 </div>
-                <div class="mb-2">
+                <div class="mb-3">
                     <label><strong>Status</strong></label>
-                    <select class="form-control" id="editStatus">
+                    <select class="form-control edit-field" id="editStatus">
                         <option value="✅ Eligible" ${record.status.includes('Eligible') ? 'selected' : ''}>Eligible</option>
                         <option value="❌ Not Eligible" ${record.status.includes('Not Eligible') ? 'selected' : ''}>Not Eligible</option>
                     </select>
@@ -1914,26 +1968,249 @@ function editRecord(index) {
     document.getElementById('editModalBody').innerHTML = html;
     document.querySelector('#editModal .modal-footer').style.display = 'flex';
     
+    // Reset validation state
+    document.querySelectorAll('.edit-field').forEach(field => {
+        field.classList.remove('is-invalid', 'is-valid');
+    });
+    
     const modal = new bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
 }
 
-// ================= UPDATE RECORD =================
+// ================= EDIT VALIDATION FUNCTIONS =================
+
+function validateEditName(input) {
+    const value = input.value;
+    // Remove invalid characters
+    input.value = value.replace(/[^a-zA-Z\s]/g, '');
+    
+    if (input.value.trim().length > 0 && /^[a-zA-Z\s]+$/.test(input.value)) {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+    } else if (input.value.length > 0) {
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+    } else {
+        input.classList.remove('is-invalid', 'is-valid');
+    }
+}
+
+function validateEditPhone(input) {
+    // Remove non-digits
+    input.value = input.value.replace(/\D/g, '');
+    
+    // Limit to 10 digits
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
+    
+    if (input.value.length === 10) {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+    } else if (input.value.length > 0) {
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+    } else {
+        input.classList.remove('is-invalid', 'is-valid');
+    }
+}
+
+function validateEditEmail(input) {
+    const email = input.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (email.length > 0 && emailRegex.test(email)) {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+    } else if (email.length > 0) {
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+    } else {
+        input.classList.remove('is-invalid', 'is-valid');
+    }
+}
+
+function validateEditNumber(input) {
+    const value = parseFloat(input.value);
+    
+    if (input.value.length > 0 && !isNaN(value) && value >= 0) {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+    } else if (input.value.length > 0) {
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+    } else {
+        input.classList.remove('is-invalid', 'is-valid');
+    }
+}
+
+function validateEditFOIR(input) {
+    const value = parseFloat(input.value);
+    
+    if (input.value.length > 0 && !isNaN(value) && value >= 0 && value <= 100) {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+    } else if (input.value.length > 0) {
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+    } else {
+        input.classList.remove('is-invalid', 'is-valid');
+    }
+}
+
+// ================= UPDATE RECORD WITH VALIDATION =================
 function updateRecord() {
     if (currentEditIndex === -1) return;
     
+    // Get all form fields
+    const fields = {
+        fullName: document.getElementById('editFullName'),
+        phone: document.getElementById('editPhone'),
+        email: document.getElementById('editEmail'),
+        dob: document.getElementById('editDob'),
+        applicantType: document.getElementById('editApplicantType'),
+        bank: document.getElementById('editBank'),
+        totalIncome: document.getElementById('editTotalIncome'),
+        remainingIncome: document.getElementById('editRemainingIncome'),
+        taxAmount: document.getElementById('editTaxAmount'),
+        proposedEMI: document.getElementById('editProposedEMI'),
+        foir: document.getElementById('editFOIR'),
+        status: document.getElementById('editStatus')
+    };
+    
+    // Validate all fields
+    let isValid = true;
+    let errorMessages = [];
+    
+    // Validate Name
+    const nameValue = fields.fullName.value.trim();
+    if (nameValue.length === 0) {
+        isValid = false;
+        errorMessages.push('Full Name is required');
+        fields.fullName.classList.add('is-invalid');
+    } else if (!/^[a-zA-Z\s]+$/.test(nameValue)) {
+        isValid = false;
+        errorMessages.push('Name should contain only letters and spaces');
+        fields.fullName.classList.add('is-invalid');
+    } else {
+        fields.fullName.classList.remove('is-invalid');
+        fields.fullName.classList.add('is-valid');
+    }
+    
+    // Validate Phone
+    const phoneValue = fields.phone.value.trim();
+    if (phoneValue.length === 0) {
+        isValid = false;
+        errorMessages.push('Phone number is required');
+        fields.phone.classList.add('is-invalid');
+    } else if (!/^[0-9]{10}$/.test(phoneValue)) {
+        isValid = false;
+        errorMessages.push('Phone number must be exactly 10 digits');
+        fields.phone.classList.add('is-invalid');
+    } else {
+        fields.phone.classList.remove('is-invalid');
+        fields.phone.classList.add('is-valid');
+    }
+    
+    // Validate Email
+    const emailValue = fields.email.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailValue.length === 0) {
+        isValid = false;
+        errorMessages.push('Email is required');
+        fields.email.classList.add('is-invalid');
+    } else if (!emailRegex.test(emailValue)) {
+        isValid = false;
+        errorMessages.push('Please enter a valid email address');
+        fields.email.classList.add('is-invalid');
+    } else {
+        fields.email.classList.remove('is-invalid');
+        fields.email.classList.add('is-valid');
+    }
+    
+    // Validate Total Income
+    const totalIncomeVal = parseFloat(fields.totalIncome.value);
+    if (fields.totalIncome.value.length === 0 || isNaN(totalIncomeVal) || totalIncomeVal < 0) {
+        isValid = false;
+        errorMessages.push('Total Monthly Income must be a valid positive number');
+        fields.totalIncome.classList.add('is-invalid');
+    } else {
+        fields.totalIncome.classList.remove('is-invalid');
+        fields.totalIncome.classList.add('is-valid');
+    }
+    
+    // Validate Remaining Income
+    const remainingIncomeVal = parseFloat(fields.remainingIncome.value);
+    if (fields.remainingIncome.value.length === 0 || isNaN(remainingIncomeVal) || remainingIncomeVal < 0) {
+        isValid = false;
+        errorMessages.push('Remaining Income must be a valid positive number');
+        fields.remainingIncome.classList.add('is-invalid');
+    } else {
+        fields.remainingIncome.classList.remove('is-invalid');
+        fields.remainingIncome.classList.add('is-valid');
+    }
+    
+    // Validate Tax Amount
+    const taxAmountVal = parseFloat(fields.taxAmount.value);
+    if (fields.taxAmount.value.length === 0 || isNaN(taxAmountVal) || taxAmountVal < 0) {
+        isValid = false;
+        errorMessages.push('Tax Amount must be a valid positive number');
+        fields.taxAmount.classList.add('is-invalid');
+    } else {
+        fields.taxAmount.classList.remove('is-invalid');
+        fields.taxAmount.classList.add('is-valid');
+    }
+    
+    // Validate Proposed EMI
+    const proposedEMIVal = parseFloat(fields.proposedEMI.value);
+    if (fields.proposedEMI.value.length === 0 || isNaN(proposedEMIVal) || proposedEMIVal < 0) {
+        isValid = false;
+        errorMessages.push('Proposed EMI must be a valid positive number');
+        fields.proposedEMI.classList.add('is-invalid');
+    } else {
+        fields.proposedEMI.classList.remove('is-invalid');
+        fields.proposedEMI.classList.add('is-valid');
+    }
+    
+    // Validate FOIR
+    const foirVal = parseFloat(fields.foir.value);
+    if (fields.foir.value.length > 0 && (isNaN(foirVal) || foirVal < 0 || foirVal > 100)) {
+        isValid = false;
+        errorMessages.push('FOIR must be between 0 and 100');
+        fields.foir.classList.add('is-invalid');
+    } else {
+        fields.foir.classList.remove('is-invalid');
+        if (fields.foir.value.length > 0) {
+            fields.foir.classList.add('is-valid');
+        }
+    }
+    
+    // If validation fails, show errors and return
+    if (!isValid) {
+        alert('Please fix the following errors:\n\n• ' + errorMessages.join('\n• '));
+        // Scroll to first invalid field
+        const firstInvalid = document.querySelector('.is-invalid');
+        if (firstInvalid) {
+            firstInvalid.focus();
+            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+    }
+    
+    // Update record with validated data
     const record = savedRecords[currentEditIndex];
-    record.fullName = document.getElementById('editFullName')?.value || record.fullName;
-    record.phone = document.getElementById('editPhone')?.value || record.phone;
-    record.email = document.getElementById('editEmail')?.value || record.email;
-    record.applicantType = document.getElementById('editApplicantType')?.value || record.applicantType;
-    record.bank = document.getElementById('editBank')?.value || record.bank;
-    record.totalIncome = '₹' + (document.getElementById('editTotalIncome')?.value || record.totalIncome.replace('₹', ''));
-    record.remainingIncome = '₹' + (document.getElementById('editRemainingIncome')?.value || record.remainingIncome.replace('₹', ''));
-    record.taxAmount = '₹' + (document.getElementById('editTaxAmount')?.value || record.taxAmount.replace('₹', ''));
-    record.proposedEMI = '₹' + (document.getElementById('editProposedEMI')?.value || record.proposedEMI.replace('₹', ''));
-    record.foir = document.getElementById('editFOIR')?.value || record.foir;
-    record.status = document.getElementById('editStatus')?.value || record.status;
+    record.fullName = nameValue;
+    record.phone = phoneValue;
+    record.email = emailValue;
+    record.dob = fields.dob.value || record.dob || 'N/A';
+    record.applicantType = fields.applicantType.value || record.applicantType;
+    record.bank = fields.bank.value || record.bank;
+    record.totalIncome = '₹' + totalIncomeVal.toFixed(2);
+    record.remainingIncome = '₹' + remainingIncomeVal.toFixed(2);
+    record.taxAmount = '₹' + taxAmountVal.toFixed(2);
+    record.proposedEMI = '₹' + proposedEMIVal.toFixed(2);
+    record.foir = fields.foir.value || record.foir;
+    record.status = fields.status.value || record.status;
     
     savedRecords[currentEditIndex] = record;
     localStorage.setItem('eligibilityRecords', JSON.stringify(savedRecords));

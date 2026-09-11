@@ -254,14 +254,20 @@ public function loginWithEmail(Request $request)
         'password' => 'required',
     ]);
 
-    $user = User::where('email_id', $request->email_id)->first();
+ $user = User::where('email_id', $request->email_id)->first();
 
-    if (!$user) {
-        return back()->withErrors([
-            'email_id' => 'Email not registered'
-        ]);
-    }
+if (!$user) {
+    return back()->withErrors([
+        'email_id' => 'Email not registered'
+    ]);
+}
 
+// CHECK ACCOUNT STATUS
+if ((int) $user->status !== 1) {
+    return back()->withErrors([
+        'email_id' => 'Your account is inactive. Please contact the administrator.'
+    ]);
+}
     if (!Hash::check($request->password, $user->password)) {
         return back()->withErrors([
             'password' => 'Invalid email or password'

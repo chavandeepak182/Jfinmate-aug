@@ -241,9 +241,7 @@ Route::post('/admin/reset-password', [UsersController::class, 'resetPassword'])
      ->name('admin.reset.password');
 
 
-Route::post('/admin/user/update-status',
-    [UsersController::class, 'updateUserStatus']
-)->name('update.user.status');
+
 
 Route::get('admin/loans-list', [LoanApplicationController::class, 'loanlist'])->name('admin.loans');
 Route::get('admin/property', [PropertyController::class, 'propertylist'])->name('admin.property');
@@ -269,13 +267,14 @@ Route::get('/', function () {
 // Route::get('/', function () {
 //     return view('frontend.index');
 // });
-Route::get('/about',function () {
+Route::get('/about', function () {
     return view('dhara-jfin.about');
-    });
+})->name('about');
 
-    Route::get('/referearn',function () {
+
+ Route::get('/refer-earn', function () {
     return view('dhara-jfin.refer_earn_with_jfinmate');
-    });
+})->name('refer.earn');
 // Route::get('about', [FrontendController::class, 'AboutView']);
 
 
@@ -321,9 +320,9 @@ Route::get('/eligibility-calculator',function () {
 //     return view('frontend.eligibility_calcultor');
 // })->name('eligibility.calculator');
 
-Route::get('/services',function () {
+Route::get('/services', function () {
     return view('dhara-jfin.services');
-    });
+})->name('services');
 // Route::get('services', [FrontendController::class, 'ServicesView']);
 
 Route::get('/contact',function () {
@@ -928,8 +927,8 @@ Route::get('/get-user-by-id', [UsersController::class, 'getUserById'])
     Route::get('/admin/load-list-by-type', 
     [App\Http\Controllers\UsersController::class, 'loadListByType']
 )->name('load.list.by.type');
-Route::post('/admin/update-employee-status', [UsersController::class,'updateEmployeeStatus'])
-    ->name('admin.update.employee.status')
+Route::post('/admin/update-employee-status', [UsersController::class, 'updateUserStatus'])
+    ->name('admin.update.employee.status');
     ;
     Route::post('/update-property-status',[PropertyController::class,'updatePropertyStatus'])
     ->name('updatePropertyStatus');

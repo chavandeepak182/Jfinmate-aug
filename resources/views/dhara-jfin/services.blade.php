@@ -19,7 +19,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{asset('theme/dhara-jfin/img/home_loan.jpg')}}">
+                       <img src="{{ asset('theme/dhara-jfin/img/home_loan.jpg') }}" alt="Home loan services offered by JF Finserve">
                     </div>
                     <div class="service-page-service-badge">Popular</div>
                 </div>
@@ -47,8 +47,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{asset('theme/dhara-jfin/img/loan_against_property.jpg')}}">
-                    </div>
+<img src="{{ asset('theme/dhara-jfin/img/loan_against_property.jpg') }}" alt="Loan against property services offered by JF Finserve">                    </div>
                     <div class="service-page-service-badge">Featured</div>
                 </div>
                 <div class="service-page-service-content">
@@ -75,8 +74,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{asset('theme/dhara-jfin/img/project_loan.jpg')}}">
-                    </div>
+<img src="{{ asset('theme/dhara-jfin/img/project_loan.jpg') }}" alt="Project loan financing services offered by JF Finserve">                    </div>
                 </div>
                 <div class="service-page-service-content">
                     <h3 class="service-page-service-title">Project Loan</h3>
@@ -102,7 +100,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{asset('theme/dhara-jfin/img/msme_loan.jpg')}}">
+                        <img src="{{ asset('theme/dhara-jfin/img/msme_loan.jpg') }}" alt="MSME business loan from JF Finserve">
                     </div>
                     <div class="service-page-service-badge">New</div>
                 </div>
@@ -130,7 +128,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{asset('theme/dhara-jfin/img/overdraft_loan.jpg')}}">
+                        <img src="{{asset('theme/dhara-jfin/img/overdraft_loan.jpg')}}" alt="Overdraft loan solutions from JF Finserve">
                     </div>
                 </div>
                 <div class="service-page-service-content">
@@ -157,7 +155,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{asset('theme/dhara-jfin/img/lrd_loan.jpg')}}">
+                        <img src="{{asset('theme/dhara-jfin/img/lrd_loan.jpg')}}" alt="Lease rental discounting loan services">
                     </div>
                 </div>
                 <div class="service-page-service-content">

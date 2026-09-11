@@ -30,14 +30,13 @@
                     {{ $lead->product_name ?? '-' }}
                 </span>
             </td>
+            <!-- ✅ FIXED: Removed nested td -->
             <td>
-              <td>
                 @if($lead->status == 'completed')
                     <span class="badge bg-success">Completed</span>
                 @else
                     <span class="badge bg-warning">Pending</span>
                 @endif
-            </td>
             </td>
             <td>
                 @if($lead->status === 'pending')

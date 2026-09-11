@@ -470,6 +470,163 @@ body.modal-open {
     </div>
 </div>
 
+<style>
+    /* Modal */
+    #addDSA .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+
+    /* Header */
+    #addDSA .modal-header {
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 16px 20px;
+    }
+
+    #addDSA .modal-title {
+        color: #1565C0;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    #addDSA .btn-close {
+        font-size: 12px;
+        opacity: 0.7;
+    }
+
+    /* Body */
+    #addDSA .modal-body {
+        padding: 22px 25px 10px;
+    }
+
+    /* Labels */
+    #addDSA label {
+        display: block;
+        margin-bottom: 6px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Inputs */
+    #addDSA .form-control,
+    #addDSA select.form-control {
+        height: 42px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        padding: 8px 12px;
+        font-size: 14px;
+        color: #334155;
+        background-color: #fff;
+        transition: all 0.2s ease;
+    }
+
+    #addDSA textarea.form-control {
+        height: auto;
+        min-height: 75px;
+        resize: vertical;
+    }
+
+    /* Focus */
+    #addDSA .form-control:focus,
+    #addDSA select.form-control:focus {
+        border-color: #1565C0;
+        box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.10);
+        outline: none;
+    }
+
+    /* Placeholder */
+    #addDSA .form-control::placeholder {
+        color: #94a3b8;
+    }
+
+    /* Password */
+    #addDSA .password-wrapper {
+        position: relative;
+    }
+
+    #addDSA .password-wrapper .form-control {
+        padding-right: 42px;
+    }
+
+    #addDSA .toggle-password {
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    #addDSA .toggle-password:hover {
+        color: #1565C0;
+    }
+
+    /* Error messages */
+    #addDSA small.text-danger {
+        display: block;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    /* Footer */
+    #addDSA .modal-footer {
+        border-top: 1px solid #e2e8f0;
+        padding: 15px 25px;
+        background: #f8fafc;
+        margin: 10px -25px 0;
+    }
+
+    #addDSA .modal-footer .btn {
+        min-width: 90px;
+        border-radius: 6px;
+        font-size: 14px;
+        padding: 8px 18px;
+    }
+
+    #addDSA .modal-footer .btn-primary {
+        background: #1565C0;
+        border-color: #1565C0;
+    }
+
+    #addDSA .modal-footer .btn-primary:hover {
+        background: #0d47a1;
+        border-color: #0d47a1;
+    }
+
+    #addDSA .modal-footer .btn-secondary {
+        background: #64748b;
+        border-color: #64748b;
+    }
+
+    /* Mobile */
+    @media (max-width: 767px) {
+
+        #addDSA .modal-body {
+            padding: 18px 15px 5px;
+        }
+
+        #addDSA .modal-header {
+            padding: 14px 15px;
+        }
+
+        #addDSA .modal-footer {
+            margin-left: -15px;
+            margin-right: -15px;
+            padding: 12px 15px;
+        }
+
+        #addDSA .modal-dialog {
+            margin: 10px;
+        }
+    }
+</style>
+
+
 <div class="modal fade" id="addDSA">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -491,85 +648,151 @@ body.modal-open {
                         <!-- NAME -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>Name</label>
-                            <input type="text" name="full_name" class="form-control" required>
+                            <input type="text"
+                                   name="full_name"
+                                   class="form-control"
+                                   required>
                         </div>
+
                         <input type="hidden" name="id" id="dsa_id">
 
                         <!-- EMAIL -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>Email</label>
-                            <input type="email" name="email_id" class="form-control" required>
-                           <small class="text-danger error-email_id"></small>
+                            <input type="email"
+                                   name="email_id"
+                                   class="form-control"
+                                   required>
+
+                            <small class="text-danger error-email_id"></small>
                         </div>
 
                         <!-- PASSWORD -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>Password</label>
-                            <input type="password" name="password" class="form-control">
+
+                            <div class="password-wrapper">
+                                <input type="password"
+                                       name="password"
+                                       id="dsaPassword"
+                                       class="form-control"
+                                       minlength="6"
+                                       autocomplete="new-password">
+
+                                <i class="fas fa-eye toggle-password"
+                                   id="toggleDsaPassword"
+                                   style="cursor:pointer;"></i>
+                            </div>
+
+                            <small class="text-danger error-password"></small>
                         </div>
 
                         <!-- MOBILE -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>Mobile</label>
-                            <input type="text" name="mobile_no" class="form-control" required>
-                             <small class="text-danger error-mobile_no"></small>
+                            <input type="text"
+                                   name="mobile_no"
+                                   class="form-control"
+                                   required>
+
+                            <small class="text-danger error-mobile_no"></small>
                         </div>
 
                         <!-- DOB -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>Date of Birth</label>
-                            <!-- DOB -->
-                            <input type="date" name="dob" class="form-control" required>
+
+                            <input type="date"
+                                   name="dob"
+                                   class="form-control"
+                                   required>
+
                             <small class="text-danger error-dob"></small>
                         </div>
 
                         <!-- PAN -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>PAN No</label>
-                            <input type="text" name="pan_no" class="form-control" required>
-                           <small class="text-danger error-pan_no"></small>
+
+                            <input type="text"
+                                   name="pan_no"
+                                   class="form-control"
+                                   required>
+
+                            <small class="text-danger error-pan_no"></small>
                         </div>
 
                         <!-- ADDRESS -->
                         <div class="form-group col-lg-12 mb-3">
                             <label>Address</label>
-                            <textarea name="address" class="form-control" rows="2" required></textarea>
+
+                            <textarea name="address"
+                                      class="form-control"
+                                      rows="2"
+                                      required></textarea>
                         </div>
 
                         <!-- STATE -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>State</label>
-                            <select name="state" id="state" class="form-control" required>
+
+                            <select name="state"
+                                    id="state"
+                                    class="form-control"
+                                    required>
+
                                 <option value="">-- Select State --</option>
+
                                 @foreach($states as $state)
-                                    <option value="{{ $state->id }}">{{ $state->name }}</option>
+                                    <option value="{{ $state->id }}">
+                                        {{ $state->name }}
+                                    </option>
                                 @endforeach
+
                             </select>
                         </div>
 
                         <!-- CITY -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>City</label>
-                            <select name="city" id="city" class="form-control" required>
+
+                            <select name="city"
+                                    id="city"
+                                    class="form-control"
+                                    required>
+
                                 <option value="">-- Select City --</option>
+
                             </select>
                         </div>
 
                         <!-- PINCODE -->
                         <div class="form-group col-lg-4 mb-3">
                             <label>Pincode</label>
-                            <!-- PINCODE -->
-<input type="text" name="pincode" class="form-control" required>
-<small class="text-danger error-pincode"></small>
+
+                            <input type="text"
+                                   name="pincode"
+                                   class="form-control"
+                                   required>
+
+                            <small class="text-danger error-pincode"></small>
                         </div>
 
-
-                   
+                    </div>
 
                     <!-- FOOTER -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">Save</button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Close
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-primary"
+                                id="submitBtn">
+                            Save
+                        </button>
                     </div>
 
                 </form>
@@ -1022,6 +1245,60 @@ $(document).ready(function(){
     // 🔍 CUSTOMER SEARCH
 $(document).on('keyup', '#customerSearch,#dsaSearchCustomer', function(){
     loadCustomers();
+});
+
+// ==========================================
+// DSA PASSWORD VALIDATION - MINIMUM 6 DIGITS
+// ==========================================
+
+$('input[name="password"]').on('input', function () {
+
+    let value = this.value;
+
+    // Maximum 6 characters if you want exactly 6?
+    // DO NOT use maxlength because requirement is minimum 6.
+    
+    if (value.length < 6) {
+
+        $('.error-password').text('Password must be at least 6 characters');
+
+        $(this).addClass('is-invalid');
+
+    } else {
+
+        $('.error-password').text('');
+
+        $(this).removeClass('is-invalid');
+    }
+
+});
+
+
+// ==========================================
+// PASSWORD SHOW / HIDE
+// ==========================================
+
+$('#toggleDsaPassword').on('click', function () {
+
+    let passwordInput = $('#dsaPassword');
+
+    if (passwordInput.attr('type') === 'password') {
+
+        passwordInput.attr('type', 'text');
+
+        $(this)
+            .removeClass('fa-eye')
+            .addClass('fa-eye-slash');
+
+    } else {
+
+        passwordInput.attr('type', 'password');
+
+        $(this)
+            .removeClass('fa-eye-slash')
+            .addClass('fa-eye');
+    }
+
 });
 </script>
 @endsection

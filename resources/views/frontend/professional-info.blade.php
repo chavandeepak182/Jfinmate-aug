@@ -351,17 +351,30 @@
                                             </div>
 
                                             <script>
-                                            document.getElementById('phone').addEventListener('input', function() {
-                                                const phone = this.value;
-                                                const errorSpan = document.getElementById('phone-error');
-                                                
-                                                if (phone.length > 0 && phone.length < 10) {
-                                                    errorSpan.textContent = 'Phone number must be 10 digits.';
-                                                } else {
-                                                    errorSpan.textContent = '';
-                                                }
-                                            });
-                                            </script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const phone = document.getElementById('phone');
+    const errorSpan = document.getElementById('phone-error');
+
+    if (!phone || !errorSpan) {
+        return;
+    }
+
+    phone.addEventListener('input', function () {
+
+        const value = this.value;
+
+        if (value.length > 0 && value.length < 10) {
+            errorSpan.textContent =
+                'Phone number must be 10 digits.';
+        } else {
+            errorSpan.textContent = '';
+        }
+
+    });
+
+});
+</script>
 
                                         {{-- <button type="button" class="btn btn-primary" id="fetchReportBtn">Fetch Credit Report</button> --}}
 
@@ -661,7 +674,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                             @enderror
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6" id="experience-field">
                                             <div class="form-floating">
                                                                                         <input type="number"
                                                 class="form-control"
@@ -682,7 +695,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                             @enderror
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6" id="designation-field">
                                             <div class="form-floating">
                                                 <input type="text"
                                                 class="form-control"
@@ -746,7 +759,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     <input type="number" class="form-control" id="selfincome"
                                                         name="selfincome"
                                                         value="{{ old('selfincome', $professional->selfincome ?? '') }}"
-                                                        placeholder="Total Income">
+                                                       placeholder="Revenue Yearly">
                                                     <label for="selfincome">Total Income <span
                                                             class="text-danger">*</span></label>
                                                 </div>
@@ -773,7 +786,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <div class="form-floating" id="selfincome">
                                                     <input type="number" class="form-control" id="selfincome"
                                                         name="selfincome" placeholder="Total Income">
-                                                    <label for="selfincome">Total Income <span
+                                                    <label for="selfincome">Revenue (Yearly) <span
                                                             class="text-danger">*</span></label>
                                                 </div>
                                             </div>
@@ -792,61 +805,101 @@ document.addEventListener("DOMContentLoaded", function () {
                                     </div>
                                 </fieldset>
 
-                               <script>
-                                    document.getElementById('submit-btn').addEventListener('click', function (e) {
-
-                                        const radios = document.querySelectorAll('input[name="profession_type"]');
-                                        const errorBox = document.getElementById('profession-error');
-
-                                        let selected = false;
-                                        radios.forEach(r => {
-                                            if (r.checked) selected = true;
-                                        });
-
-                                        if (!selected) {
-                                            e.preventDefault(); // ❌ form submit थांबवा
-                                            errorBox.style.display = 'block';
-                                        } else {
-                                            errorBox.style.display = 'none';
-                                        }
-                                    });
-                              </script>
-                              <script>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const inputs = document.querySelectorAll('input[name="business_establish_date"]');
+    const form = document.getElementById('loanForm');
 
-    inputs.forEach(function(input) {
+    if (!form) {
+        return;
+    }
 
-        function validateDate() {
+    form.addEventListener('submit', function (e) {
 
-            let selectedDate = input.value;
-            let today = new Date().toISOString().split("T")[0];
+        const radios =
+            document.querySelectorAll(
+                'input[name="profession_type"]'
+            );
 
-            // remove old error
-            let parent = input.closest('.col-md-6');
-            let oldError = parent.querySelector(".date-error");
-            if (oldError) oldError.remove();
+        const errorBox =
+            document.getElementById('profession-error');
 
-            if (selectedDate && selectedDate > today) {
+        let selected = false;
 
-                let error = document.createElement("div");
-                error.className = "text-danger date-error mt-1";
-                error.innerText = "Future date is not allowed";
+        radios.forEach(function (radio) {
 
-                parent.appendChild(error);
+            if (radio.checked) {
+                selected = true;
             }
+
+        });
+
+        // Profession validation
+        if (!selected) {
+
+            e.preventDefault();
+
+            if (errorBox) {
+                errorBox.style.display = 'block';
+            }
+
+            return;
         }
 
-        // 🔥 important: both events use kara
-        input.addEventListener("change", validateDate);
-        input.addEventListener("input", validateDate);
+        if (errorBox) {
+            errorBox.style.display = 'none';
+        }
+
+
+        // Business Establish Date validation
+        const dateInput =
+            document.getElementById(
+                'business_establish_date'
+            );
+
+        if (dateInput && dateInput.value) {
+
+            const today =
+                new Date()
+                .toISOString()
+                .split('T')[0];
+
+            if (dateInput.value > today) {
+
+                e.preventDefault();
+
+                let parent =
+                    dateInput.closest('.col-md-6');
+
+                if (parent) {
+
+                    let oldError =
+                        parent.querySelector('.date-error');
+
+                    if (oldError) {
+                        oldError.remove();
+                    }
+
+                    let error =
+                        document.createElement('span');
+
+                    error.className =
+                        'text-danger date-error';
+
+                    error.innerText =
+                        'Future date is not allowed';
+
+                    parent.appendChild(error);
+                }
+
+                return;
+            }
+        }
 
     });
 
 });
 </script>
-
                                 <!-- Upload Documents -->
                             @elseif ($currentStep == 3)
                                 <fieldset>
@@ -1508,41 +1561,272 @@ if ($user && $user instanceof \App\Models\User) {
             });
         }
 
-        // Attach this function to your form submission event
-        document.getElementById('your-form-id').addEventListener('submit', function(event) {
-            cleanEmptyLoanEntries(); // Clean empty loan entries before submitting the form
-        });
+      
     </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const salariedTab = document.getElementById('salariedTab');
-            const selfTab = document.getElementById('selfTab');
-            const businessEstablishDate = document.getElementById('business_establish_date').closest('.col-md-6');
-            const selfIncome = document.getElementById('selfincome').closest('.col-md-6');
-            const netSalary = document.getElementById('netsalary').closest('.col-md-6');
-            const grossSalary = document.getElementById('gross_salary').closest('.col-md-6');
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-            function toggleTextField() {
-                if (selfTab.checked) {
-                    businessEstablishDate.classList.remove('d-none');
-                    selfIncome.classList.remove('d-none');
-                    netSalary.classList.add('d-none');
-                    grossSalary.classList.add('d-none');
+    const form = document.getElementById('loanForm');
+    const salariedTab = document.getElementById('salariedTab');
+    const selfTab = document.getElementById('selfTab');
+
+    const experienceField = document.getElementById('experience-field');
+    const designationField = document.getElementById('designation-field');
+    const experienceInput = document.getElementById('experience_year');
+    const designationInput = document.getElementById('designation');
+
+    const netSalaryInput = document.querySelector('input[name="netsalary"]');
+    const grossSalaryInput = document.querySelector('input[name="gross_salary"]');
+    const selfIncomeInput = document.querySelector('input[name="selfincome"]');
+    const businessDateInput = document.querySelector('input[name="business_establish_date"]');
+
+    const netSalaryField = netSalaryInput ? netSalaryInput.closest('.col-md-6') : null;
+    const grossSalaryField = grossSalaryInput ? grossSalaryInput.closest('.col-md-6') : null;
+    const selfIncomeField = selfIncomeInput ? selfIncomeInput.closest('.col-md-6') : null;
+    const businessDateField = businessDateInput ? businessDateInput.closest('.col-md-6') : null;
+
+    function toggleProfessionFields() {
+        if (selfTab && selfTab.checked) {
+            // Hide salaried fields
+            if (experienceField) experienceField.classList.add('d-none');
+            if (designationField) designationField.classList.add('d-none');
+            if (netSalaryField) netSalaryField.classList.add('d-none');
+            if (grossSalaryField) grossSalaryField.classList.add('d-none');
+
+            // Show business fields
+            if (selfIncomeField) selfIncomeField.classList.remove('d-none');
+            if (businessDateField) businessDateField.classList.remove('d-none');
+
+            // Remove required from salaried fields & clear values
+            if (experienceInput) { experienceInput.required = false; experienceInput.value = ''; }
+            if (designationInput) { designationInput.required = false; designationInput.value = ''; }
+            if (netSalaryInput) { netSalaryInput.required = false; netSalaryInput.value = ''; }
+            if (grossSalaryInput) { grossSalaryInput.required = false; grossSalaryInput.value = ''; }
+
+            // Business fields required
+            if (selfIncomeInput) selfIncomeInput.required = true;
+            if (businessDateInput) businessDateInput.required = true;
+
+            // Remove validation errors
+            document.querySelectorAll('.salary-validation-error').forEach(el => el.remove());
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        } else if (salariedTab && salariedTab.checked) {
+            // Show salaried fields
+            if (experienceField) experienceField.classList.remove('d-none');
+            if (designationField) designationField.classList.remove('d-none');
+            if (netSalaryField) netSalaryField.classList.remove('d-none');
+            if (grossSalaryField) grossSalaryField.classList.remove('d-none');
+
+            // Hide business fields
+            if (selfIncomeField) selfIncomeField.classList.add('d-none');
+            if (businessDateField) businessDateField.classList.add('d-none');
+
+            // Salaried fields required
+            if (experienceInput) experienceInput.required = true;
+            if (designationInput) designationInput.required = true;
+            if (netSalaryInput) netSalaryInput.required = true;
+            if (grossSalaryInput) grossSalaryInput.required = true;
+
+            // Business fields not required and clear values
+            if (selfIncomeInput) { selfIncomeInput.required = false; selfIncomeInput.value = ''; }
+            if (businessDateInput) { businessDateInput.required = false; businessDateInput.value = ''; }
+        }
+    }
+
+    if (salariedTab) salariedTab.addEventListener('change', toggleProfessionFields);
+    if (selfTab) selfTab.addEventListener('change', toggleProfessionFields);
+    toggleProfessionFields();
+
+    // ==========================================
+    // SHOW ERROR FUNCTION
+    // ==========================================
+    function showError(input, message) {
+        if (!input) return;
+        const parent = input.closest('.col-md-6');
+        if (parent) {
+            const oldError = parent.querySelector('.salary-validation-error');
+            if (oldError) oldError.remove();
+        }
+        const error = document.createElement('div');
+        error.className = 'salary-validation-error text-danger mt-1';
+        error.style.fontSize = '13px';
+        error.innerText = message;
+        input.closest('.col-md-6').appendChild(error);
+        input.classList.add('is-invalid');
+    }
+
+    // ==========================================
+    // FORM SUBMIT - VALIDATE BASED ON PROFESSION
+    // ==========================================
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            const isSelfEmployed = selfTab && selfTab.checked;
+            const isSalaried = salariedTab && salariedTab.checked;
+
+            // Remove old errors
+            document.querySelectorAll('.salary-validation-error').forEach(el => el.remove());
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+            let hasError = false;
+
+            // ✅ Validate Self Employed fields
+            if (isSelfEmployed) {
+                const companyName = document.querySelector('input[name="company_name"]');
+                const industry = document.querySelector('input[name="industry"]');
+                const companyAddress = document.querySelector('input[name="company_address"]');
+
+                if (!companyName || !companyName.value.trim()) {
+                    showError(companyName, 'Company Name is required.');
+                    hasError = true;
+                }
+                if (!industry || !industry.value.trim()) {
+                    showError(industry, 'Nature of Business is required.');
+                    hasError = true;
+                }
+                if (!companyAddress || !companyAddress.value.trim()) {
+                    showError(companyAddress, 'Company Address is required.');
+                    hasError = true;
+                }
+                if (!selfIncomeInput || !selfIncomeInput.value.trim()) {
+                    showError(selfIncomeInput, 'Total Income is required.');
+                    hasError = true;
+                } else if (parseFloat(selfIncomeInput.value) <= 0) {
+                    showError(selfIncomeInput, 'Total Income must be greater than 0.');
+                    hasError = true;
+                }
+                if (!businessDateInput || !businessDateInput.value.trim()) {
+                    showError(businessDateInput, 'Business Establish Date is required.');
+                    hasError = true;
                 } else {
-                    businessEstablishDate.classList.add('d-none');
-                    selfIncome.classList.add('d-none');
-                    netSalary.classList.remove('d-none');
-                    grossSalary.classList.remove('d-none');
+                    const today = new Date().toISOString().split('T')[0];
+                    if (businessDateInput.value > today) {
+                        showError(businessDateInput, 'Future date is not allowed.');
+                        hasError = true;
+                    }
+                }
+
+                // Set default values for fields that backend expects but are hidden
+                if (experienceInput && !experienceInput.value.trim()) {
+                    experienceInput.value = '0';
+                }
+                if (designationInput && !designationInput.value.trim()) {
+                    designationInput.value = 'Self Employed';
                 }
             }
 
-            salariedTab.addEventListener('change', toggleTextField);
-            selfTab.addEventListener('change', toggleTextField);
+            // ✅ Validate Salaried fields
+            if (isSalaried) {
+                if (!experienceInput || !experienceInput.value.trim()) {
+                    showError(experienceInput, 'Experience Year is required.');
+                    hasError = true;
+                } else if (parseInt(experienceInput.value) < 0) {
+                    showError(experienceInput, 'Experience Year must be 0 or greater.');
+                    hasError = true;
+                }
+                if (!designationInput || !designationInput.value.trim()) {
+                    showError(designationInput, 'Designation is required.');
+                    hasError = true;
+                }
+                if (!netSalaryInput || !netSalaryInput.value.trim()) {
+                    showError(netSalaryInput, 'Net Salary is required.');
+                    hasError = true;
+                } else if (parseFloat(netSalaryInput.value) <= 0) {
+                    showError(netSalaryInput, 'Net Salary must be greater than 0.');
+                    hasError = true;
+                }
+                if (!grossSalaryInput || !grossSalaryInput.value.trim()) {
+                    showError(grossSalaryInput, 'Gross Salary is required.');
+                    hasError = true;
+                } else if (parseFloat(grossSalaryInput.value) <= 0) {
+                    showError(grossSalaryInput, 'Gross Salary must be greater than 0.');
+                    hasError = true;
+                }
+                if (netSalaryInput && grossSalaryInput && 
+                    netSalaryInput.value.trim() && grossSalaryInput.value.trim()) {
+                    const net = parseFloat(netSalaryInput.value);
+                    const gross = parseFloat(grossSalaryInput.value);
+                    if (net > gross) {
+                        showError(netSalaryInput, 'Net Salary cannot be greater than Gross Salary.');
+                        hasError = true;
+                    }
+                }
+                if (selfIncomeInput) selfIncomeInput.required = false;
+                if (businessDateInput) businessDateInput.required = false;
+            }
 
-            toggleTextField(); // Ensure correct fields are visible on page load
+            if (hasError) {
+                e.preventDefault();
+                const firstError = document.querySelector('.salary-validation-error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         });
-    </script>
+    }
+
+    // ==========================================
+    // LIVE VALIDATION - ONLY FOR SALARIED
+    // ==========================================
+    function validateSalary() {
+        document.querySelectorAll('.salary-validation-error').forEach(el => el.remove());
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+        // ONLY validate if Salaried is selected
+        if (!salariedTab || !salariedTab.checked) {
+            return true;
+        }
+        if (!netSalaryInput || !grossSalaryInput) {
+            return true;
+        }
+
+        let valid = true;
+
+        if (netSalaryInput.value.trim() && parseFloat(netSalaryInput.value) <= 0) {
+            showError(netSalaryInput, 'Net Salary must be greater than 0.');
+            valid = false;
+        }
+        if (grossSalaryInput.value.trim() && parseFloat(grossSalaryInput.value) <= 0) {
+            showError(grossSalaryInput, 'Gross Salary must be greater than 0.');
+            valid = false;
+        }
+        if (netSalaryInput.value.trim() && grossSalaryInput.value.trim()) {
+            const net = parseFloat(netSalaryInput.value);
+            const gross = parseFloat(grossSalaryInput.value);
+            if (net > gross) {
+                showError(netSalaryInput, 'Net Salary cannot be greater than Gross Salary.');
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    if (netSalaryInput) {
+        netSalaryInput.addEventListener('input', function() {
+            if (this.value < 0) this.value = '';
+            if (salariedTab && salariedTab.checked) {
+                validateSalary();
+            } else {
+                document.querySelectorAll('.salary-validation-error').forEach(el => el.remove());
+                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            }
+        });
+    }
+
+    if (grossSalaryInput) {
+        grossSalaryInput.addEventListener('input', function() {
+            if (this.value < 0) this.value = '';
+            if (salariedTab && salariedTab.checked) {
+                validateSalary();
+            } else {
+                document.querySelectorAll('.salary-validation-error').forEach(el => el.remove());
+                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            }
+        });
+    }
+
+});
+</script>
 
 
 
@@ -1731,6 +2015,214 @@ $(document).ready(function () {
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const form = document.getElementById('loanForm');
+
+    const salariedTab = document.getElementById('salariedTab');
+    const selfTab = document.getElementById('selfTab');
+
+    // Get actual INPUT elements by name
+    const netSalary = document.querySelector('input[name="netsalary"]');
+    const grossSalary = document.querySelector('input[name="gross_salary"]');
+
+    if (!form || !netSalary || !grossSalary) {
+        return;
+    }
+
+    // ==============================
+    // CREATE ERROR MESSAGE
+    // ==============================
+
+    function showError(input, message) {
+
+        // Remove old error
+        removeError(input);
+
+        const error = document.createElement('div');
+        error.className = 'salary-validation-error text-danger mt-1';
+        error.style.fontSize = '13px';
+        error.innerText = message;
+
+        input.closest('.col-md-6').appendChild(error);
+
+        input.classList.add('is-invalid');
+    }
+
+
+    function removeError(input) {
+
+        const parent = input.closest('.col-md-6');
+
+        if (parent) {
+            const oldError = parent.querySelector(
+                '.salary-validation-error'
+            );
+
+            if (oldError) {
+                oldError.remove();
+            }
+        }
+
+        input.classList.remove('is-invalid');
+    }
+
+
+    // ==============================
+    // VALIDATE SALARY
+    // ==============================
+
+    function validateSalary() {
+
+        // Clear previous errors
+        removeError(netSalary);
+        removeError(grossSalary);
+
+        // If Self Employed / Business
+        // salary validation is NOT required
+        if (selfTab && selfTab.checked) {
+            return true;
+        }
+
+        // Only Salaried validation
+        if (!salariedTab || !salariedTab.checked) {
+            return true;
+        }
+
+        const netValue = netSalary.value.trim();
+        const grossValue = grossSalary.value.trim();
+
+        let valid = true;
+
+        // ==============================
+        // NET SALARY REQUIRED
+        // ==============================
+
+        if (netValue === '') {
+
+            showError(
+                netSalary,
+                'Net Salary is required.'
+            );
+
+            valid = false;
+
+        } else if (parseFloat(netValue) <= 0) {
+
+            showError(
+                netSalary,
+                'Net Salary must be greater than 0.'
+            );
+
+            valid = false;
+        }
+
+
+        // ==============================
+        // GROSS SALARY REQUIRED
+        // ==============================
+
+        if (grossValue === '') {
+
+            showError(
+                grossSalary,
+                'Gross Salary is required.'
+            );
+
+            valid = false;
+
+        } else if (parseFloat(grossValue) <= 0) {
+
+            showError(
+                grossSalary,
+                'Gross Salary must be greater than 0.'
+            );
+
+            valid = false;
+        }
+
+
+        // ==============================
+        // NET <= GROSS
+        // ==============================
+
+        if (
+            netValue !== '' &&
+            grossValue !== '' &&
+            parseFloat(netValue) > 0 &&
+            parseFloat(grossValue) > 0
+        ) {
+
+            const net = parseFloat(netValue);
+            const gross = parseFloat(grossValue);
+
+            if (net > gross) {
+
+                showError(
+                    netSalary,
+                    'Net Salary cannot be greater than Gross Salary.'
+                );
+
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+
+
+    // ==============================
+    // LIVE VALIDATION
+    // ==============================
+
+    netSalary.addEventListener('input', function () {
+
+        // Remove negative values
+        if (this.value < 0) {
+            this.value = '';
+        }
+
+        validateSalary();
+    });
+
+
+    grossSalary.addEventListener('input', function () {
+
+        // Remove negative values
+        if (this.value < 0) {
+            this.value = '';
+        }
+
+        validateSalary();
+    });
+
+
+    // ==============================
+    // FORM SUBMIT VALIDATION
+    // ==============================
+
+    form.addEventListener('submit', function (e) {
+
+        if (!validateSalary()) {
+
+            e.preventDefault();
+
+            // Scroll to salary section
+            const firstError =
+                document.querySelector('.salary-validation-error');
+
+            if (firstError) {
+                firstError.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
+
+    });
+
+});
+</script>
 
 @endsection

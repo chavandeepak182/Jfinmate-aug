@@ -9,6 +9,164 @@
 
 
 <style>
+
+    /* ==============================
+   ADD USER MODAL - UI ONLY
+   ============================== */
+
+#addUserView .modal-content {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Header */
+#addUserView .modal-header {
+    padding: 16px 22px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+#addUserView .modal-title {
+    margin: 0;
+    color: #1565C0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+#addUserView .btn-close {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+#addUserView .btn-close:hover {
+    opacity: 1;
+}
+
+/* Body */
+#addUserView .modal-body {
+    padding: 22px 25px 10px;
+}
+
+/* Form spacing */
+#addUserView .form-group {
+    margin-bottom: 18px;
+}
+
+/* Labels */
+#addUserView .col-form-label,
+#addUserView label {
+    display: block;
+    margin-bottom: 6px;
+    padding-top: 0;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Inputs and Select */
+#addUserView .form-control {
+    width: 100%;
+    height: 42px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+/* Focus */
+#addUserView .form-control:focus {
+    border-color: #1565C0;
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.10);
+    outline: none;
+}
+
+/* Readonly field */
+#addUserView .form-control[readonly] {
+    background: #f8fafc;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+/* Select */
+#addUserView select.form-control {
+    cursor: pointer;
+}
+
+/* Placeholder */
+#addUserView .form-control::placeholder {
+    color: #9ca3af;
+}
+
+/* Footer */
+#addUserView .modal-footer {
+    margin-top: 8px;
+    padding: 15px 25px;
+    background: #f8fafc;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Buttons */
+#addUserView .modal-footer .btn {
+    min-width: 90px;
+    padding: 8px 18px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Close */
+#addUserView .modal-footer .btn-secondary {
+    background: #64748b;
+    border-color: #64748b;
+}
+
+#addUserView .modal-footer .btn-secondary:hover {
+    background: #475569;
+    border-color: #475569;
+}
+
+/* Save */
+#addUserView .modal-footer .btn-primary {
+    background: #1565C0;
+    border-color: #1565C0;
+}
+
+#addUserView .modal-footer .btn-primary:hover {
+    background: #0d47a1;
+    border-color: #0d47a1;
+}
+
+/* Row spacing */
+#addUserView .row {
+    margin-bottom: 2px;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+
+    #addUserView .modal-dialog {
+        margin: 10px;
+    }
+
+    #addUserView .modal-body {
+        padding: 18px 15px 5px;
+    }
+
+    #addUserView .modal-header {
+        padding: 14px 16px;
+    }
+
+    #addUserView .modal-footer {
+        padding: 13px 15px;
+    }
+
+}
 .analytics-card {
     background: #ffffff;
     border-radius: 18px;

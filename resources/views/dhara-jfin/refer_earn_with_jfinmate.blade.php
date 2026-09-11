@@ -1,1006 +1,3188 @@
-@section('title', 'About Us')
-@section('content')
 @include('dhara-jfin.layout.header')
-
   <style>
-    /* Hero Section */
-#home.hero {
-    width: 104%;
-    margin-left: -2%;
+        /* ----- RESET & BASE ----- */
+       
+        .jf-modern {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        .jf-container {
+            width: min(1180px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+        /* buttons & common */
+        .jf-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: 0.2s;
+            border: 2px solid transparent;
+            cursor: pointer;
+            min-height: 50px;
+        }
+        .jf-btn-primary {
+            background: #1769e0;
+            color: #fff;
+            border-color: #1769e0;
+        }
+        .jf-btn-primary:hover {
+            background: #0d4fb3;
+            border-color: #0d4fb3;
+        }
+        .jf-btn-outline {
+            background: transparent;
+            color: #071b33;
+            border-color: #cbd9e8;
+        }
+        .jf-btn-outline:hover {
+            border-color: #1769e0;
+            color: #1769e0;
+            background: #f2f8ff;
+        }
+        .jf-footnote {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 20px;
+        }
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #1769e0;
+            background: #eaf3ff;
+            padding: 6px 14px;
+            border-radius: 40px;
+        }
+
+        /* =========================================================
+           JFINMATE HERO BANNER - DESKTOP / TABLET / MOBILE
+           ========================================================= */
+
+        #home.hero {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #home .hero-slider {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+        #home .hero-slider .slide {
+            width: 100%;
+            height: 78vh;
+            min-height: 600px;
+            max-height: 800px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+
+        #home .hero-slider .slide::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0.96) 0%,
+                rgba(255,255,255,0.88) 28%,
+                rgba(255,255,255,0.48) 55%,
+                rgba(255,255,255,0.10) 78%,
+                rgba(255,255,255,0) 100%
+            );
+        }
+
+        #home .hero-content {
+            width: min(1180px, calc(100% - 40px));
+            height: 100%;
+            margin: 0 auto;
+            padding: 50px 0;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
+            box-sizing: border-box;
+        }
+
+        #home .hero-intro {
+            display: block;
+            margin: 0 0 14px;
+            color: #295cab;
+            font-size: 15px;
+            line-height: 1.4;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        #home .hero-content h1 {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 0 20px;
+            color: #1a1a2e;
+            font-size: clamp(42px, 5vw, 68px);
+            line-height: 1.08;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        #home .hero-content h1 span {
+            color: #295cab !important;
+        }
+
+        #home .hero-content > p {
+            width: 100%;
+            max-width: 650px;
+            margin: 0 0 30px;
+            color: #4a5568;
+            font-size: 17px;
+            line-height: 1.75;
+        }
+
+        #home .hero-btns {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 14px;
+            width: auto;
+        }
+
+        #home .hero-btns .btn {
+            min-height: 52px;
+            padding: 13px 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: all 0.25s ease;
+        }
+
+        #home .hero-btns .btn-primary-hero {
+            background: #295cab;
+            color: #ffffff;
+            border: 2px solid #295cab;
+        }
+
+        #home .hero-btns .btn-primary-hero:hover {
+            background: #1e4789;
+            border-color: #1e4789;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        #home .hero-btns .btn-outline {
+            background: rgba(255,255,255,0.92);
+            color: #295cab;
+            border: 2px solid #295cab;
+        }
+
+        #home .hero-btns .btn-outline:hover {
+            background: #295cab;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* TABLET */
+        @media (max-width: 991px) {
+            #home .hero-slider .slide {
+                height: 620px;
+                min-height: 620px;
+            }
+
+            #home .hero-content {
+                width: min(100% - 50px, 760px);
+            }
+
+            #home .hero-content h1 {
+                max-width: 620px;
+                font-size: clamp(40px, 6vw, 56px);
+            }
+
+            #home .hero-content > p {
+                max-width: 580px;
+                font-size: 16px;
+            }
+        }
+
+        /* MOBILE */
+      /* =========================================================
+   HERO - MOBILE FIX
+   ========================================================= */
+
+
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    #home .hero-slider .slide {
+        min-height: 590px;
+        height: 590px;
+
+        /*
+         * More right-side image visible.
+         */
+        background-size: auto 100%;
+        background-position: 92% center;
+    }
+
+    #home .hero-content {
+        min-height: 590px;
+        height: 590px;
+
+        padding: 40px 10px;
+    }
+
+    #home .hero-intro {
+        font-size: 10px;
+        letter-spacing: 1.2px;
+    }
+
+    #home .hero-content h1 {
+        width: 72%;
+        max-width: 300px;
+
+        font-size: 29px;
+        line-height: 1.15;
+    }
+
+    #home .hero-content > p {
+        width: 69%;
+        max-width: 300px;
+
+        font-size: 12.5px;
+        line-height: 1.6;
+    }
+
+    #home .hero-btns {
+        width: 65%;
+        max-width: 285px;
+    }
+
+    #home .hero-btns .btn {
+        min-height: 50px;
+        font-size: 13px;
+    }
+}
+        /* SMALL MOBILE */
+        @media (max-width: 480px) {
+            #home .hero-slider .slide {
+                min-height: 590px;
+                background-position: 68% center;
+            }
+
+            #home .hero-content {
+                min-height: 590px;
+                padding: 45px 16px;
+            }
+
+            #home .hero-intro {
+                font-size: 10px;
+                letter-spacing: 1.2px;
+            }
+
+            #home .hero-content h1 {
+                font-size: 30px;
+                line-height: 1.15;
+            }
+
+            #home .hero-content > p {
+                font-size: 13px;
+                line-height: 1.65;
+            }
+
+            #home .hero-btns {
+                max-width: 310px;
+            }
+
+            #home .hero-btns .btn {
+                min-height: 48px;
+                font-size: 13px;
+            }
+        }
+
+        /* ===== OTHER SECTIONS (JFINMATE MODERN) ===== */
+        :root {
+            --jf-navy: #071b33;
+            --jf-blue: #1769e0;
+            --jf-blue-dark: #0d4fb3;
+            --jf-sky: #eaf3ff;
+            --jf-light: #f6f9fd;
+            --jf-text: #26364a;
+            --jf-muted: #718096;
+            --jf-border: #e3ebf5;
+            --jf-white: #ffffff;
+            --jf-success: #18a66b;
+        }
+
+        .jf-modern .jf-section-heading {
+            max-width: 700px;
+            margin: 0 auto 55px;
+            text-align: center;
+        }
+        .jf-modern .jf-section-heading h2 {
+            font-size: clamp(30px, 4vw, 44px);
+            font-weight: 800;
+            color: var(--jf-navy);
+            margin: 15px 0;
+        }
+        .jf-modern .jf-section-heading p {
+            color: var(--jf-muted);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        /* why */
+        .jf-why {
+            padding: 100px 0;
+            background: var(--jf-light);
+            position: relative;
+        }
+        .jf-why-wrap {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 70px;
+            align-items: center;
+        }
+        .jf-why-content h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            color: var(--jf-navy);
+            line-height: 1.12;
+            margin: 20px 0 20px;
+        }
+        .jf-why-content h2 span { color: var(--jf-blue); }
+        .jf-why-content p {
+            color: var(--jf-muted);
+            line-height: 1.85;
+            margin-bottom: 16px;
+        }
+        .jf-why-points {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 14px;
+            margin-top: 30px;
+        }
+        .jf-why-point {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--jf-navy);
+            font-size: 0.9rem;
+        }
+        .jf-why-point i {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e4f7ef;
+            color: var(--jf-success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .jf-reward-box {
+            background: var(--jf-navy);
+            border-radius: 35px;
+            padding: 45px;
+            color: #fff;
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .jf-reward-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+        .jf-reward-box h3 {
+            font-size: 28px;
+            line-height: 1.2;
+            margin: 30px 0 12px;
+        }
+        .jf-reward-box p { color: rgba(255,255,255,0.7); }
+        .jf-reward-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1769e0;
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            width: fit-content;
+        }
+
+        /* journey */
+        .jf-journey {
+            padding: 100px 0;
+            background: #fff;
+        }
+        .jf-journey-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 25px;
+        }
+        .jf-journey-card {
+            border: 1px solid var(--jf-border);
+            border-radius: 28px;
+            padding: 38px;
+            background: #fff;
+            transition: 0.25s;
+            position: relative;
+        }
+        .jf-journey-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 25px 60px rgba(17,51,89,0.08);
+            border-color: #cfe1fa;
+        }
+        .jf-card-number {
+            position: absolute;
+            right: 25px;
+            top: 20px;
+            font-size: 70px;
+            font-weight: 900;
+            color: #f1f6fc;
+            line-height: 1;
+        }
+        .jf-journey-icon {
+            width: 62px;
+            height: 62px;
+            border-radius: 18px;
+            background: #eaf3ff;
+            color: var(--jf-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            margin-bottom: 25px;
+        }
+        .jf-journey-card h3 {
+            font-size: 25px;
+            color: var(--jf-navy);
+            margin-bottom: 14px;
+        }
+        .jf-journey-card > p { color: var(--jf-muted); }
+        .jf-benefits {
+            list-style: none;
+            margin: 25px 0 30px;
+        }
+        .jf-benefits li {
+            display: flex;
+            gap: 11px;
+            margin-bottom: 12px;
+            color: #44556b;
+            font-size: 0.9rem;
+        }
+        .jf-benefits li i { color: var(--jf-success); margin-top: 3px; }
+
+        /* process */
+        .jf-process {
+            padding: 100px 0;
+            background: var(--jf-navy);
+            color: #fff;
+        }
+        .jf-process .eyebrow {
+            background: rgba(255,255,255,0.09);
+            color: #8ebfff;
+        }
+        .jf-process .jf-section-heading h2 { color: #fff; }
+        .jf-process .jf-section-heading p { color: rgba(255,255,255,0.6); }
+        .jf-process-intro {
+            max-width: 900px;
+            margin: 0 auto 65px;
+            padding: 28px 32px;
+            border-left: 3px solid var(--jf-blue);
+            background: rgba(255,255,255,0.05);
+            border-radius: 0 16px 16px 0;
+        }
+        .jf-process-intro p { color: rgba(255,255,255,0.72); }
+        .jf-steps {
+            display: grid;
+            grid-template-columns: repeat(5,1fr);
+            gap: 20px;
+        }
+        .jf-step-number {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #1769e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            box-shadow: 0 0 0 8px rgba(23,105,224,0.12);
+        }
+        .jf-step h4 { color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
+        .jf-step p { color: rgba(255,255,255,0.55); font-size: 0.85rem; }
+
+        /* prefer */
+        .jf-prefer {
+            padding: 100px 0;
+            background: var(--jf-light);
+        }
+        .jf-prefer-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 15px;
+        }
+        .jf-prefer-item {
+            background: #fff;
+            border: 1px solid var(--jf-border);
+            border-radius: 18px;
+            padding: 25px 20px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+            transition: 0.2s;
+        }
+        .jf-prefer-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(17,51,89,0.06);
+        }
+        .jf-prefer-item i { font-size: 24px; color: var(--jf-blue); }
+        .jf-prefer-item span { font-weight: 700; color: var(--jf-navy); }
+
+        /* faq */
+        .jf-faq {
+            padding: 100px 0;
+            background: #fff;
+        }
+        .jf-faq-layout {
+            display: grid;
+            grid-template-columns: 0.7fr 1.3fr;
+            gap: 70px;
+            align-items: start;
+        }
+        .jf-faq-side h2 {
+            font-size: 38px;
+            color: var(--jf-navy);
+            margin: 14px 0;
+        }
+        .jf-faq-side p { color: var(--jf-muted); }
+        .jf-faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .jf-faq-item {
+            border: 1px solid var(--jf-border);
+            border-radius: 15px;
+            padding: 20px 23px;
+            background: #fff;
+        }
+        .jf-faq-item h4 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--jf-navy);
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .jf-faq-item h4 i { color: var(--jf-blue); }
+        .jf-faq-item p {
+            color: var(--jf-muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-left: 27px;
+        }
+
+        /* final cta */
+        .jf-final {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #071b33 0%, #0c3565 100%);
+            color: #fff;
+            text-align: center;
+        }
+        .jf-final-content .eyebrow {
+            background: rgba(255,255,255,0.08);
+            color: #86b9ff;
+        }
+        .jf-final-content h2 {
+            font-size: clamp(32px,5vw,52px);
+            margin: 16px 0;
+        }
+        .jf-final-content p { color: rgba(255,255,255,0.7); max-width: 650px; margin: 0 auto; }
+        .jf-final-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 30px;
+        }
+        .jf-final .jf-btn-primary {
+            background: #fff;
+            color: var(--jf-navy);
+            border-color: #fff;
+        }
+        .jf-final .jf-btn-primary:hover { background: #eaf3ff; }
+        .jf-final .jf-btn-outline {
+            border-color: rgba(255,255,255,0.25);
+            color: #fff;
+        }
+        .jf-final .jf-btn-outline:hover { background: rgba(255,255,255,0.1); }
+        .jf-brand-line {
+            margin-top: 40px !important;
+            opacity: 0.5;
+            font-size: 0.9rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 991px) {
+            .jf-why-wrap, .jf-faq-layout {
+                grid-template-columns: 1fr;
+                gap: 45px;
+            }
+            .jf-steps { grid-template-columns: repeat(2,1fr); }
+            .jf-prefer-grid { grid-template-columns: repeat(2,1fr); }
+            .jf-faq-side { text-align: center; }
+        }
+        @media (max-width: 767px) {
+            .jf-why, .jf-journey, .jf-process, .jf-prefer, .jf-faq, .jf-final {
+                padding: 70px 0;
+            }
+            .jf-journey-grid { grid-template-columns: 1fr; }
+            .jf-why-points { grid-template-columns: 1fr; }
+            .jf-steps { grid-template-columns: 1fr; }
+            .jf-step {
+                display: grid;
+                grid-template-columns: 55px 1fr;
+                gap: 12px;
+            }
+            .jf-step-number { grid-row: span 2; margin: 0; }
+            .jf-faq-item p { margin-left: 0; margin-top: 8px; }
+            .jf-prefer-grid { grid-template-columns: 1fr 1fr; }
+            .jf-final-buttons { flex-direction: column; align-items: center; }
+            .jf-final-buttons .jf-btn { width: 100%; max-width: 340px; }
+        }
+        @media (max-width: 480px) {
+            .jf-prefer-grid { grid-template-columns: 1fr; }
+            .jf-reward-box { padding: 28px; }
+            .jf-journey-card { padding: 24px 20px; }
+        }
+
+        /* =========================================================
+   JFINMATE HERO
+   DESKTOP + TABLET + MOBILE
+   ========================================================= */
+
+.jf-hero {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    background: #eef6ff;
+}
+
+.jf-hero-inner {
+    width: 100%;
+    min-height: 680px;
+    height: 680px;
+
+    position: relative;
+    overflow: hidden;
+
+    background: #eef6ff;
+}
+
+
+/* =========================================================
+   HERO IMAGE
+   ========================================================= */
+
+.jf-hero-image {
+    position: absolute;
+
+    width: auto;
+    height: 100%;
+
+    max-width: none;
+
+    right: 0;
+    top: 0;
+
+    object-fit: contain;
+    object-position: right center;
+
+    z-index: 1;
+
+    display: block;
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
+
+.jf-hero-overlay {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 68%;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    background: linear-gradient(
+        90deg,
+        rgba(238,246,255,1) 0%,
+        rgba(238,246,255,0.98) 30%,
+        rgba(238,246,255,0.85) 52%,
+        rgba(238,246,255,0.35) 78%,
+        rgba(238,246,255,0) 100%
+    );
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.jf-hero-container {
+    width: 100%;
+    max-width: 1200px;
+
+    height: 100%;
+
+    margin: 0 auto;
+
+    padding: 0 25px;
+
+    position: relative;
+
+    z-index: 3;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.jf-hero-content {
+    width: 55%;
+    max-width: 650px;
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    text-align: left;
+}
+
+
+/* =========================================================
+   INTRO
+   ========================================================= */
+
+.jf-hero-intro {
+    margin: 0 0 14px;
+
+    color: #295cab;
+
+    font-size: 15px;
+
+    line-height: 1.4;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.jf-hero-content h1 {
+    margin: 0 0 20px;
+
+    max-width: 650px;
+
+    color: #101828;
+
+    font-size: clamp(42px, 5vw, 68px);
+
+    line-height: 1.08;
+
+    font-weight: 800;
+
+    letter-spacing: -1.5px;
+}
+
+.jf-hero-content h1 span {
+    color: #295cab;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.jf-hero-content p {
+    margin: 0 0 30px;
+
+    max-width: 600px;
+
+    color: #4a5568;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.jf-hero-buttons {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 14px;
+
+    flex-wrap: wrap;
+}
+
+
+.jf-btn {
+    min-height: 52px;
+
+    padding: 13px 27px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    box-sizing: border-box;
+
+    transition: all 0.25s ease;
+}
+
+
+/* PRIMARY BUTTON */
+
+.jf-btn-primary {
+    color: #ffffff;
+
+    background: #4d62d8;
+
+    border: 2px solid #4d62d8;
+}
+
+.jf-btn-primary:hover {
+    color: #ffffff;
+
+    background: #354bc5;
+
+    border-color: #354bc5;
+
+    transform: translateY(-2px);
+}
+
+
+/* OUTLINE BUTTON */
+
+.jf-btn-outline {
+    color: #4d62d8;
+
+    background: rgba(255,255,255,0.95);
+
+    border: 2px solid #4d62d8;
+}
+
+.jf-btn-outline:hover {
+    color: #ffffff;
+
+    background: #4d62d8;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 991px) {
+
+    .jf-hero-inner {
+        height: 620px;
+
+        min-height: 620px;
+    }
+
+    .jf-hero-image {
+        height: 100%;
+
+        right: -40px;
+    }
+
+    .jf-hero-overlay {
+        width: 72%;
+    }
+
+    .jf-hero-container {
+        padding: 0 25px;
+    }
+
+    .jf-hero-content {
+        width: 60%;
+    }
+
+    .jf-hero-content h1 {
+        font-size: 48px;
+    }
+
+    .jf-hero-content p {
+        font-size: 15px;
+
+        max-width: 520px;
+    }
+
+    .jf-btn {
+        padding: 12px 22px;
+
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+/* =========================================================
+   JFINMATE HERO - MOBILE FINAL
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .jf-hero {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .jf-hero-inner {
+        width: 100%;
+        height: 650px;
+        min-height: 650px;
+        position: relative;
+        overflow: hidden;
+        background: #eef6ff;
+    }
+
+
+    /* =====================================================
+       IMAGE
+       ===================================================== */
+
+    .jf-hero-image {
+        position: absolute;
+
+        height: 100%;
+        width: auto;
+        max-width: none;
+
+        top: 0;
+
+        /*
+         * Keep image on right.
+         */
+        right: -85px;
+
+        object-fit: contain;
+        object-position: right center;
+
+        z-index: 1;
+
+        display: block;
+    }
+
+
+    /* =====================================================
+       IMAGE OVERLAY
+       ===================================================== */
+
+    .jf-hero-overlay {
+        position: absolute;
+
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        z-index: 2;
+
+        pointer-events: none;
+
+        background: linear-gradient(
+            90deg,
+            rgba(238,246,255,0.99) 0%,
+            rgba(238,246,255,0.97) 32%,
+            rgba(238,246,255,0.82) 48%,
+            rgba(238,246,255,0.45) 65%,
+            rgba(238,246,255,0.08) 100%
+        );
+    }
+
+
+    /* =====================================================
+       CONTAINER
+       ===================================================== */
+
+    .jf-hero-container {
+        width: 100%;
+        height: 100%;
+
+        margin: 0;
+        padding: 0 5px;
+
+        position: relative;
+        z-index: 3;
+
+        box-sizing: border-box;
+    }
+
+
+    /* =====================================================
+       CONTENT
+       ===================================================== */
+
+    .jf-hero-content {
+
+        width: 68%;
+        max-width: 345px;
+
+        height: 100%;
+
+        margin: 0;
+
+        display: flex;
+        flex-direction: column;
+
+        justify-content: center;
+        align-items: flex-start;
+
+        text-align: left;
+    }
+
+
+    /* =====================================================
+       INTRO
+       ===================================================== */
+
+    .jf-hero-intro {
+
+        width: 100%;
+
+        margin: 0 0 13px;
+
+        font-size: 11px;
+        line-height: 1.4;
+
+        letter-spacing: 1.4px;
+
+        color: #295cab;
+
+        font-weight: 800;
+
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       HEADING
+       ===================================================== */
+
+    .jf-hero-content h1 {
+
+        width: 100%;
+        max-width: 340px;
+
+        margin: 0 0 18px;
+
+        font-size: 30px;
+        line-height: 1.13;
+
+        letter-spacing: -0.5px;
+
+        color: #101828;
+    }
+
+    .jf-hero-content h1 span {
+        color: #295cab !important;
+    }
+
+
+    /* =====================================================
+       DESCRIPTION
+       ===================================================== */
+
+    .jf-hero-content p {
+
+        width: 100%;
+        max-width: 335px;
+
+        margin: 0 0 25px;
+
+        font-size: 13px;
+        line-height: 1.65;
+
+        color: #526174;
+    }
+
+
+    /* =====================================================
+       BUTTON AREA
+       ===================================================== */
+
+    .jf-hero-buttons {
+
+        width: 100%;
+        max-width: 285px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 10px;
+    }
+
+
+    /* =====================================================
+       BUTTON
+       ===================================================== */
+
+    .jf-btn {
+
+        width: 100%;
+
+        min-height: 52px;
+
+        padding: 12px 10px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        box-sizing: border-box;
+
+        border-radius: 10px;
+
+        font-size: 14px;
+
+        line-height: 1.25;
+
+        text-align: center;
+    }
+
+
+    .jf-btn-primary {
+
+        background: #4d62d8;
+
+        color: #ffffff;
+
+        border: 2px solid #4d62d8;
+    }
+
+
+    .jf-btn-outline {
+
+        background: rgba(255,255,255,0.96);
+
+        color: #4d62d8;
+
+        border: 2px solid #4d62d8;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE - 480px
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .jf-hero-inner {
+
+        height: 590px;
+        min-height: 590px;
+    }
+
+
+    .jf-hero-image {
+
+        height: 590px;
+
+        /*
+         * Move image further right.
+         */
+        right: -100px;
+    }
+
+
+    .jf-hero-content {
+
+        width: 69%;
+        max-width: 300px;
+    }
+
+
+    .jf-hero-intro {
+
+        font-size: 9px;
+
+        letter-spacing: 1.1px;
+
+        margin-bottom: 10px;
+    }
+
+
+    .jf-hero-content h1 {
+
+        font-size: 28px;
+
+        line-height: 1.14;
+
+        margin-bottom: 15px;
+    }
+
+
+    .jf-hero-content p {
+
+        font-size: 12px;
+
+        line-height: 1.6;
+
+        margin-bottom: 20px;
+    }
+
+
+    .jf-hero-buttons {
+
+        max-width: 270px;
+
+        gap: 9px;
+    }
+
+
+    .jf-btn {
+
+        min-height: 49px;
+
+        font-size: 13px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .jf-hero-inner {
+
+        height: 590px;
+
+        min-height: 590px;
+    }
+
+
+    .jf-hero-image {
+
+        height: 590px;
+
+        right: -65px;
+    }
+
+
+    .jf-hero-content {
+
+        width: 68%;
+
+        max-width: 300px;
+    }
+
+
+    .jf-hero-intro {
+
+        font-size: 9px;
+
+        letter-spacing: 1.1px;
+
+        margin-bottom: 10px;
+    }
+
+
+    .jf-hero-content h1 {
+
+        font-size: 28px;
+
+        line-height: 1.14;
+
+        margin-bottom: 15px;
+    }
+
+
+    .jf-hero-content p {
+
+        font-size: 12px;
+
+        line-height: 1.6;
+
+        margin-bottom: 20px;
+    }
+
+
+    .jf-hero-buttons {
+
+        max-width: 275px;
+
+        gap: 9px;
+    }
+
+
+    .jf-btn {
+
+        min-height: 49px;
+
+        font-size: 13px;
+
+        padding: 11px 10px;
+    }
+}
+
+/* =========================================================
+   MOBILE ONLY - FINAL FIX
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    /* BUTTONS ONE BELOW ANOTHER */
+    .jf-clean-buttons {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+
+        width: 100% !important;
+        gap: 8px !important;
+
+        position: relative !important;
+        z-index: 50 !important;
+    }
+
+
+    .jf-clean-btn {
+        display: flex !important;
+
+        width: 190px !important;
+        min-width: 190px !important;
+
+        height: 42px !important;
+        min-height: 42px !important;
+
+        margin: 0 !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        box-sizing: border-box !important;
+
+        border-radius: 25px !important;
+
+        white-space: nowrap !important;
+    }
+
+
+    /* =====================================================
+       IMAGE - MOVE TO RIGHT
+       ===================================================== */
+
+    .jf-clean-image {
+        width: 100% !important;
+
+        height: 245px !important;
+        min-height: 245px !important;
+
+        position: relative !important;
+
+        margin: 0 !important;
+
+        display: flex !important;
+
+        align-items: flex-end !important;
+
+        justify-content: flex-end !important;
+
+        overflow: hidden !important;
+
+        z-index: 1 !important;
+    }
+
+
+    .jf-clean-image img {
+        width: 100% !important;
+
+        height: 100% !important;
+
+        object-fit: cover !important;
+
+        /*
+         * Move complete image toward right
+         */
+        object-position: 72% center !important;
+
+        display: block !important;
+    }
+
+
+    /* Keep text above image */
+    .jf-clean-hero-content {
+        position: relative !important;
+
+        z-index: 20 !important;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .jf-clean-buttons {
+        flex-direction: column !important;
+
+        align-items: flex-start !important;
+
+        gap: 7px !important;
+    }
+
+
+    .jf-clean-btn {
+        width: 180px !important;
+
+        min-width: 180px !important;
+
+        height: 40px !important;
+
+        min-height: 40px !important;
+    }
+
+
+    .jf-clean-image {
+        height: 230px !important;
+
+        min-height: 230px !important;
+    }
+
+
+    .jf-clean-image img {
+        object-position: 76% center !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .jfinHeroSlide:nth-child(1) {
+        background-size: auto 63% !important;
+        
+    }
+}
+    </style>
+
+
+<div class="jf-modern">
+
+   {{-- =========================================================
+     JFINSERV HERO
+     ========================================================= --}}
+
+<section class="jfinHero" id="home">
+
+    <div class="jfinHeroSlider">
+
+        {{-- ================= SINGLE HERO SLIDE ================= --}}
+        <div class="jfinHeroSlide jfinHeroSlideActive"
+             style="background-image:url('{{ asset('theme/dhara-jfin/img/refer.jpg') }}');">
+
+            <div class="jfinHeroContent">
+
+                <div class="jfinHeroText">
+
+                    <div class="jfinHeroLabel">
+                        BUY. FINANCE. REFER. EARN.
+                    </div>
+
+                    <h1 class="jfinHeroTitle">
+                        One Platform.
+                        <span>Multiple Benefits.</span>
+                    </h1>
+
+                    <p class="jfinHeroDescription">
+                        Find your dream home or the right financial solution
+                        with JFinMate. Enjoy exclusive customer benefits and
+                        unlock referral rewards after becoming our customer.
+                    </p>
+          <div class="jfinHeroButtons">
+
+                        <a href="{{ route('property.login') }}"
+                           class="jfinHeroBtn jfinHeroApply">
+                             Properties
+                        </a>
+
+                        <a href="{{ route('authv3.login.form') }}"
+                           class="jfinHeroBtn jfinHeroLogin">
+                             Finance
+                        </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+    <!-- =========================================================
+         WHY JFINMATE
+    ========================================================= -->
+    <section class="jf-why">
+        <div class="jf-container">
+            <div class="jf-why-wrap">
+                <div class="jf-why-content">
+                    <span class="eyebrow"><i class="fas fa-sparkles"></i> The JFinMate Difference</span>
+                    <h2>One platform for your <span>property & finance</span> journey.</h2>
+                    <p>Buying a home or arranging finance shouldn't be complicated. At JFinMate, we bring everything together in one place — from verified properties and financial solutions to exclusive customer benefits and referral rewards.</p>
+                    <p>Whether you're purchasing your first home, investing in property, or looking for the right financing, we're here to make the journey simple, transparent, and rewarding.</p>
+                    <div class="jf-why-points">
+                        <div class="jf-why-point"><i class="fas fa-check"></i> Verified Property Options</div>
+                        <div class="jf-why-point"><i class="fas fa-check"></i> Expert Financial Guidance</div>
+                        <div class="jf-why-point"><i class="fas fa-check"></i> Dedicated Support</div>
+                        <div class="jf-why-point"><i class="fas fa-check"></i> Customer Rewards</div>
+                    </div>
+                </div>
+                <div class="jf-reward-box">
+                    <div>
+                        <div class="jf-reward-icon"><i class="fas fa-gift"></i></div>
+                        <h3>Your journey doesn't stop after purchase.</h3>
+                        <p>Become a JFinMate customer and unlock opportunities to share your experience with friends and family.</p>
+                    </div>
+                    <div class="jf-reward-tag"><i class="fas fa-arrow-trend-up"></i> Refer & Earn</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         CHOOSE YOUR JOURNEY
+    ========================================================= -->
+    <section class="jf-journey">
+        <div class="jf-container">
+            <div class="jf-section-heading">
+                <span class="eyebrow">Start Here</span>
+                <h2>Choose Your Journey</h2>
+                <p>Whether you're searching for your next property or looking for the right financial solution, JFinMate is here to help.</p>
+            </div>
+            <div class="jf-journey-grid">
+                <!-- property card -->
+                <div class="jf-journey-card">
+                    <span class="jf-card-number">01</span>
+                    <div class="jf-journey-icon"><i class="fas fa-house-chimney"></i></div>
+                    <h3>Looking for a Property?</h3>
+                    <p>Find verified residential and commercial properties that match your budget and lifestyle.</p>
+                    <ul class="jf-benefits">
+                        <li><i class="fas fa-circle-check"></i> Expert property guidance</li>
+                        <li><i class="fas fa-circle-check"></i> Assistance throughout the buying process</li>
+                        <li><i class="fas fa-circle-check"></i> Exclusive customer offers*</li>
+                        <li><i class="fas fa-circle-check"></i> Access to referral rewards after becoming a customer</li>
+                    </ul>
+                    <a href="{{ route('property.login') }}" class="jf-btn jf-btn-primary"><i class="fas fa-building"></i> Explore Properties</a>
+                </div>
+                <!-- finance card -->
+                <div class="jf-journey-card">
+                    <span class="jf-card-number">02</span>
+                    <div class="jf-journey-icon"><i class="fas fa-coins"></i></div>
+                    <h3>Looking for Finance?</h3>
+                    <p>Need financial support for your goals? Our experts help you choose the right solution with a smooth and transparent process.</p>
+                    <ul class="jf-benefits">
+                        <li><i class="fas fa-circle-check"></i> Expert financial guidance</li>
+                        <li><i class="fas fa-circle-check"></i> Dedicated relationship support</li>
+                        <li><i class="fas fa-circle-check"></i> Hassle-free documentation</li>
+                        <li><i class="fas fa-circle-check"></i> No Processing Fee on eligible offers*</li>
+                        <li><i class="fas fa-circle-check"></i> Referral rewards after becoming a customer</li>
+                    </ul>
+                    <a href="{{ route('authv3.login.form') }}" class="jf-btn jf-btn-outline"><i class="fas fa-hand-holding-dollar"></i> Explore Finance</a>
+                </div>
+            </div>
+            <p class="jf-footnote">*Terms & conditions apply. Offers vary by project and eligibility.</p>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         HOW IT WORKS
+    ========================================================= -->
+
+<section class="jf-process">
+
+    <div class="jf-container">
+
+        {{-- Section Heading --}}
+        <div class="jf-section-heading">
+            <span class="eyebrow">
+                Simple. Transparent. Rewarding.
+            </span>
+
+            <h2>
+                How JFinMate Rewards You
+            </h2>
+
+            <p>
+                Your relationship with JFinMate doesn't end after your
+                property purchase or finance journey.
+            </p>
+        </div>
+
+
+        {{-- Intro --}}
+        <div class="jf-process-intro">
+
+            <div class="jf-process-quote-icon">
+                <i class="fas fa-quote-left"></i>
+            </div>
+
+            <p>
+                Once you become a JFinMate customer, you can recommend us
+                to friends and family who are looking for a property or
+                financial solution. When their eligible transaction is
+                successfully completed through JFinMate, you become eligible
+                for referral rewards.
+            </p>
+
+        </div>
+
+
+        {{-- INFOGRAPHIC --}}
+        <div class="jf-process-infographic">
+
+            {{-- Connecting Line --}}
+            <div class="jf-process-line"></div>
+
+
+            {{-- STEP 01 --}}
+            <div class="jf-process-card">
+
+                <div class="jf-process-icon">
+                    <i class="fas fa-house"></i>
+                </div>
+
+                <div class="jf-process-number">
+                    01
+                </div>
+
+                <div class="jf-process-card-content">
+
+                    <h3>
+                        Choose a Property or Finance Solution
+                    </h3>
+
+                    <p>
+                        Browse verified properties or connect with
+                        our finance experts.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {{-- STEP 02 --}}
+            <div class="jf-process-card">
+
+                <div class="jf-process-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+
+                <div class="jf-process-number">
+                    02
+                </div>
+
+                <div class="jf-process-card-content">
+
+                    <h3>
+                        Complete Your Journey
+                    </h3>
+
+                    <p>
+                        We'll guide you from enquiry to successful
+                        completion.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {{-- STEP 03 --}}
+            <div class="jf-process-card">
+
+                <div class="jf-process-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+
+                <div class="jf-process-number">
+                    03
+                </div>
+
+                <div class="jf-process-card-content">
+
+                    <h3>
+                        Unlock Customer Benefits
+                    </h3>
+
+                    <p>
+                        Enjoy exclusive offers, cashback or
+                        project-specific benefits where applicable.*
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {{-- STEP 04 --}}
+            <div class="jf-process-card">
+
+                <div class="jf-process-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+
+                <div class="jf-process-number">
+                    04
+                </div>
+
+                <div class="jf-process-card-content">
+
+                    <h3>
+                        Refer Friends & Family
+                    </h3>
+
+                    <p>
+                        Share JFinMate with people looking for
+                        property or finance.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {{-- STEP 05 --}}
+            <div class="jf-process-card">
+
+                <div class="jf-process-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+
+                <div class="jf-process-number">
+                    05
+                </div>
+
+                <div class="jf-process-card-content">
+
+                    <h3>
+                        Earn Referral Rewards
+                    </h3>
+
+                    <p>
+                        Receive referral rewards when eligible
+                        transactions are successfully completed.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- Footnote --}}
+        <p class="jf-footnote">
+            *Subject to project & offer terms.
+        </p>
+
+    </div>
+
+</section>
+<style>
+
+/* =========================================================
+   JFIN SERV - REWARD PROCESS
+   BLUE THEME
+========================================================= */
+
+.jf-process {
+    position: relative;
+    width: 100%;
+    padding: 90px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #063b5c 0%,
+            #07547d 48%,
+            #032d48 100%
+        );
+
     overflow: hidden;
 }
 
-/* Hero Slide */
-#home .hero-slider .slide {
-    width: 99%;
-    height: 81vh;
-    min-height: 500px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+
+/* =========================================================
+   DECORATIVE BACKGROUND
+========================================================= */
+
+.jf-process::before {
+    content: "";
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    top: -220px;
+    right: -160px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(0, 171, 233, 0.12);
+
+    pointer-events: none;
+}
+
+.jf-process::after {
+    content: "";
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    bottom: -200px;
+    left: -160px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(0, 171, 233, 0.08);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.jf-process .jf-container {
     position: relative;
-}
+    z-index: 2;
 
-/* Hero content */
-#home .hero-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    #home.hero {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    #home .hero-slider .slide {
-        height: 86vh;
-        min-height: 500px;
-    }
-
-    #home .hero-slider .slide {
     width: 100%;
-    height: 88%;
+    max-width: 1200px;
+
+    margin: 0 auto;
 }
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.jf-process .jf-section-heading {
+    width: 100%;
+    max-width: 780px;
+
+    margin: 0 auto 45px;
+
+    text-align: center;
 }
-    
-    /* Buttons */
-    .btn-primary, .btn-outline {
-      display: inline-block;
-      padding: 12px 32px;
-      border-radius: 60px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: 0.2s ease;
-      border: 2px solid transparent;
-      cursor: default;
-      letter-spacing: 0.3px;
+
+.jf-process .eyebrow {
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+    color: #00abe9;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+}
+
+.jf-process .jf-section-heading h2 {
+    margin: 0 0 15px;
+
+    color: #ffffff;
+
+    font-size: 40px;
+    line-height: 1.2;
+
+    font-weight: 700;
+}
+
+.jf-process .jf-section-heading p {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.75);
+
+    font-size: 17px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   INTRO BOX
+========================================================= */
+
+.jf-process-intro {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 18px;
+
+    width: 100%;
+    max-width: 950px;
+
+    margin: 0 auto 65px;
+
+    padding: 24px 28px;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    border: 1px solid rgba(0, 171, 233, 0.20);
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.10);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    box-sizing: border-box;
+}
+
+
+/* Quote Icon */
+
+.jf-process-quote-icon {
+    flex: 0 0 42px;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #00abe9;
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    box-shadow:
+        0 8px 20px rgba(0, 171, 233, 0.25);
+}
+
+.jf-process-intro p {
+    flex: 1;
+
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.84);
+
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   INFOGRAPHIC
+========================================================= */
+
+.jf-process-infographic {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 18px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONNECTING LINE
+========================================================= */
+
+.jf-process-line {
+    position: absolute;
+
+    top: 48px;
+
+    left: 9%;
+    right: 9%;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 171, 233, 0.20),
+            #00abe9,
+            rgba(0, 171, 233, 0.20)
+        );
+
+    z-index: 0;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   PROCESS CARD
+========================================================= */
+
+.jf-process-card {
+    position: relative;
+
+    z-index: 1;
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 0 8px 25px;
+
+    text-align: center;
+
+    box-sizing: border-box;
+
+    transition:
+        transform 0.3s ease;
+}
+
+.jf-process-card:hover {
+    transform: translateY(-7px);
+}
+
+
+/* =========================================================
+   PROCESS ICON
+========================================================= */
+
+.jf-process-icon {
+    position: relative;
+
+    width: 96px;
+    height: 96px;
+
+    margin: 0 auto 14px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    border: 6px solid #00abe9;
+
+    color: #07547d;
+
+    font-size: 27px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.20);
+
+    box-sizing: border-box;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.jf-process-card:hover .jf-process-icon {
+    transform: scale(1.06);
+
+    box-shadow:
+        0 14px 35px rgba(0, 171, 233, 0.28);
+}
+
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+.jf-process-number {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 42px;
+    height: 25px;
+
+    padding: 0 9px;
+
+    margin-bottom: 13px;
+
+    border-radius: 20px;
+
+    background: rgba(0, 171, 233, 0.14);
+
+    border: 1px solid rgba(0, 171, 233, 0.40);
+
+    color: #00abe9;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    letter-spacing: 1px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CARD CONTENT
+========================================================= */
+
+.jf-process-card-content {
+    width: 100%;
+}
+
+.jf-process-card-content h3 {
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: 17px;
+    line-height: 1.4;
+
+    font-weight: 700;
+}
+
+.jf-process-card-content p {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.66);
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   FOOTNOTE
+========================================================= */
+
+.jf-process .jf-footnote {
+    margin: 35px 0 0;
+
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.48) !important;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   LARGE TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .jf-process {
+        padding: 75px 20px;
     }
 
-    .btn-primary {
-      background: #0b2b4a;
-      color: white;
-      border-color: #0b2b4a;
+    .jf-process .jf-section-heading h2 {
+        font-size: 36px;
     }
 
-    .btn-primary i {
-      margin-right: 8px;
+    .jf-process-infographic {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 45px 20px;
     }
 
-    .btn-primary:hover {
-      background: #1d3f5e;
-      border-color: #1d3f5e;
+    .jf-process-line {
+        display: none;
     }
 
-    .btn-outline {
-      background: transparent;
-      color: #0b2b4a;
-      border-color: #0b2b4a;
+    .jf-process-icon {
+        width: 88px;
+        height: 88px;
+
+        border-width: 5px;
+
+        font-size: 25px;
+    }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .jf-process {
+        padding: 60px 16px;
     }
 
-    .btn-outline i {
-      margin-right: 8px;
+    .jf-process .jf-section-heading {
+        margin-bottom: 32px;
     }
 
-    .btn-outline:hover {
-      background: #eef3f9;
+    .jf-process .jf-section-heading h2 {
+        font-size: 31px;
     }
 
-    .btn-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 20px;
+    .jf-process .jf-section-heading p {
+        font-size: 15px;
     }
 
-    /* Hero */
-    .hero {
-      background: linear-gradient(145deg, #f0f5fe 0%, #ffffff 100%);
-      padding: 60px 0 48px;
-      border-bottom: 1px solid rgba(11, 43, 74, 0.06);
+
+    /* Intro */
+
+    .jf-process-intro {
+        margin-bottom: 45px;
+
+        padding: 20px;
+
+        gap: 14px;
     }
 
-    .hero h1 {
-      font-size: 2.8rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      max-width: 700px;
+    .jf-process-intro p {
+        font-size: 14px;
     }
 
-    .hero h1 span {
-      color: #0b2b4a;
-      background: linear-gradient(135deg, #0b2b4a, #2b5a7a);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .jf-process-quote-icon {
+        flex: 0 0 38px;
+
+        width: 38px;
+        height: 38px;
+
+        font-size: 15px;
     }
 
-    .hero .subhead {
-      font-size: 1.4rem;
-      font-weight: 500;
-      color: #1a3a57;
-      margin: 12px 0 6px;
+
+    /* Two columns */
+
+    .jf-process-infographic {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 40px 15px;
     }
 
-    .hero .tagline {
-      font-size: 1.1rem;
-      color: #2c405a;
-      max-width: 680px;
-      margin-bottom: 8px;
+
+    .jf-process-card {
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
-    .hero .badge-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px 32px;
-      margin: 18px 0 10px;
-      color: #1f3b57;
-      font-weight: 500;
+
+    .jf-process-icon {
+        width: 78px;
+        height: 78px;
+
+        border-width: 5px;
+
+        font-size: 23px;
     }
 
-    .hero .badge-list i {
-      margin-right: 8px;
-      color: #0b2b4a;
+
+    .jf-process-number {
+        margin-bottom: 10px;
     }
 
-    /* section header */
-    .section-title {
-      font-size: 2.2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
+
+    .jf-process-card-content h3 {
+        font-size: 16px;
     }
 
-    .section-sub {
-      font-size: 1.1rem;
-      color: #2d405b;
-      max-width: 700px;
+    .jf-process-card-content p {
+        font-size: 13px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 575px) {
+
+    .jf-process {
+        padding: 48px 14px;
     }
 
-    /* Why choose */
-    .why-section {
-      padding: 60px 0 40px;
-      background: white;
+
+    /* Heading */
+
+    .jf-process .jf-section-heading {
+        margin-bottom: 28px;
     }
 
-    .why-grid {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 40px;
-      margin-top: 30px;
+    .jf-process .eyebrow {
+        margin-bottom: 9px;
+
+        font-size: 11px;
+
+        letter-spacing: 1.1px;
     }
 
-    .why-text {
-      flex: 1 1 320px;
+    .jf-process .jf-section-heading h2 {
+        font-size: 25px;
+
+        line-height: 1.3;
     }
 
-    .why-text p {
-      font-size: 1.05rem;
-      color: #1e334d;
-      margin-bottom: 16px;
+    .jf-process .jf-section-heading p {
+        font-size: 14px;
+
+        line-height: 1.55;
     }
 
-    .why-highlight {
-      background: #e9f0fa;
-      padding: 18px 24px;
-      border-radius: 40px;
-      display: inline-block;
-      font-weight: 600;
-      color: #0b2b4a;
+
+    /* Intro */
+
+    .jf-process-intro {
+        display: block;
+
+        padding: 20px 18px;
+
+        margin-bottom: 40px;
+
+        text-align: center;
+
+        border-radius: 14px;
     }
 
-    .why-highlight i {
-      margin-right: 10px;
+    .jf-process-quote-icon {
+        margin: 0 auto 13px;
     }
 
-    /* journey cards */
-    .journey-section {
-      background: #f2f7ff;
-      padding: 60px 0;
+    .jf-process-intro p {
+        font-size: 13px;
+
+        line-height: 1.65;
     }
 
-    .journey-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-      margin-top: 32px;
-    }
 
-    @media (max-width: 780px) {
-      .journey-grid {
+    /* Single column */
+
+    .jf-process-infographic {
+        display: grid;
+
         grid-template-columns: 1fr;
-      }
+
+        gap: 0;
     }
 
-    .journey-card {
-      background: white;
-      border-radius: 28px;
-      padding: 32px 30px;
-      box-shadow: 0 8px 24px rgba(0,20,40,0.04);
-      border: 1px solid rgba(11,43,74,0.06);
-      transition: 0.2s;
+
+    /* Vertical line */
+
+    .jf-process-line {
+        display: block;
+
+        top: 40px;
+        bottom: 40px;
+
+        left: 50%;
+
+        right: auto;
+
+        width: 2px;
+        height: auto;
+
+        transform: translateX(-50%);
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(0, 171, 233, 0.20),
+                #00abe9,
+                rgba(0, 171, 233, 0.20)
+            );
     }
 
-    .journey-card h3 {
-      font-size: 1.7rem;
-      font-weight: 700;
-      margin-bottom: 10px;
+
+    /* Card */
+
+    .jf-process-card {
+        width: 100%;
+
+        padding: 0 10px 45px;
     }
 
-    .journey-card .icon-big {
-      font-size: 2.4rem;
-      color: #0b2b4a;
-      margin-bottom: 14px;
+    .jf-process-card:last-child {
+        padding-bottom: 10px;
     }
 
-    .journey-card ul {
-      list-style: none;
-      margin: 18px 0 24px;
+
+    /* Icon */
+
+    .jf-process-icon {
+        width: 82px;
+        height: 82px;
+
+        margin-bottom: 12px;
+
+        background: #ffffff;
+
+        border-width: 5px;
+
+        font-size: 23px;
     }
 
-    .journey-card ul li {
-      padding: 6px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #1f3753;
+
+    /* Number */
+
+    .jf-process-number {
+        position: relative;
+        z-index: 2;
+
+        margin-bottom: 9px;
+
+        background: #07547d;
     }
 
-    .journey-card ul li i {
-      color: #0b2b4a;
-      width: 20px;
-      font-size: 1rem;
+
+    /* Content */
+
+    .jf-process-card-content {
+        width: 100%;
+        max-width: 320px;
+
+        margin: 0 auto;
     }
 
-    .journey-card .btn-outline, .journey-card .btn-primary {
-      margin-top: 6px;
+    .jf-process-card-content h3 {
+        font-size: 17px;
+
+        line-height: 1.4;
     }
 
-    /* rewards & how it works */
-    .rewards-section {
-      background: white;
-      padding: 60px 0;
+    .jf-process-card-content p {
+        font-size: 13px;
+
+        line-height: 1.6;
     }
 
-    .rewards-highlight {
-      background: #e7eff9;
-      border-radius: 40px;
-      padding: 30px 32px;
-      margin: 24px 0 12px;
+
+    /* Footnote */
+
+    .jf-process .jf-footnote {
+        margin-top: 25px;
+
+        font-size: 11px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 375px) {
+
+    .jf-process {
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
-    .rewards-highlight p {
-      font-size: 1.08rem;
-      color: #15304b;
+
+    .jf-process .jf-section-heading h2 {
+        font-size: 23px;
     }
 
-    .steps {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px 28px;
-      margin: 32px 0 12px;
-      counter-reset: step;
+
+    .jf-process-intro {
+        padding: 18px 15px;
     }
 
-    .step-item {
-      flex: 1 1 180px;
-      background: #f5f9ff;
-      border-radius: 24px;
-      padding: 22px 20px;
-      border-left: 4px solid #0b2b4a;
-      counter-increment: step;
+
+    .jf-process-card {
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
-    .step-item::before {
-      content: "0" counter(step);
-      font-weight: 700;
-      font-size: 1.3rem;
-      color: #0b2b4a;
-      display: block;
-      margin-bottom: 6px;
+
+    .jf-process-icon {
+        width: 78px;
+        height: 78px;
     }
 
-    .step-item strong {
-      display: block;
-      font-size: 1.1rem;
-      margin: 6px 0 4px;
+
+    .jf-process-card-content {
+        max-width: 290px;
     }
 
-    .step-item p {
-      color: #1f3753;
-      font-size: 0.95rem;
+}
+
+
+/* =========================================================
+   EXTRA SMALL DEVICES
+========================================================= */
+
+@media (max-width: 320px) {
+
+    .jf-process {
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
-    /* why customers prefer */
-    .prefer-section {
-      background: #f2f7ff;
-      padding: 50px 0;
+    .jf-process .jf-section-heading h2 {
+        font-size: 21px;
     }
 
-    .prefer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 16px 20px;
-      margin-top: 28px;
+    .jf-process .jf-section-heading p {
+        font-size: 13px;
     }
 
-    .prefer-item {
-      background: white;
-      padding: 18px 18px;
-      border-radius: 60px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 500;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-      border: 1px solid rgba(0,0,0,0.02);
+    .jf-process-intro p {
+        font-size: 12px;
     }
 
-    .prefer-item i {
-      color: #0b2b4a;
-      font-size: 1.2rem;
-      width: 24px;
+    .jf-process-card-content h3 {
+        font-size: 16px;
     }
 
-    /* FAQ */
-    .faq-section {
-      background: white;
-      padding: 56px 0 48px;
+    .jf-process-card-content p {
+        font-size: 12px;
     }
 
-    .faq-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px 40px;
-      margin-top: 28px;
-    }
+}
 
-    @media (max-width: 700px) {
-      .faq-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+</style>
 
-    .faq-item h4 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
 
-    .faq-item h4 i {
-      color: #0b2b4a;
-      font-size: 1rem;
-    }
+    <!-- =========================================================
+         WHY CUSTOMERS PREFER
+    ========================================================= -->
+   <section class="jf-prefer">
+    <div class="jf-container">
 
-    .faq-item p {
-      color: #1f3753;
-      padding-left: 32px;
-    }
+        <div class="jf-section-heading">
+            <span class="eyebrow">Built Around You</span>
 
-    /* final CTA */
-    .final-cta {
-      background: linear-gradient(135deg, #0b2b4a 0%, #1e4a6e 100%);
-      color: white;
-      padding: 56px 0 48px;
-      text-align: center;
-    }
+            <h2>Why Customers Prefer JFinMate</h2>
 
-    .final-cta h2 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      max-width: 700px;
-      margin: 0 auto 8px;
-    }
+            <p>
+                Everything you need, supported by a team you can trust.
+            </p>
+        </div>
 
-    .final-cta .sub {
-      font-size: 1.2rem;
-      opacity: 0.9;
-      margin-bottom: 24px;
-    }
+        <div class="jf-prefer-grid">
 
-    .final-cta .btn-group .btn-primary {
-      background: white;
-      color: #0b2b4a;
-      border-color: white;
-    }
+            {{-- Card 1 --}}
+            <div class="jf-prefer-card">
+                <div class="jf-prefer-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80"
+                        alt="Verified Property Options"
+                    >
+                </div>
 
-    .final-cta .btn-group .btn-primary:hover {
-      background: #e7edf5;
-    }
-
-    .final-cta .btn-group .btn-outline {
-      color: white;
-      border-color: white;
-    }
-
-    .final-cta .btn-group .btn-outline:hover {
-      background: rgba(255,255,255,0.12);
-    }
-
-    /* small */
-    .footnote {
-      font-size: 0.85rem;
-      color: #4b627c;
-      margin-top: 12px;
-    }
-
-    hr {
-      border: none;
-      border-top: 1px solid rgba(11,43,74,0.08);
-      margin: 12px 0 0;
-    }
-
-    .mt-2 { margin-top: 8px; }
-    .mt-3 { margin-top: 16px; }
-    .mb-1 { margin-bottom: 4px; }
-
-    .text-center { text-align: center; }
-
-    /* responsive */
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 2rem; }
-      .hero .subhead { font-size: 1.1rem; }
-      .section-title { font-size: 1.8rem; }
-    }
-  </style>
-
-  <!-- Hero Banner -->
- {{-- HERO SECTION --}}
-    <section id="home" class="hero">
-        <div class="hero-slider">
-            <div class="slide" style="background-image:  url('{{asset('theme/dhara-jfin/img/refer.jpg')}}')">
-                <div class="container-tab hero-content">
-
-                    <div class="hero-intro">Buy. Finance. Refer. Earn.</div>
-                    <h1>One Platform. <span style="color:#295cab">Multiple Benefits.</span></h1>
-                    <p>Find your dream home or the right financial solution with JFinMate.<br>
-                     Enjoy exclusive customer benefits and unlock referral rewards <br>after becoming our customer.</p>
-
-                   <div class="hero-btns">
-                        <a href="{{ route('authv3.login.form') }}" class="btn btn-primary-hero"> Explore Properties</a>
-                        <a href="{{ url('/login') }}" class="btn btn-outline"> Explore Finance Solutions</a>
-                    </div>
+                <div class="jf-prefer-content">
+                    <h3>Verified Property Options</h3>
+                    <p>
+                        Explore trusted and verified property options
+                        selected to suit your needs.
+                    </p>
                 </div>
             </div>
 
-        
+
+            {{-- Card 2 --}}
+            <div class="jf-prefer-card">
+                <div class="jf-prefer-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80"
+                        alt="Expert Finance Assistance"
+                    >
+                </div>
+
+                <div class="jf-prefer-content">
+                    <h3>Expert Finance Assistance</h3>
+                    <p>
+                        Get professional guidance to make your
+                        financing journey simple and stress-free.
+                    </p>
+                </div>
+            </div>
+
+
+            {{-- Card 3 --}}
+            <div class="jf-prefer-card">
+                <div class="jf-prefer-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80"
+                        alt="Dedicated Relationship Managers"
+                    >
+                </div>
+
+                <div class="jf-prefer-content">
+                    <h3>Dedicated Relationship Managers</h3>
+                    <p>
+                        Get personalised support from a dedicated
+                        relationship manager whenever you need it.
+                    </p>
+                </div>
+            </div>
+
+
+            {{-- Card 4 --}}
+            <div class="jf-prefer-card">
+                <div class="jf-prefer-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80"
+                        alt="Transparent Process"
+                    >
+                </div>
+
+                <div class="jf-prefer-content">
+                    <h3>Transparent Process</h3>
+                    <p>
+                        Clear communication and a transparent process
+                        from start to finish.
+                    </p>
+                </div>
+            </div>
+
+
+            {{-- Card 5 --}}
+            <div class="jf-prefer-card">
+                <div class="jf-prefer-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80"
+                        alt="Exclusive Customer Benefits"
+                    >
+                </div>
+
+                <div class="jf-prefer-content">
+                    <h3>Exclusive Customer Benefits*</h3>
+                    <p>
+                        Enjoy exclusive benefits designed especially
+                        for our valued customers.
+                    </p>
+                </div>
+            </div>
+
+
+            {{-- Card 6 --}}
+            <div class="jf-prefer-card">
+                <div class="jf-prefer-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1606761568499-6d2451b23c66?auto=format&fit=crop&w=800&q=80"
+                        alt="Referral Rewards"
+                    >
+                </div>
+
+                <div class="jf-prefer-content">
+                    <h3>Referral Rewards</h3>
+                    <p>
+                        Refer your friends and family and enjoy
+                        exciting rewards.
+                    </p>
+                </div>
+            </div>
+
+
+            {{-- Card 7 --}}
+            <div class="jf-prefer-card">
+                <div class="jf-prefer-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80"
+                        alt="One Trusted Platform"
+                    >
+                </div>
+
+                <div class="jf-prefer-content">
+                    <h3>One Trusted Platform</h3>
+                    <p>
+                        Manage your property and finance needs through
+                        one reliable and trusted platform.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<style>
+
+/* =========================================
+   WHY CUSTOMERS PREFER JFINMATE
+========================================= */
+
+.jf-prefer {
+    width: 100%;
+    padding: 80px 20px;
+    background: #f7f9fc;
+    overflow: hidden;
+}
+
+.jf-prefer .jf-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+/* =========================================
+   SECTION HEADING
+========================================= */
+
+.jf-prefer .jf-section-heading {
+    text-align: center;
+    max-width: 750px;
+    margin: 0 auto 45px;
+}
+
+.jf-prefer .eyebrow {
+    display: inline-block;
+    margin-bottom: 10px;
+
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+
+    color: #d39a2c;
+}
+
+.jf-prefer .jf-section-heading h2 {
+    margin: 0 0 12px;
+
+    font-size: 38px;
+    line-height: 1.2;
+    font-weight: 700;
+
+    color: #172b4d;
+}
+
+.jf-prefer .jf-section-heading p {
+    margin: 0;
+
+    font-size: 17px;
+    line-height: 1.6;
+
+    color: #667085;
+}
+
+
+/* =========================================
+   CARD GRID
+========================================= */
+
+.jf-prefer-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 24px;
+
+    width: 100%;
+}
+
+
+/* =========================================
+   CARD
+========================================= */
+
+.jf-prefer-card {
+    width: 100%;
+    min-width: 0;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    border: 1px solid #e8ecf2;
+
+    box-shadow: 0 8px 30px rgba(20, 40, 70, 0.07);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.jf-prefer-card:hover {
+    transform: translateY(-7px);
+
+    box-shadow: 0 16px 40px rgba(20, 40, 70, 0.13);
+}
+
+
+/* =========================================
+   IMAGE
+========================================= */
+
+.jf-prefer-image {
+    width: 100%;
+    height: 190px;
+
+    overflow: hidden;
+
+    background: #e9edf3;
+}
+
+.jf-prefer-image img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 0.5s ease;
+}
+
+.jf-prefer-card:hover .jf-prefer-image img {
+    transform: scale(1.06);
+}
+
+
+/* =========================================
+   CARD CONTENT
+========================================= */
+
+.jf-prefer-content {
+    padding: 22px 20px 24px;
+
+    text-align: center;
+}
+
+.jf-prefer-content h3 {
+    margin: 0 0 10px;
+
+    font-size: 18px;
+    line-height: 1.35;
+    font-weight: 700;
+
+    color: #172b4d;
+}
+
+.jf-prefer-content p {
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    color: #667085;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+    .jf-prefer {
+        padding: 70px 20px;
+    }
+
+    .jf-prefer-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .jf-prefer-image {
+        height: 180px;
+    }
+
+    .jf-prefer .jf-section-heading h2 {
+        font-size: 34px;
+    }
+}
+
+
+/* =========================================
+   SMALL TABLET
+========================================= */
+
+@media (max-width: 768px) {
+
+    .jf-prefer {
+        padding: 55px 16px;
+    }
+
+    .jf-prefer .jf-section-heading {
+        margin-bottom: 30px;
+    }
+
+    .jf-prefer .jf-section-heading h2 {
+        font-size: 29px;
+    }
+
+    .jf-prefer .jf-section-heading p {
+        font-size: 15px;
+    }
+
+    .jf-prefer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .jf-prefer-image {
+        height: 165px;
+    }
+
+    .jf-prefer-content {
+        padding: 18px 15px 20px;
+    }
+
+    .jf-prefer-content h3 {
+        font-size: 16px;
+    }
+
+    .jf-prefer-content p {
+        font-size: 13px;
+    }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 575px) {
+
+    .jf-prefer {
+        padding: 45px 14px;
+    }
+
+    .jf-prefer .jf-section-heading {
+        padding: 0 5px;
+        margin-bottom: 28px;
+    }
+
+    .jf-prefer .eyebrow {
+        font-size: 12px;
+        letter-spacing: 1.2px;
+    }
+
+    .jf-prefer .jf-section-heading h2 {
+        font-size: 25px;
+        line-height: 1.3;
+    }
+
+    .jf-prefer .jf-section-heading p {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .jf-prefer-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .jf-prefer-card {
+        border-radius: 16px;
+    }
+
+    .jf-prefer-image {
+        height: 200px;
+    }
+
+    .jf-prefer-content {
+        padding: 20px 18px 22px;
+    }
+
+    .jf-prefer-content h3 {
+        font-size: 18px;
+    }
+
+    .jf-prefer-content p {
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================
+   VERY SMALL MOBILE
+========================================= */
+
+@media (max-width: 375px) {
+
+    .jf-prefer {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .jf-prefer .jf-section-heading h2 {
+        font-size: 23px;
+    }
+
+    .jf-prefer-image {
+        height: 185px;
+    }
+}
+</style>
+    <!-- =========================================================
+         FAQ
+    ========================================================= -->
+    <section class="jf-faq">
+        <div class="jf-container">
+            <div class="jf-faq-layout">
+                <div class="jf-faq-side">
+                    <span class="eyebrow">Need Help?</span>
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Find quick answers about JFinMate, customer benefits and our referral rewards program.</p>
+                </div>
+                <div class="jf-faq-list">
+                    <div class="jf-faq-item"><h4><i class="fas fa-circle-question"></i> Who can earn referral rewards?</h4><p>Any customer who has successfully purchased a property or availed a financial solution through JFinMate may become eligible for referral rewards, subject to the program terms.</p></div>
+                    <div class="jf-faq-item"><h4><i class="fas fa-circle-question"></i> Do I need to become a customer first?</h4><p>Yes. The referral rewards program is available after you complete an eligible property purchase or finance journey with JFinMate.</p></div>
+                    <div class="jf-faq-item"><h4><i class="fas fa-circle-question"></i> What can I refer?</h4><p>You can refer people looking to buy a property or explore financing solutions.</p></div>
+                    <div class="jf-faq-item"><h4><i class="fas fa-circle-question"></i> How do I receive referral rewards?</h4><p>Referral rewards are processed after your referred customer completes an eligible transaction through JFinMate, as per the program terms.</p></div>
+                    <div class="jf-faq-item"><h4><i class="fas fa-circle-question"></i> Are there any customer benefits?</h4><p>Yes. Depending on the project or offer, eligible customers may receive benefits such as cashback, purchase offers or other promotional rewards.</p></div>
+                </div>
+            </div>
+        </div>
     </section>
 
- <!DOCTYPE html>
-<html lang="en">
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-   
-
-   
-
-    
-    .btn-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    .btn-primary, .btn-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 32px;
-      border-radius: 60px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: 0.2s ease;
-      border: 2px solid transparent;
-      cursor: default;
-      letter-spacing: 0.3px;
-    }
-
-    .btn-primary {
-      background: #0b2b4a;
-      color: white;
-      border-color: #0b2b4a;
-    }
-
-    .btn-primary i {
-      font-size: 1rem;
-    }
-
-    .btn-primary:hover {
-      background: #1d3f5e;
-      border-color: #1d3f5e;
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: #0b2b4a;
-      border-color: #0b2b4a;
-    }
-
-    .btn-outline i {
-      font-size: 1rem;
-    }
-
-    .btn-outline:hover {
-      background: #eef3f9;
-    }
-
-    .hero-visual {
-      flex: 0 0 220px;
-      background: #e5eff9;
-      border-radius: 60px;
-      padding: 28px 20px;
-      text-align: center;
-      min-height: 160px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      color: #0b2b4a;
-      border: 1px solid rgba(11,43,74,0.04);
-      box-shadow: 0 8px 20px rgba(11,43,74,0.04);
-    }
-
-    .hero-visual i {
-      font-size: 3.2rem;
-      margin-bottom: 10px;
-      color: #0b2b4a;
-    }
-
-    .hero-visual .refer-badge {
-      background: #0b2b4a;
-      color: white;
-      padding: 6px 18px;
-      border-radius: 60px;
-      font-size: 0.8rem;
-      margin-top: 8px;
-    }
-
-    /* ===== SECTION TITLES ===== */
-    .section-title {
-      font-size: 2.2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
-    }
-
-    .section-sub {
-      font-size: 1.1rem;
-      color: #2d405b;
-      max-width: 700px;
-    }
-
-    /* ===== WHY ===== */
-    .why-section {
-      padding: 56px 0 32px;
-      background: white;
-    }
-
-    .why-grid {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 40px;
-      margin-top: 20px;
-    }
-
-    .why-text {
-      flex: 1 1 320px;
-    }
-
-    .why-text p {
-      font-size: 1.05rem;
-      color: #1e334d;
-      margin-bottom: 16px;
-    }
-
-    .why-highlight {
-      background: #e9f0fa;
-      padding: 14px 24px;
-      border-radius: 60px;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 600;
-      color: #0b2b4a;
-    }
-
-    .why-highlight i {
-      font-size: 1.2rem;
-    }
-
-    /* ===== JOURNEY ===== */
-    .journey-section {
-      background: #f2f7ff;
-      padding: 56px 0 48px;
-    }
-
-    .journey-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-      margin-top: 32px;
-    }
-
-    @media (max-width: 780px) {
-      .journey-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .journey-card {
-      background: white;
-      border-radius: 28px;
-      padding: 32px 30px;
-      box-shadow: 0 8px 24px rgba(0,20,40,0.04);
-      border: 1px solid rgba(11,43,74,0.06);
-      transition: 0.2s;
-    }
-
-    .journey-card h3 {
-      font-size: 1.7rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .journey-card .icon-big {
-      font-size: 2.4rem;
-      color: #0b2b4a;
-      margin-bottom: 14px;
-    }
-
-    .journey-card ul {
-      list-style: none;
-      margin: 18px 0 24px;
-    }
-
-    .journey-card ul li {
-      padding: 6px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #1f3753;
-    }
-
-    .journey-card ul li i {
-      color: #0b2b4a;
-      width: 20px;
-      font-size: 1rem;
-    }
-
-    .footnote {
-      font-size: 0.85rem;
-      color: #4b627c;
-      margin-top: 16px;
-    }
-
-    /* ===== REWARDS ===== */
-    .rewards-section {
-      background: white;
-      padding: 56px 0 40px;
-    }
-
-    .rewards-highlight {
-      background: #e7eff9;
-      border-radius: 40px;
-      padding: 28px 32px;
-      margin: 24px 0 16px;
-    }
-
-    .rewards-highlight p {
-      font-size: 1.08rem;
-      color: #15304b;
-    }
-
-    .steps {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px 24px;
-      margin: 32px 0 12px;
-      counter-reset: step;
-    }
-
-    .step-item {
-      flex: 1 1 180px;
-      background: #f5f9ff;
-      border-radius: 24px;
-      padding: 22px 20px;
-      border-left: 4px solid #0b2b4a;
-      counter-increment: step;
-    }
-
-    .step-item::before {
-      content: "0" counter(step);
-      font-weight: 700;
-      font-size: 1.3rem;
-      color: #0b2b4a;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .step-item strong {
-      display: block;
-      font-size: 1.1rem;
-      margin: 6px 0 4px;
-    }
-
-    .step-item p {
-      color: #1f3753;
-      font-size: 0.95rem;
-    }
-
-    /* ===== PREFER ===== */
-    .prefer-section {
-      background: #f2f7ff;
-      padding: 48px 0;
-    }
-
-    .prefer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 16px 20px;
-      margin-top: 28px;
-    }
-
-    .prefer-item {
-      background: white;
-      padding: 14px 18px;
-      border-radius: 60px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 500;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-      border: 1px solid rgba(0,0,0,0.02);
-    }
-
-    .prefer-item i {
-      color: #0b2b4a;
-      font-size: 1.2rem;
-      width: 24px;
-    }
-
-    /* ===== FAQ ===== */
-    .faq-section {
-      background: white;
-      padding: 52px 0 48px;
-    }
-
-    .faq-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px 40px;
-      margin-top: 28px;
-    }
-
-    @media (max-width: 700px) {
-      .faq-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .faq-item h4 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .faq-item h4 i {
-      color: #0b2b4a;
-      font-size: 1rem;
-    }
-
-    .faq-item p {
-      color: #1f3753;
-      padding-left: 32px;
-    }
-
-    /* ===== FINAL CTA ===== */
-    .final-cta {
-      background: linear-gradient(135deg, #0b2b4a 0%, #1e4a6e 100%);
-      color: white;
-      padding: 56px 0 48px;
-      text-align: center;
-    }
-
-    .final-cta h2 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      max-width: 700px;
-      margin: 0 auto 8px;
-    }
-
-    .final-cta .sub {
-      font-size: 1.2rem;
-      opacity: 0.9;
-      margin-bottom: 24px;
-    }
-
-    .final-cta .btn-group {
-      justify-content: center;
-    }
-
-    .final-cta .btn-group .btn-primary {
-      background: white;
-      color: #0b2b4a;
-      border-color: white;
-    }
-
-    .final-cta .btn-group .btn-primary:hover {
-      background: #e7edf5;
-    }
-
-    .final-cta .btn-group .btn-outline {
-      color: white;
-      border-color: white;
-    }
-
-    .final-cta .btn-group .btn-outline:hover {
-      background: rgba(255,255,255,0.12);
-    }
-
-    .final-cta .footnote {
-      color: rgba(255,255,255,0.6);
-      margin-top: 32px;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 600px) {
-      .hero-content h1 { font-size: 2.2rem; }
-      .hero-sub { font-size: 1.1rem; }
-      .section-title { font-size: 1.8rem; }
-      .hero-visual { flex: 1 1 100%; }
-      .hero-grid { flex-direction: column; }
-    }
-  </style>
-</head>
-
-
-
-
-  <!-- WHY CHOOSE -->
-  <section class="why-section">
-    <div class="container">
-      <div class="why-grid">
-        <div class="why-text">
-          <h2 class="section-title">Why Choose JFinMate?</h2>
-          <p>Buying a home or arranging finance shouldn't be complicated. At JFinMate, we bring everything together in one place—from verified properties and financial solutions to exclusive customer benefits and referral rewards.</p>
-          <p>Whether you're purchasing your first home, investing in property, or looking for the right financing, we're here to make the journey simple, transparent, and rewarding.</p>
-          <div class="why-highlight"><i class="fas fa-gift"></i> Turn Every Successful Referral Into Extra Rewards</div>
+    <!-- =========================================================
+         FINAL CTA
+    ========================================================= -->
+    <section class="jf-final">
+        <div class="jf-container">
+            <div class="jf-final-content">
+                <span class="eyebrow">Your JFinMate Journey</span>
+                <h2>Your Journey Doesn't End After You Buy.<br>It Gets Even More Rewarding.</h2>
+                <p>Find your dream property, secure the right financial solution, and enjoy benefits that continue even after your journey is complete.</p>
+                <div class="jf-final-buttons">
+                    <a href="{{ route('property.login') }}" class="jf-btn jf-btn-primary"><i class="fas fa-building"></i> Explore Properties</a>
+                    <a href="{{ route('authv3.login.form') }}" class="jf-btn jf-btn-primary"><i class="fas fa-hand-holding-dollar"></i> Explore Finance Solutions</a>
+                </div>
+                <p class="jf-brand-line">JFinMate · One Platform. Multiple Benefits.</p>
+            </div>
         </div>
-        <div style="flex:0 0 220px; background: #e5eff9; border-radius: 60px; padding: 20px; text-align: center; min-height: 120px; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #0b2b4a; gap: 12px; flex-wrap: wrap; border: 1px solid rgba(11,43,74,0.04);">
-          <i class="fas fa-people-arrows" style="font-size: 2.8rem;"></i> Refer & earn
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- JOURNEY -->
-  <section class="journey-section">
-    <div class="container">
-      <h2 class="section-title">Choose Your Journey</h2>
-      <div class="journey-grid">
-        <div class="journey-card">
-          <div class="icon-big"><i class="fas fa-home"></i></div>
-          <h3>Looking for a Property?</h3>
-          <p>Find verified residential and commercial properties that match your budget and lifestyle. With JFinMate, you also get:</p>
-          <ul>
-            <li><i class="fas fa-check-circle"></i> Expert property guidance</li>
-            <li><i class="fas fa-check-circle"></i> Assistance throughout the buying process</li>
-            <li><i class="fas fa-check-circle"></i> Exclusive customer offers*</li>
-            <li><i class="fas fa-check-circle"></i> Access to referral rewards after becoming a customer</li>
-          </ul>
-          <a href="{{ route('authv3.login.form') }}" class="btn-primary"><i class="fas fa-building"></i> Explore Properties</a>
-        </div>
-        <div class="journey-card">
-          <div class="icon-big"><i class="fas fa-coins"></i></div>
-          <h3>Looking for Finance?</h3>
-          <p>Need financial support for your goals? Our experts help you choose the right solution with a smooth and transparent process. Benefits include:</p>
-          <ul>
-            <li><i class="fas fa-check-circle"></i> Expert financial guidance</li>
-            <li><i class="fas fa-check-circle"></i> Dedicated relationship support</li>
-            <li><i class="fas fa-check-circle"></i> Hassle-free documentation</li>
-            <li><i class="fas fa-check-circle"></i> No Processing Fee on eligible offers*</li>
-            <li><i class="fas fa-check-circle"></i> Referral rewards after becoming a customer</li>
-          </ul>
-          <a href="{{ url('/login') }}" class="btn-outline"><i class="fas fa-hand-holding-usd"></i> Explore Finance</a>
-        </div>
-      </div>
-      <p class="footnote">*Terms & conditions apply. Offers vary by project and eligibility.</p>
-    </div>
-  </section>
+</div>
+@include('dhara-jfin.layout.footer')
 
-  <!-- REWARDS + HOW IT WORKS -->
-  <section class="rewards-section">
-    <div class="container">
-      <h2 class="section-title">How JFinMate Rewards You</h2>
-      <div class="rewards-highlight">
-        <p><i class="fas fa-quote-left" style="opacity:0.6; margin-right:8px;"></i> Unlike traditional platforms, your relationship with JFinMate doesn't end after your purchase or finance journey. Once you become a JFinMate customer, you can recommend us to friends and family who are looking for a property or financial solution. When their eligible transaction is successfully completed through JFinMate, you become eligible for referral rewards. It's our way of thanking you for sharing your experience.</p>
-      </div>
-
-      <h3 class="section-title" style="font-size: 1.8rem; margin-top: 32px;">How It Works</h3>
-      <div class="steps">
-        <div class="step-item"><strong>Choose a Property or Finance Solution</strong><p>Browse verified properties or connect with our finance experts.</p></div>
-        <div class="step-item"><strong>Complete Your Journey with JFinMate</strong><p>We'll guide you from enquiry to successful completion.</p></div>
-        <div class="step-item"><strong>Unlock Customer Benefits</strong><p>Enjoy exclusive offers, cashback, or project-specific benefits where applicable.*</p></div>
-        <div class="step-item"><strong>Refer Friends & Family</strong><p>Share JFinMate with people you know who are looking for property or finance.</p></div>
-        <div class="step-item"><strong>Earn Referral Rewards</strong><p>Receive referral rewards when eligible transactions are successfully completed.</p></div>
-      </div>
-      <p class="footnote">*Subject to project & offer terms.</p>
-    </div>
-  </section>
-
-  <!-- WHY CUSTOMERS PREFER -->
-  <section class="prefer-section">
-    <div class="container">
-      <h2 class="section-title">Why Customers Prefer JFinMate</h2>
-      <div class="prefer-grid">
-        <div class="prefer-item"><i class="fas fa-check-circle"></i> Verified Property Options</div>
-        <div class="prefer-item"><i class="fas fa-check-circle"></i> Expert Finance Assistance</div>
-        <div class="prefer-item"><i class="fas fa-check-circle"></i> Dedicated Relationship Managers</div>
-        <div class="prefer-item"><i class="fas fa-check-circle"></i> Transparent Process</div>
-        <div class="prefer-item"><i class="fas fa-check-circle"></i> Exclusive Customer Benefits*</div>
-        <div class="prefer-item"><i class="fas fa-check-circle"></i> Referral Rewards</div>
-        <div class="prefer-item"><i class="fas fa-check-circle"></i> One Trusted Platform</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq-section">
-    <div class="container">
-      <h2 class="section-title">Frequently Asked Questions</h2>
-      <div class="faq-grid">
-        <div class="faq-item">
-          <h4><i class="fas fa-circle-question"></i> Who can earn referral rewards?</h4>
-          <p>Any customer who has successfully purchased a property or availed a financial solution through JFinMate may become eligible for referral rewards, subject to the program terms.</p>
-        </div>
-        <div class="faq-item">
-          <h4><i class="fas fa-circle-question"></i> Do I need to become a customer first?</h4>
-          <p>Yes. The referral rewards program is available after you complete an eligible property purchase or finance journey with JFinMate.</p>
-        </div>
-        <div class="faq-item">
-          <h4><i class="fas fa-circle-question"></i> What can I refer?</h4>
-          <p>You can refer people looking to: Buy a property · Explore financing solutions</p>
-        </div>
-        <div class="faq-item">
-          <h4><i class="fas fa-circle-question"></i> How do I receive referral rewards?</h4>
-          <p>Referral rewards are processed after your referred customer completes an eligible transaction through JFinMate, as per the program terms.</p>
-        </div>
-        <div class="faq-item">
-          <h4><i class="fas fa-circle-question"></i> Are there any customer benefits?</h4>
-          <p>Yes. Depending on the project or offer, eligible customers may receive benefits such as cashback, purchase offers, or other promotional rewards.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FINAL CTA -->
-  <section class="final-cta">
-    <div class="container">
-      <h2>Your Journey Doesn't End After You Buy. <br>It Gets Even More Rewarding.</h2>
-      <p class="sub">Find your dream property, secure the right financial solution, and enjoy benefits that continue even after your journey is complete.</p>
-      <div class="btn-group">
-        <a href="{{ route('authv3.login.form') }}" class="btn-primary"><i class="fas fa-building"></i> Explore Properties</a>
-        <a href="{{ url('/login') }}" class="btn-outline"><i class="fas fa-hand-holding-usd"></i> Explore Finance Solutions</a>
-      </div>
-      <p class="footnote" style="margin-top: 32px; opacity: 0.6; font-size: 0.9rem;">JFinMate · One Platform. Multiple Benefits.</p>
-    </div>
-  </section>

@@ -78,60 +78,247 @@ class AdminController extends Controller
     }
 
 
-    public function dashboard()
-    {
-        if (!empty(Session::get('role_id'))) {
-            $totalLoans = DB::table('loans')->count();
-            $inProcessLoans = DB::table('loans')->where('status', 'in process')->count();
-            $approvedLoans = DB::table('loans')->where('status', 'approved')->count();
-            $disbursedLoans = DB::table('loans')->where('status', 'disbursed')->count();
-            $rejectedLoans = DB::table('loans')->where('status', 'rejected')->count();
-            $totalUsers = DB::table('users')->count();
-            $totalCustomers = DB::table('users')->where('role_id', 1)->count();
-            $totalOfficers = DB::table('users')->where('role_id', 2)->count();
-            $leads = DB::table('leads')->count();
-            $enquiries = DB::table('enquiries')->count();
-            $properties = DB::table('properties')->count();
-            $recentLoans = $this->fetchRecentLoans();
-
-            // Fetch monthly data for disbursed loans
-            $monthlyDisbursedData = DB::table('loans')
-                ->select(
-                    DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
-                    DB::raw("COUNT(*) as total_loans"),
-                    DB::raw("SUM(amount) as total_amount")
-                )
-                ->where('status', 'disbursed')
-                ->groupBy('month')
-                ->orderBy('month', 'ASC')
-                ->get();
-
-            $loanStatuses = [
-                'In Process' => $inProcessLoans,
-                'Approved' => $approvedLoans,
-                'Disbursed' => $disbursedLoans,
-                'Rejected' => $rejectedLoans,
-            ];
-
-            return view('admin.dashboard-dark', compact(
-                'totalLoans',
-                'approvedLoans',
-                'rejectedLoans',
-                'loanStatuses',
-                'totalUsers',
-                'disbursedLoans',
-                'recentLoans',
-                'monthlyDisbursedData',
-                'totalCustomers',
-                'totalOfficers',
-                'leads',
-                'enquiries',
-                'properties'
-            ));
-        } else {
-            return redirect('/');
-        }
+ public function dashboard()
+{
+    if (empty(Session::get('role_id'))) {
+        return redirect('/');
     }
+
+    // =====================================================
+    // TOTAL COUNTS
+    // =====================================================
+
+    $totalLoans = DB::table('loans')->count();
+
+    $inProcessLoans = DB::table('loans')
+        ->where('status', 'in process')
+        ->count();
+
+    $approvedLoans = DB::table('loans')
+        ->where('status', 'approved')
+        ->count();
+
+    $disbursedLoans = DB::table('loans')
+        ->where('status', 'disbursed')
+        ->count();
+
+    $rejectedLoans = DB::table('loans')
+        ->where('status', 'rejected')
+        ->count();
+
+    $totalUsers = DB::table('users')->count();
+
+    $totalCustomers = DB::table('users')
+        ->where('role_id', 1)
+        ->count();
+
+    $totalOfficers = DB::table('users')
+        ->where('role_id', 2)
+        ->count();
+
+    $leads = DB::table('leads')->count();
+
+    $enquiries = DB::table('enquiries')->count();
+
+    $properties = DB::table('properties')->count();
+
+    // =====================================================
+    // CURRENT / PREVIOUS MONTH
+    // =====================================================
+
+    $currentMonthStart = Carbon::now()->startOfMonth();
+    $currentMonthEnd = Carbon::now()->endOfMonth();
+
+    $previousMonthStart = Carbon::now()
+        ->subMonth()
+        ->startOfMonth();
+
+    $previousMonthEnd = Carbon::now()
+        ->subMonth()
+        ->endOfMonth();
+
+    // =====================================================
+    // LOAN GROWTH
+    // =====================================================
+
+    $currentLoans = DB::table('loans')
+        ->whereBetween('created_at', [
+            $currentMonthStart,
+            $currentMonthEnd
+        ])
+        ->count();
+
+    $previousLoans = DB::table('loans')
+        ->whereBetween('created_at', [
+            $previousMonthStart,
+            $previousMonthEnd
+        ])
+        ->count();
+
+    $loanGrowth = $previousLoans > 0
+        ? (($currentLoans - $previousLoans) / $previousLoans) * 100
+        : ($currentLoans > 0 ? 100 : 0);
+
+    // Loan amount difference
+    $currentLoanAmount = DB::table('loans')
+        ->whereBetween('created_at', [
+            $currentMonthStart,
+            $currentMonthEnd
+        ])
+        ->sum('amount');
+
+    $previousLoanAmount = DB::table('loans')
+        ->whereBetween('created_at', [
+            $previousMonthStart,
+            $previousMonthEnd
+        ])
+        ->sum('amount');
+
+    $loanGrowthAmount = $currentLoanAmount - $previousLoanAmount;
+
+    // =====================================================
+    // LEAD GROWTH
+    // =====================================================
+
+    $currentLeads = DB::table('leads')
+        ->whereBetween('created_at', [
+            $currentMonthStart,
+            $currentMonthEnd
+        ])
+        ->count();
+
+    $previousLeads = DB::table('leads')
+        ->whereBetween('created_at', [
+            $previousMonthStart,
+            $previousMonthEnd
+        ])
+        ->count();
+
+    $leadGrowth = $previousLeads > 0
+        ? (($currentLeads - $previousLeads) / $previousLeads) * 100
+        : ($currentLeads > 0 ? 100 : 0);
+
+    $leadGrowthCount = $currentLeads - $previousLeads;
+
+    // =====================================================
+    // CUSTOMER GROWTH
+    // role_id = 1
+    // =====================================================
+
+    $currentCustomers = DB::table('users')
+        ->where('role_id', 1)
+        ->whereBetween('created_at', [
+            $currentMonthStart,
+            $currentMonthEnd
+        ])
+        ->count();
+
+    $previousCustomers = DB::table('users')
+        ->where('role_id', 1)
+        ->whereBetween('created_at', [
+            $previousMonthStart,
+            $previousMonthEnd
+        ])
+        ->count();
+
+    $customerGrowth = $previousCustomers > 0
+        ? (($currentCustomers - $previousCustomers) / $previousCustomers) * 100
+        : ($currentCustomers > 0 ? 100 : 0);
+
+    $customerGrowthCount = $currentCustomers - $previousCustomers;
+
+    // =====================================================
+    // EMPLOYEE / OFFICER GROWTH
+    // role_id = 2
+    // =====================================================
+
+    $currentOfficers = DB::table('users')
+        ->where('role_id', 2)
+        ->whereBetween('created_at', [
+            $currentMonthStart,
+            $currentMonthEnd
+        ])
+        ->count();
+
+    $previousOfficers = DB::table('users')
+        ->where('role_id', 2)
+        ->whereBetween('created_at', [
+            $previousMonthStart,
+            $previousMonthEnd
+        ])
+        ->count();
+
+    $employeeGrowth = $previousOfficers > 0
+        ? (($currentOfficers - $previousOfficers) / $previousOfficers) * 100
+        : ($currentOfficers > 0 ? 100 : 0);
+
+    $employeeGrowthCount = $currentOfficers - $previousOfficers;
+
+    // =====================================================
+    // RECENT LOANS
+    // =====================================================
+
+    $recentLoans = $this->fetchRecentLoans();
+
+    // =====================================================
+    // MONTHLY DISBURSED DATA
+    // =====================================================
+
+    $monthlyDisbursedData = DB::table('loans')
+        ->select(
+            DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
+            DB::raw("COUNT(*) as total_loans"),
+            DB::raw("SUM(amount) as total_amount")
+        )
+        ->where('status', 'disbursed')
+        ->groupBy('month')
+        ->orderBy('month', 'ASC')
+        ->get();
+
+    // =====================================================
+    // LOAN STATUS
+    // =====================================================
+
+    $loanStatuses = [
+        'In Process' => $inProcessLoans,
+        'Approved'   => $approvedLoans,
+        'Disbursed'  => $disbursedLoans,
+        'Rejected'   => $rejectedLoans,
+    ];
+
+    // =====================================================
+    // DASHBOARD VIEW
+    // =====================================================
+
+    return view('admin.dashboard-dark', compact(
+        'totalLoans',
+        'approvedLoans',
+        'rejectedLoans',
+        'loanStatuses',
+        'totalUsers',
+        'disbursedLoans',
+        'recentLoans',
+        'monthlyDisbursedData',
+        'totalCustomers',
+        'totalOfficers',
+        'leads',
+        'enquiries',
+        'properties',
+
+        // Growth data
+        'loanGrowth',
+        'loanGrowthAmount',
+
+        'leadGrowth',
+        'leadGrowthCount',
+
+        'employeeGrowth',
+        'employeeGrowthCount',
+
+        'customerGrowth',
+        'customerGrowthCount'
+    ));
+}
     public function fetchRecentLoans($limit = 5)
     {
         $recentLoans = DB::table('loans')
@@ -718,6 +905,7 @@ class AdminController extends Controller
             $enquiries = DB::table('enquiries')->count();
             $properties = DB::table('properties')->count();
             $recentLoans = $this->fetchRecentLoans();
+            
 
             // Fetch monthly data for disbursed loans
             $monthlyDisbursedData = DB::table('loans')
