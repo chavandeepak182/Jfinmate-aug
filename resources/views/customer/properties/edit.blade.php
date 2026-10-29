@@ -249,9 +249,7 @@
                     <input class="offer-input offer-main-amount" type="number"
                            name="offers[{{ $i }}][amount]"
                            value="{{ $offer['amount'] }}"
-                           oninput="validateMainOffer(this, {{ $i }})"
-                           onblur="validateMainOffer(this, {{ $i }})"
-                           onchange="validateMainOffer(this, {{ $i }})"
+                          onchange="validateMainOffer(this, {{ $i }})"
                            {{ $isLocked ? 'readonly' : '' }}>
                     <small class="pool-hint">
                         Max allowed: ₹ <b class="pool-hint-value">{{ number_format($booking->offer_pool ?? 0, 2) }}</b>
@@ -636,22 +634,26 @@ function removeSubItem(button, parentIndex) {
 /* ====================================
    VALIDATE MAIN OFFER AMOUNT
 ==================================== */
-function validateMainOffer(input, parentIndex) {
-    const finalOfferPool = Number(window.finalOfferPoolAmount) || 0;
-    const entered = Number(input.value) || 0;
 
-    if (entered > finalOfferPool) {
+function validateMainOffer(input, parentIndex) {
+    const offerAmount = Number(window.finalOfferPoolAmount) || 0;
+    const mainOfferAmount = Number(input.value) || 0;
+
+    if (Math.abs(mainOfferAmount - offerAmount) > 0.01) {
         alert(
-            'Offer Amount cannot exceed the Offer Pool!\n' +
-            'Available Offer Pool: ₹ ' + finalOfferPool.toFixed(2)
+            'Main Offer Amount must be equal to the Offer Amount!\n\n' +
+            'Offer Amount: ₹ ' + offerAmount.toFixed(2) +
+            '\nMain Offer Amount: ₹ ' + mainOfferAmount.toFixed(2)
         );
 
-        input.value = finalOfferPool.toFixed(2);
+        input.style.borderColor = 'red';
+        return false;
     }
 
-    if (entered < 0) input.value = '0';
+    input.style.borderColor = '#e2e8f0';
 
     updateSubTotals(parentIndex);
+    return true;
 }
 
 /* ====================================
@@ -744,12 +746,13 @@ if (bookingEditForm) {
                 break;
             }
 
-            if (mainAmount > offerPool + 0.01) {
-                errorMessage =
-                    'Main Offer Amount cannot exceed the Offer Pool.\n\n' +
-                    'Offer Pool: ₹ ' + offerPool.toFixed(2);
-                break;
-            }
+           if (Math.abs(mainAmount - offerPool) > 0.01) {
+    errorMessage =
+        'Main Offer Amount must be equal to the Offer Amount.\n\n' +
+        'Offer Amount: ₹ ' + offerPool.toFixed(2) +
+        '\nMain Offer Amount: ₹ ' + mainAmount.toFixed(2);
+    break;
+}
 
             // Cashback is allowed without Sub Items.
             // Furniture and every other Main Offer need at least one Sub Item.
@@ -779,13 +782,17 @@ if (bookingEditForm) {
 
             if (errorMessage) break;
 
-            if (subTotal > mainAmount + 0.01) {
-                errorMessage =
-                    'Sub Items total cannot exceed Main Offer Amount.\n\n' +
-                    'Main Offer: ₹ ' + mainAmount.toFixed(2) +
-                    '\nSub Items Total: ₹ ' + subTotal.toFixed(2);
-                break;
-            }
+           
+
+if (type !== 'cashback' && Math.abs(subTotal - mainAmount) > 0.01) {
+    errorMessage =
+        'Sub Items Total must be equal to Main Offer Amount!\n\n' +
+        'Main Offer Amount: ₹ ' + mainAmount.toFixed(2) +
+        '\nSub Items Total: ₹ ' + subTotal.toFixed(2);
+    break;
+}
+
+
         }
 
         // IMPORTANT:
