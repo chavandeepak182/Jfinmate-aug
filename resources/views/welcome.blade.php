@@ -791,7 +791,7 @@
                             <input type="checkbox" id="rememberMe">
                             <label for="rememberMe">Remember me</label>
                         </div>
-                        <a href="{{ route('forgot') }}" class="forgot-link">Forgot Password?</a>
+                        <!--<a href="{{ route('forgot') }}" class="forgot-link">Forgot Password?</a>-->
                     </div>
 
                     <!-- Login Button -->
@@ -800,9 +800,9 @@
                     </button>
 
                     <!-- Sign Up Link -->
-                    <div class="signup-link">
-                        Don't have an account? <a href="{{ route('registerPage') }}">Sign Up Now</a>
-                    </div>
+                    <!--<div class="signup-link">-->
+                    <!--    Don't have an account? <a href="{{ route('registerPage') }}">Sign Up Now</a>-->
+                    <!--</div>-->
 
                 </form>
             </div>

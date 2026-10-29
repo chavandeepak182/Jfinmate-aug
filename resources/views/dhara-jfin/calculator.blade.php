@@ -1,5 +1,97 @@
-@include('dhara-jfin.layout.header')
+{{-- SEO META DATA FOR ELIGIBILITY CALCULATOR PAGE --}}
+@section('title', 'Loan Eligibility Calculator & EMI Calculator')
+@section('meta_description', 'Check your loan eligibility and calculate EMIs with Loan Eligibility Calculator and EMI Calculator. Estimate loan amount, monthly EMI, interest and repayment.')
+@section('meta_keywords', 'Loan Eligibility Calculator, EMI Calculator, Loan Eligibility, EMI Calculation, Loan Amount Calculator, Monthly EMI, Interest Calculator, Repayment Calculator')
 
+@section('content')
+@push('schema')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://jfinserv.com/eligibility-calculator#webpage",
+      "url": "https://jfinserv.com/eligibility-calculator",
+      "name": "Loan Eligibility Calculator & EMI Calculator | JF Finserve",
+      "description": "Use the JF Finserve EMI and loan eligibility calculators to estimate monthly loan repayments, total interest, repayment amounts and potential loan eligibility based on income, existing EMIs, interest rate and loan tenure.",
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://jfinserv.com/#website"
+      },
+      "about": {
+        "@id": "https://jfinserv.com/#organization"
+      },
+      "mainEntity": {
+        "@id": "https://jfinserv.com/eligibility-calculator#application"
+      },
+      "breadcrumb": {
+        "@id": "https://jfinserv.com/eligibility-calculator#breadcrumb"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://jfinserv.com/eligibility-calculator#application",
+      "name": "JF Finserve EMI & Loan Eligibility Calculator",
+      "url": "https://jfinserv.com/eligibility-calculator",
+      "applicationCategory": "FinanceApplication",
+      "applicationSubCategory": "EMI and Loan Eligibility Calculator",
+      "operatingSystem": "Web Browser",
+      "description": "An online financial calculator that helps users estimate monthly EMIs, total loan repayment, interest payable and indicative loan eligibility using loan parameters, gross monthly income and existing monthly EMIs.",
+      "provider": {
+        "@id": "https://jfinserv.com/#organization"
+      },
+      "featureList": [
+        "EMI Calculation",
+        "Loan Eligibility Estimation",
+        "Monthly Installment Calculation",
+        "Total Interest Calculation",
+        "Total Repayment Calculation",
+        "Loan Amortization Schedule",
+        "Income and Existing EMI Assessment",
+        "Downloadable Calculation Reports"
+      ],
+      "inLanguage": "en-IN"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://jfinserv.com/#website",
+      "url": "https://jfinserv.com/",
+      "name": "JF Finserve",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://jfinserv.com/#organization"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://jfinserv.com/#organization",
+      "name": "JF Finserve",
+      "url": "https://jfinserv.com/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://jfinserv.com/eligibility-calculator#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://jfinserv.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Eligibility Calculator",
+          "item": "https://jfinserv.com/eligibility-calculator"
+        }
+      ]
+    }
+  ]
+}
+</script>
+@endpush
+@include('dhara-jfin.layout.header')
 
 <main class="calculator-wrapper">
         <div class="container-calc">
@@ -79,9 +171,9 @@
                             </div>
 
                             <div class="cta-section-calc">
-                                <a href="{{ route('authv3.login.form') }}" class="btn-calc btn-calc-primary">
+                                <!-- <a href="{{ route('authv3.login.form') }}" class="btn-calc btn-calc-primary">
                                     Apply Now
-                                </a>
+                                </a> -->
                                 <button class="btn-calc btn-calc-secondary" id="download-emi-pdf">Download PDF</button>
                             </div>
                         </div>
@@ -202,9 +294,9 @@
                             </div>
 
                             <div class="cta-section-calc">
-                                <a href="{{ url('/dhara') }}#dharacontact" class="btn-calc btn-calc-primary">
+                                <!-- <a href="{{ url('/dhara') }}#dharacontact" class="btn-calc btn-calc-primary">
                                     Check Detailed Eligibility
-                                </a>
+                                </a> -->
                         
                                 <button class="btn-calc btn-calc-secondary" id="download-elig-pdf">Download Report</button>
                             </div>

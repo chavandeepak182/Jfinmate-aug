@@ -1359,6 +1359,79 @@ row.style.display=row.innerText.toLowerCase().includes(value)?'':'none';
 
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.deleteCategory').forEach(function (btn) {
+
+        btn.addEventListener('click', function () {
+
+            const categoryId = this.dataset.id;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This loan category will be permanently deleted!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+
+                if (!result.isConfirmed) return;
+
+                fetch("{{ route('loan.category.delete') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        loan_category_id: categoryId
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+
+                    if (data.status === 1) {
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: data.msg,
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => location.reload());
+
+                    } else {
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.msg
+                        });
+                    }
+
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Check console.'
+                    });
+                });
+
+            });
+
+        });
+
+    });
+
+});
+</script>
 
 @endsection
 

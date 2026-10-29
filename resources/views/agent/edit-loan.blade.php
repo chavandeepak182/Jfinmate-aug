@@ -276,95 +276,608 @@
             </div>
 
             <!-- Right Section: Document Management -->
-            <div class="col-md-4 py-2 px-5 bg-light">
-                <div class="section mb-4">
-                    <h3 class="h5 mb-3 mt-3"><strong>Loan Documents</strong></h3>
-                    <div class="">
-                        <!-- Existing Documents -->
-                        <h6>Uploaded Documents:</h6>
-                        <div class="row">
-                            @foreach($documents as $doc)
-                            <div class="col-md-12 mb-3">
-                                <div class="document-wrapper">
-                                    <a href="{{  Storage::url($doc->file_path)  }}" target="_blank">{{ $doc->document_name }}</a> 
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                        <!-- Document Upload -->
-                        <h6>Upload New Documents:</h6>
-                        <div id="document-upload-section">
-                            <div class="document-upload-row mb-3">
-                                <div class="row">
-                                    <div class="col-md-12 mb-2">
-                                        <input type="text" name="document_name[]" class="form-control" placeholder="Document Name">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <input type="file" name="documents[]" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary" onclick="addDocumentUploadRow()">Add Another Document</button>
-                    </div>
+<style>
+/* =========================================================
+   DOCUMENT COLUMN
+========================================================= */
+.document-column {
+    padding: 25px 30px 25px 10px;
+}
+
+/* =========================================================
+   MAIN DOCUMENT CARD
+========================================================= */
+.document-section {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e1e5eb;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    position: sticky;
+    top: 20px;
+    box-sizing: border-box;
+}
+
+/* HEADER */
+.document-header { margin-bottom: 25px; }
+.document-header-left { display: flex; align-items: flex-start; gap: 14px; }
+.document-folder-icon { color: #2864d7; font-size: 30px; flex-shrink: 0; }
+.document-title { margin: 0; color: #293548; font-size: 25px; font-weight: 700; line-height: 1.3; }
+.document-subtitle { margin: 5px 0 0; color: #7b8494; font-size: 14px; line-height: 1.5; }
+
+/* SECTION LABEL */
+.document-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+    color: #293548;
+    font-size: 16px;
+    font-weight: 700;
+}
+.document-label i { color: #2864d7; }
+
+/* DOCUMENT LIST */
+.document-list { display: flex; flex-direction: column; gap: 10px; }
+
+/* DOCUMENT CARD */
+.document-card {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #dfe4ea;
+    border-radius: 11px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+/* DOCUMENT ICON */
+.document-icon {
+    width: 55px; height: 55px; min-width: 55px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; font-size: 22px; flex-shrink: 0;
+}
+.file-image   { background: #eee8ff; color: #7c3aed; }
+.file-pdf     { background: #fee2e2; color: #dc2626; }
+.file-word    { background: #e5efff; color: #2563eb; }
+.file-excel   { background: #e5f8ec; color: #15803d; }
+.file-default { background: #f1f3f5; color: #596579; }
+
+/* DOCUMENT INFO */
+.document-info { flex: 1; min-width: 0; }
+.document-name {
+    color: #293548; font-size: 14px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.document-type { margin-top: 4px; color: #9299a5; font-size: 10px; }
+
+/* DOCUMENT ACTIONS */
+.document-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.document-action {
+    width: 38px; height: 38px;
+    border: none; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; text-decoration: none !important; flex-shrink: 0;
+}
+.view-document     { background: #edf5ff; color: #2864d7 !important; }
+.view-document:hover { background: #2864d7; color: #ffffff !important; }
+.download-document { background: #edfbf3; color: #159447 !important; }
+.download-document:hover { background: #159447; color: #ffffff !important; }
+.delete-document   { background: #fff0f0; color: #dc2626; }
+.delete-document:hover { background: #dc2626; color: #ffffff; }
+
+/* DIVIDER */
+.document-divider { height: 1px; background: #e2e5e9; margin: 27px 0; }
+
+/* UPLOAD ROW */
+.document-upload-row { width: 100%; margin-bottom: 15px; box-sizing: border-box; }
+
+/* DOCUMENT NAME INPUT */
+.document-name-wrapper { width: 100%; margin-bottom: 10px; }
+.document-input {
+    width: 100%; height: 53px;
+    border: 1px solid #d8dee6; border-radius: 9px;
+    padding: 0 15px; font-size: 14px; color: #293548;
+    background: #ffffff; box-sizing: border-box; outline: none;
+}
+.document-input:focus { border-color: #2864d7; box-shadow: 0 0 0 2px rgba(40,100,215,0.08); }
+.document-input::placeholder { color: #7b8494; }
+
+/* =========================================================
+   CUSTOM FILE UPLOAD  ← THE IMPORTANT PART
+========================================================= */
+.custom-file-wrapper {
+    position: relative;                 /* anchor for absolute children */
+    width: 100%;
+    height: 53px;
+    display: flex;
+    align-items: center;
+    background: #e9edf2;
+    border: 1px solid #d8dee6;
+    border-radius: 9px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* HIDE native file input — bulletproof */
+.custom-file-wrapper .document-file-input {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0,0,0,0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+/* CHOOSE FILE button (left) */
+.custom-file-label {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    min-width: 80px;
+    margin: 0;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9edf2;
+    border-right: 1px solid #d8dee6;
+    cursor: pointer;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+}
+.custom-file-label:hover { background: #dde4ec; }
+
+.choose-file-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: #536174;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.choose-file-text i { font-size: 18px; color: #596579; }
+
+/* SELECTED FILE NAME (right) */
+.selected-file-name {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    color: #596579;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    z-index: 1;
+}
+.selected-file-name.has-file {
+    color: #2864d7;
+    font-weight: 600;
+}
+
+/* ADD ANOTHER BUTTON */
+.add-document-btn {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 8px;
+    background: #0866d3;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+.add-document-btn:hover { background: #0056b8; }
+.add-document-btn:active { transform: scale(0.99); }
+.add-document-btn i { font-size: 16px; }
+
+/* NO DOCUMENTS */
+.no-documents {
+    padding: 22px;
+    text-align: center;
+    border: 1px dashed #d6dbe2;
+    border-radius: 10px;
+    color: #9aa2af;
+}
+.no-documents i { display: block; font-size: 24px; margin-bottom: 7px; }
+.no-documents p { margin: 0; font-size: 13px; }
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+    .document-column { padding: 20px 15px; }
+    .document-section { position: relative; top: auto; width: 100%; }
+}
+@media (max-width: 575px) {
+    .document-column { padding: 15px 10px; }
+    .document-section { padding: 18px; border-radius: 12px; }
+    .document-header { margin-bottom: 20px; }
+    .document-header-left { gap: 10px; }
+    .document-folder-icon { font-size: 24px; }
+    .document-title { font-size: 21px; }
+    .document-subtitle { font-size: 12px; }
+    .document-label { font-size: 14px; margin-bottom: 12px; }
+    .document-card { padding: 8px; gap: 8px; }
+    .document-icon { width: 45px; height: 45px; min-width: 45px; font-size: 18px; }
+    .document-name { font-size: 13px; }
+    .document-type { font-size: 9px; }
+    .document-actions { gap: 4px; }
+    .document-action { width: 32px; height: 32px; font-size: 11px; }
+    .document-input { height: 50px; }
+    .custom-file-wrapper { height: 50px; }
+    .custom-file-label { min-width: 120px; padding: 0 10px; }
+    .choose-file-text { font-size: 13px; gap: 5px; }
+    .choose-file-text i { font-size: 16px; }
+    .selected-file-name { padding: 0 10px; font-size: 12px; }
+    .add-document-btn { height: 50px; font-size: 14px; }
+}
+@media (max-width: 380px) {
+    .document-section { padding: 15px; }
+    .document-title { font-size: 19px; }
+    .custom-file-label { min-width: 105px; padding: 0 8px; }
+    .choose-file-text { font-size: 12px; }
+    .choose-file-text i { font-size: 14px; }
+    .selected-file-name { padding: 0 8px; font-size: 11px; }
+}
+</style> 
+            <!-- =========================================================
+     RIGHT SIDE : DOCUMENTS
+========================================================= -->
+
+<div class="col-lg-4 col-md-12 document-column">
+
+    <div class="document-section">
+
+        <!-- HEADER -->
+        <div class="document-header">
+
+            <div class="document-header-left">
+
+                <div class="document-folder-icon">
+                    <i class="fas fa-folder-open"></i>
                 </div>
-                <!-- Education Information -->
-                <!-- <div class="section mb-4">
-                    <h3 class="h5 mb-3 mt-3"><strong>Education Information</strong></h3>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="qualification">Qualification:</label>
-                                <input type="text" class="form-control" id="qualification" name="qualification" value="{{ old('qualification', $education->qualification ?? '') }}">
+
+                <div>
+                    <h3 class="document-title">
+                        Documents
+                    </h3>
+
+                    <p class="document-subtitle">
+                        Uploaded and required documents
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EXISTING DOCUMENTS
+        ================================================== -->
+
+        <div class="document-list-section">
+
+            <h6 class="document-label">
+                <i class="fas fa-file-alt"></i>
+                Uploaded Documents
+            </h6>
+
+
+            <div id="uploadedDocuments">
+
+                @if(isset($documents) && $documents->count() > 0)
+
+                    <div class="document-list">
+
+                        @foreach($documents as $doc)
+
+                            @php
+
+                                $fileUrl = Storage::url($doc->file_path);
+
+                                $extension = strtolower(
+                                    pathinfo(
+                                        $doc->file_path,
+                                        PATHINFO_EXTENSION
+                                    )
+                                );
+
+                                if(in_array($extension, ['jpg','jpeg','png','gif','webp'])) {
+
+                                    $iconClass = 'fa-file-image';
+                                    $iconColor = 'file-image';
+
+                                } elseif($extension === 'pdf') {
+
+                                    $iconClass = 'fa-file-pdf';
+                                    $iconColor = 'file-pdf';
+
+                                } elseif(in_array($extension, ['doc','docx'])) {
+
+                                    $iconClass = 'fa-file-word';
+                                    $iconColor = 'file-word';
+
+                                } elseif(in_array($extension, ['xls','xlsx'])) {
+
+                                    $iconClass = 'fa-file-excel';
+                                    $iconColor = 'file-excel';
+
+                                } else {
+
+                                    $iconClass = 'fa-file';
+                                    $iconColor = 'file-default';
+
+                                }
+
+                            @endphp
+
+
+                            <div class="document-card"
+                                 id="document-{{ $doc->document_id }}">
+
+
+                                <!-- FILE ICON -->
+                                <div class="document-icon {{ $iconColor }}">
+
+                                    <i class="fas {{ $iconClass }}"></i>
+
+                                </div>
+
+
+                                <!-- FILE INFORMATION -->
+                                <div class="document-info">
+
+                                    <div class="document-name"
+                                         title="{{ $doc->document_name }}">
+
+                                        {{ $doc->document_name }}
+
+                                    </div>
+
+                                    <div class="document-type">
+
+                                        {{ strtoupper($extension) }} FILE
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ACTION BUTTONS -->
+                                <div class="document-actions">
+
+                                    <!-- VIEW -->
+                                    <a href="{{ $fileUrl }}"
+                                       target="_blank"
+                                       class="document-action view-document"
+                                       title="View Document">
+
+                                        <i class="fas fa-eye"></i>
+
+                                    </a>
+
+
+                                    <!-- DOWNLOAD -->
+                                    <a href="{{ $fileUrl }}"
+                                       download
+                                       class="document-action download-document"
+                                       title="Download Document">
+
+                                        <i class="fas fa-download"></i>
+
+                                    </a>
+
+
+                                    <!-- DELETE -->
+                                    <button type="button"
+                                            class="document-action delete-document"
+                                            onclick="deleteDocument({{ $doc->document_id }}, this)"
+                                            title="Delete Document">
+
+                                        <i class="fas fa-trash"></i>
+
+                                    </button>
+
+                                </div>
+
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="pass_year">Passing Year:</label>
-                                <input type="number" class="form-control" id="pass_year" name="pass_year" value="{{ old('pass_year', $education->pass_year ?? '') }}">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="college_name">College Name:</label>
-                                <input type="text" class="form-control" id="college_name" name="college_name" value="{{ old('college_name', $education->college_name ?? '') }}">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="college_address">College Address:</label>
-                                <textarea class="form-control" id="college_address" name="college_address">{{ old('college_address', $education->college_address ?? '') }}</textarea>
-                            </div>
-                        </div>
+
+                        @endforeach
+
                     </div>
-                </div> -->
-            </div>            
+
+                @else
+
+                    <div class="no-documents">
+
+                        <i class="fas fa-folder-open"></i>
+
+                        <p>
+                            No documents uploaded yet.
+                        </p>
+
+                    </div>
+
+                @endif
+
+            </div>
+
+        </div>
+
+
+        <!-- DIVIDER -->
+        <div class="document-divider"></div>
+
+
+        <!-- =================================================
+             UPLOAD NEW DOCUMENTS
+        ================================================== -->
+
+        <div class="document-upload-section">
+
+            <h6 class="document-label">
+
+                <i class="fas fa-cloud-upload-alt"></i>
+
+                Upload New Documents
+
+            </h6>
+
+
+            <div id="document-upload-section">
+
+
+                <!-- FIRST DOCUMENT -->
+                <div class="document-upload-row">
+
+
+                    <!-- DOCUMENT NAME -->
+                    <div class="document-name-wrapper">
+
+                        <input type="text"
+                               name="document_name[]"
+                               class="form-control document-input"
+                               placeholder="Document Name">
+
+                    </div>
+
+
+                    <!-- FILE -->
+                    <div class="custom-file-wrapper">
+
+                        <label for="document_file_1"
+                               class="custom-file-label">
+
+                            <span class="choose-file-text">
+
+                                <i class="fas fa-folder-open"></i>
+
+
+                            </span>
+
+                        </label>
+
+
+                        <input type="file"
+                               id="document_file_1"
+                               name="documents[]"
+                               class="document-file-input"
+                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+
+
+                        <span class="selected-file-name">
+
+                            No file chosen
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADD ANOTHER -->
+            <button type="button"
+                    class="add-document-btn"
+                    onclick="addDocumentUploadRow()">
+
+                <i class="fas fa-plus"></i>
+
+                Add Another Document
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>         
         </div>
     </form>
 </div>
 
 <!-- JavaScript for Document Upload Rows -->
 <script>
-    function addDocumentUploadRow() {
-        const documentSection = document.getElementById('document-upload-section');
-        const index = documentSection.querySelectorAll('.document-upload-row').length;
+  function addDocumentUploadRow() {
 
-        const newRow = document.createElement('div');
-        newRow.className = 'document-upload-row mb-3';
-        newRow.innerHTML = `
-            <div class="row">
-                <div class="col-md-12 mb-2">
-                  <input type="text" name="document_name[]" class="form-control">
-                </div>
-                <div class="col-md-12">
-                    <input type="file" name="documents[]" class="form-control">
-                </div>
-            </div>
-        `;
+    const documentSection = document.getElementById('document-upload-section');
 
-        documentSection.appendChild(newRow);
-    }
-function toggleRemarkBox(value) {
+    const index = documentSection.querySelectorAll('.document-upload-row').length + 1;
+
+    const newRow = document.createElement('div');
+
+    newRow.className = 'document-upload-row mb-3';
+
+    newRow.innerHTML = `
+        
+        <div class="document-name-wrapper">
+
+            <input type="text"
+                   name="document_name[]"
+                   class="form-control document-input"
+                   placeholder="Document Name">
+
+        </div>
+
+        <div class="custom-file-wrapper">
+
+            <label for="document_file_${index}"
+                   class="custom-file-label">
+
+                <span class="choose-file-text">
+
+                    <i class="fas fa-folder-open"></i>
+
+                    Choose File
+
+                </span>
+
+            </label>
+
+            <input type="file"
+                   id="document_file_${index}"
+                   name="documents[]"
+                   class="document-file-input"
+                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+
+            <span class="selected-file-name">
+
+                No file chosen
+
+            </span>
+
+        </div>
+
+    `;
+
+    documentSection.appendChild(newRow);
+}
+
+    function toggleRemarkBox(value) {
 
     const remarkBox = document.getElementById('remarkBox');
     const approvedAmountBox = document.getElementById('approvedAmountBox');
@@ -546,5 +1059,38 @@ $(document).ready(function(){
 
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    function updateFileName(input) {
+
+        const wrapper = input.closest('.custom-file-wrapper');
+        if (!wrapper) return;
+
+        const display = wrapper.querySelector('.selected-file-name');
+        if (!display) return;
+
+        if (input.files && input.files.length > 0) {
+            display.textContent = input.files[0].name;
+            display.classList.add('has-file');
+        } else {
+            display.textContent = 'No file chosen';
+            display.classList.remove('has-file');
+        }
+    }
+
+    // Delegated listener - works for dynamically added rows too
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.classList.contains('document-file-input')) {
+            updateFileName(e.target);
+        }
+    });
+
+    // Initialize any existing file inputs on page load
+    document.querySelectorAll('.document-file-input').forEach(function (input) {
+        updateFileName(input);
+    });
+
+});
+</script>
 @endsection

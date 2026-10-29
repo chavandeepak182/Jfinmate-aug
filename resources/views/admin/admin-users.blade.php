@@ -1489,8 +1489,8 @@ $(document).on('click', '.delete-user', function () {
         $('#exampleModalLabel').text('Add New Channel Partner');
     }
     else if (type === 'active') {
-    $('#openAddModal').text('Active Customers');
-    $('#exampleModalLabel').text('Active Customers');
+    // $('#openAddModal').text('Active Customers');
+    // $('#exampleModalLabel').text('Active Customers');
 }
 
     $.ajax({

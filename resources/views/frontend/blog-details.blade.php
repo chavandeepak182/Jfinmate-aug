@@ -19,32 +19,7 @@
          HERO SECTION
     ====================================================== -->
 
-    <section class="blog-detail-hero">
-
-        <div
-            class="blog-detail-hero-image"
-            style="background-image: url('{{ asset('storage/' . $blog->image) }}');">
-        </div>
-
-        <div class="blog-detail-hero-overlay"></div>
-
-        <div class="blog-detail-hero-content">
-
-            <div class="blog-detail-hero-inner">
-
-                <h1 class="blog-detail-hero-title">
-                    {{ $blog->blog_name }}
-                </h1>
-
-                <p class="blog-detail-hero-description">
-                    {{ Str::limit(strip_tags($blog->description), 120, '...') }}
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
+  
 
 
 
@@ -52,7 +27,7 @@
          MAIN BLOG CONTENT
     ====================================================== -->
 
-    <section class="blog-detail-main">
+    <section class="blog-detail-main" style="margin-top:20px;">
 
         <div class="blog-detail-container">
 

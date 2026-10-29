@@ -258,11 +258,59 @@ Route::get('admin/eligible', [BankController::class, 'eligiblelist'])->name('adm
 
 Route::get('/', function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | EXISTING DATA
+    |--------------------------------------------------------------------------
+    */
+
     $data['allProperties'] = DB::table('properties')
-        ->where('is_active',1)
+        ->where('is_active', 1)
         ->get();
 
-    return view('dhara-jfin.index', compact('data'));
+
+    /*
+    |--------------------------------------------------------------------------
+    | LATEST 3 BLOGS
+    |--------------------------------------------------------------------------
+    */
+
+    $latestBlogs = DB::table('blog')
+        ->leftJoin(
+            'blog_category',
+            'blog.category_id',
+            '=',
+            'blog_category.pid'
+        )
+        ->select(
+            'blog.id',
+            'blog.image',
+            'blog.blog_name',
+            'blog.description',
+            'blog.slug',
+            'blog.created_at',
+            'blog.category_id',
+            'blog_category.category_name'
+        )
+        ->where(
+            'blog.status',
+            'active'
+        )
+        ->orderBy(
+            'blog.created_at',
+            'desc'
+        )
+        ->take(3)
+        ->get();
+
+
+    return view(
+        'dhara-jfin.index',
+        compact(
+            'data',
+            'latestBlogs'
+        )
+    );
 });
 // Route::get('/', function () {
 //     return view('frontend.index');
@@ -536,7 +584,11 @@ Route::get('admin/blogs', [BlogController::class, 'index'])->name('blogs.index')
     Route::get('blogs/edit/{id}', [BlogController::class, 'edit'])->name('blogs.edit');  // Edit blog form
     Route::put('blogs/update/{id}', [BlogController::class, 'update'])->name('blogs.update'); // Update blog
     Route::post('blogs/delete/{id}', [BlogController::class, 'deleteService'])->name('blogs.delete'); // Delete blog
+Route::get('/blogs', [FrontendController::class, 'blog'])
+    ->name('blogs');
 
+Route::get('/blogs/{slug}', [FrontendController::class, 'showBlog'])
+    ->name('blogs.show');
 
     // blog category
     Route::get('/blog-categories', [BlogCategoryController::class, 'index'])->name('blog.categories.index');
@@ -729,7 +781,12 @@ Route::get('/notifications/unread-count', [NotificationController::class, 'unrea
 });
 
 Route::get('/cities/{state_id}', [LoanApplicationController::class, 'getCities'])->name('getCities');
-
+Route::delete('/admin/document/{id}', [LoanApplicationController::class, 'deleteDocument'])
+    ->name('admin.deleteDocument');
+    Route::delete(
+    '/agent/delete-document/{id}',
+    [AgentController::class, 'deleteDocument']
+)->name('agent.deleteDocument');
 
 //loan
 // Route::get('/applyNow', [LoanApplicationController::class, 'applyNow'])->name('applyNow');

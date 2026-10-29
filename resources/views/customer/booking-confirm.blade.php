@@ -232,9 +232,12 @@ h4
             $offers = json_decode($booking->offers, true);
         @endphp
 
-        @if(!$offers)
-            <p>No offers available.</p>
-        @else
+       @if(empty($offers))
+    <p>No offers added. You can submit your selection as Cashback.</p>
+    @php
+        $offers = [];
+    @endphp
+@endif
         @if($errors->any())
     <div style="background:red;color:white;padding:10px;">
         @foreach($errors->all() as $error)
@@ -262,90 +265,144 @@ h4
 
             <h5>Select Offer Options</h5>
 
-            <div class="offers">
+          {{-- OFFERS SECTION --}}
+<div class="offers">
 
-                @foreach($offers as $mainIndex => $main)
+    @if(!empty($offers) && is_array($offers))
 
-                    <div style="margin-bottom:15px; border:1px solid #ddd; padding:12px; border-radius:6px;">
+        @foreach($offers as $mainIndex => $main)
 
-                        {{-- MAIN --}}
-                        <label>
-    <input type="checkbox"
-class="main-checkbox"
-data-index="{{ $mainIndex }}"
-data-label="{{ strtolower($main['label']) }}">
+            <div class="offer-card"
+                 style="margin-bottom:15px; border:1px solid #ddd; padding:12px; border-radius:6px;">
 
-    <strong>{{ $main['label'] }}</strong>
-    – ₹ 
-    <span class="main-amount"
-          id="main_amount_{{ $mainIndex }}">
-        {{ number_format($main['amount'],2) }}
-    </span>
-</label>
+                {{-- MAIN OFFER --}}
+                <label style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
 
-                        {{-- SUB ITEMS --}}
-                        @if(!empty($main['items']))
-                            <div style="margin-left:25px; margin-top:8px;">
-                              @foreach($main['items'] as $subIndex => $sub)
+                    <input
+                        type="checkbox"
+                        class="main-checkbox"
+                        data-index="{{ $mainIndex }}"
+                        data-label="{{ strtolower($main['label'] ?? '') }}"
+                    >
 
-    <div style="margin-bottom:15px; padding:10px; border:1px solid #e2e8f0; border-radius:8px;">
+                    <strong>{{ $main['label'] ?? 'Offer' }}</strong>
 
-       <label style="display:flex; gap:8px; align-items:center;">
+                    – ₹
 
-<input type="checkbox"
-class="sub-checkbox"
-data-parent="{{ $mainIndex }}"
-data-label="{{ $sub['label'] }}"
-data-amount="{{ $sub['amount'] }}"
-data-id="{{ $mainIndex }}_{{ $subIndex }}">
+                    <span
+                        class="main-amount"
+                        id="main_amount_{{ $mainIndex }}"
+                    >
+                        {{ number_format((float)($main['amount'] ?? 0), 2) }}
+                    </span>
 
-<input type="hidden"
-name="selected_items[{{ $mainIndex }}_{{ $subIndex }}][label]"
-value="{{ $sub['label'] }}"
-disabled>
+                </label>
 
-<input type="hidden"
-name="selected_items[{{ $mainIndex }}_{{ $subIndex }}][description]"
-value="{{ $sub['description'] ?? '' }}"
-disabled>
+                {{-- SUB ITEMS --}}
+                @if(!empty($main['items']) && is_array($main['items']))
 
-<input type="hidden"
-name="selected_items[{{ $mainIndex }}_{{ $subIndex }}][image]"
-value="{{ $sub['image'] ?? '' }}"
-disabled>
+                    <div style="margin-left:25px; margin-top:12px;">
 
-<input type="hidden"
-name="selected_items[{{ $mainIndex }}_{{ $subIndex }}][amount]"
-value="{{ $sub['amount'] }}"
-disabled>
+                        @foreach($main['items'] as $subIndex => $sub)
 
-<strong>{{ $sub['label'] }}</strong>
-– ₹ {{ number_format($sub['amount'],2) }}
+                            <div class="sub-item-card"
+                                 style="margin-bottom:15px; padding:10px; border:1px solid #e2e8f0; border-radius:8px;">
 
-</label>
-        <div class="remaining-display" 
-     id="remaining_for_{{ $mainIndex }}_{{ $subIndex }}" 
-     style="color:#004181; font-weight:600; margin-top:6px;">
-</div>
+                                <label style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
 
-        {{-- DESCRIPTION + IMAGE --}}
-        @if(!empty($sub['description']))
-            <div style="margin-top:8px; padding:10px; background:#f8fafc; border-radius:6px;">
-                {!! $sub['description'] !!}
-            </div>
-        @endif
+                                    {{-- SUB ITEM CHECKBOX --}}
+                                    <input
+                                        type="checkbox"
+                                        class="sub-checkbox"
+                                        data-parent="{{ $mainIndex }}"
+                                        data-label="{{ $sub['label'] ?? '' }}"
+                                        data-amount="{{ (float)($sub['amount'] ?? 0) }}"
+                                        data-id="{{ $mainIndex }}_{{ $subIndex }}"
+                                    >
 
-    </div>
+                                    {{-- HIDDEN FIELDS --}}
+                                    <input
+                                        type="hidden"
+                                        name="selected_items[{{ $mainIndex }}_{{ $subIndex }}][label]"
+                                        value="{{ $sub['label'] ?? '' }}"
+                                        disabled
+                                    >
 
-@endforeach
+                                    <input
+                                        type="hidden"
+                                        name="selected_items[{{ $mainIndex }}_{{ $subIndex }}][description]"
+                                        value="{{ $sub['description'] ?? '' }}"
+                                        disabled
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="selected_items[{{ $mainIndex }}_{{ $subIndex }}][image]"
+                                        value="{{ $sub['image'] ?? '' }}"
+                                        disabled
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="selected_items[{{ $mainIndex }}_{{ $subIndex }}][amount]"
+                                        value="{{ (float)($sub['amount'] ?? 0) }}"
+                                        disabled
+                                    >
+
+                                    <strong>{{ $sub['label'] ?? 'Sub Item' }}</strong>
+
+                                    – ₹{{ number_format((float)($sub['amount'] ?? 0), 2) }}
+
+                                </label>
+
+                                {{-- REMAINING AMOUNT --}}
+                                <div
+                                    class="remaining-display"
+                                    id="remaining_for_{{ $mainIndex }}_{{ $subIndex }}"
+                                    style="color:#004181; font-weight:600; margin-top:6px;"
+                                ></div>
+
+                                {{-- DESCRIPTION --}}
+                                @if(!empty($sub['description']))
+
+                                    <div style="margin-top:8px; padding:10px; background:#f8fafc; border-radius:6px;">
+                                        {!! $sub['description'] !!}
+                                    </div>
+
+                                @endif
+
+                                {{-- IMAGE --}}
+                                @if(!empty($sub['image']))
+
+                                    <div style="margin-top:10px;">
+                                        <img
+                                            src="{{ $sub['image'] }}"
+                                            alt="{{ $sub['label'] ?? 'Offer image' }}"
+                                            style="max-width:200px; width:100%; height:auto; border-radius:8px;"
+                                        >
+                                    </div>
+
+                                @endif
+
                             </div>
-                        @endif
+
+                        @endforeach
 
                     </div>
 
-                @endforeach
+                @endif
 
             </div>
+
+        @endforeach
+
+    @else
+
+        <p>No offers are available. You can continue with the Cashback option.</p>
+
+    @endif
+
+</div>
 
             <hr>
 
@@ -369,7 +426,6 @@ disabled>
 
         </form>
 
-        @endif
 
    @elseif($booking->status === 'customer_confirmed' || $booking->status === 'completed')
         <p style="color:green;">

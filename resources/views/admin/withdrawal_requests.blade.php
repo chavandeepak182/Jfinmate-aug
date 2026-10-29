@@ -216,10 +216,14 @@ JFS | Wallet Balance
 
             </div>
 
-            <span class="badge bg-primary fs-6 px-3 py-2 wallet-request-count">
+            <span class="badge bg-primary fs-6 px-3 py-2 wallet-request-count" style="color:#fff;">
                 {{ count($requests) }} Requests
             </span>
-
+<style>
+    .wallet-request-count {
+    color: #fff !important;
+}
+</style>
         </div>
 
     </div>

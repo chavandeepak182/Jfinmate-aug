@@ -167,11 +167,12 @@ public function adminView($id)
     /* ===========================
        ADMIN – OFFER SUBMIT
     ============================*/
+
 public function adminOffer(Request $request, $id)
 {
     $user = auth()->user();
 
-    // ✅ Allow Admin + Partner
+    // 1. Allow Admin and Partner
     if (!in_array($user->role_id, [
         config('constants.roles.admin'),
         config('constants.roles.partner')
@@ -179,124 +180,194 @@ public function adminOffer(Request $request, $id)
         abort(403);
     }
 
+    // 2. Find booking
     $booking = PropertyBooking::findOrFail($id);
 
-    // 🔥 CP la check (only assigned + accepted)
+    // 3. Partner permission checks
     if ($user->role_id == config('constants.roles.partner')) {
 
         if ($booking->cp_id != $user->id) {
-            abort(403); // ❌ not assigned
+            abort(403);
         }
 
         if ($booking->cp_status != 'accepted') {
-            return back()->withErrors('Please accept booking first');
+            return back()->withErrors([
+                'booking' => 'Please accept booking first.'
+            ]);
         }
     }
 
-    /* ================= VALIDATION ================= */
+    // 4. Validate form data
     $validated = $request->validate([
-        'agreement_cost'        => 'required|numeric|min:1',
-        'commission_percentage' => 'required|numeric|min:0|max:100',
-        'tds_percentage'        => 'required|numeric|min:0|max:100',
-        'gst_percentage'        => 'required|numeric|min:0|max:100',
-        'offers.*.items.*.description' => 'nullable|string',
-        'mlm_amount'            => 'required|numeric|min:0',
+        'agreement_cost'          => 'required|numeric|min:1',
+        'commission_percentage'   => 'required|numeric|min:0|max:100',
+        'tds_percentage'          => 'required|numeric|min:0|max:100',
+        'gst_percentage'          => 'required|numeric|min:0|max:100',
 
-        'offers' => 'nullable|array',
-        'offers.*.label' => 'required|string|max:255',
-        'offers.*.amount' => 'required|numeric|min:0',
-        'offers.*.items' => 'nullable|array',
-        'offers.*.items.*.label' => 'required|string|max:255',
-        'offers.*.items.*.image' => 'nullable|string',
+        'mlm_type'                => 'required|in:amount,percent',
+        'mlm_value'               => 'required|numeric|min:0',
+
+        'offers'                  => 'nullable|array',
+        'offers.*.label'          => 'required|string|max:255',
+        'offers.*.amount'         => 'required|numeric|min:0',
+        'offers.*.items'          => 'nullable|array',
+        'offers.*.items.*.label'  => 'required|string|max:255',
+        'offers.*.items.*.image'  => 'nullable|string',
         'offers.*.items.*.amount' => 'required|numeric|min:0',
+        'offers.*.items.*.description' => 'nullable|string',
     ]);
 
-    /* ================= CALCULATION ================= */
+    // 5. Calculate commission
+    $agreementCost = (float) $validated['agreement_cost'];
+    $commissionPercentage = (float) $validated['commission_percentage'];
+    $tdsPercentage = (float) $validated['tds_percentage'];
+    $gstPercentage = (float) $validated['gst_percentage'];
 
-    $actualCommission = $request->agreement_cost *
-        ($request->commission_percentage / 100);
+    $actualCommission = round(
+        $agreementCost * ($commissionPercentage / 100),
+        2
+    );
 
-    $tdsAmount = $actualCommission * ($request->tds_percentage / 100);
-    $gstAmount = $actualCommission * ($request->gst_percentage / 100);
+    $tdsAmount = round(
+        $actualCommission * ($tdsPercentage / 100),
+        2
+    );
 
-    $netCommission = $actualCommission - $tdsAmount - $gstAmount;
+    $gstAmount = round(
+        $actualCommission * ($gstPercentage / 100),
+        2
+    );
 
-    $offerPool = $netCommission / 2;
-    $companyShare = $netCommission / 2;
+    $netCommission = round(
+        $actualCommission - $tdsAmount - $gstAmount,
+        2
+    );
 
-    $finalOfferPool = $offerPool - $request->mlm_amount;
+    // 6. Calculate offer pool and company share
+    $offerPool = round(max(0, $netCommission / 2), 2);
+    $companyShare = round(max(0, $netCommission / 2), 2);
 
-    if ($finalOfferPool < 0) {
-        return back()->withErrors('MLM amount exceeds offer pool');
+    // 7. Calculate MLM amount on the server
+    $mlmType = $validated['mlm_type'];
+    $mlmValue = (float) $validated['mlm_value'];
+
+    if ($mlmType === 'percent') {
+
+        if ($mlmValue > 100) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'mlm_value' => 'MLM percentage cannot exceed 100%.'
+                ]);
+        }
+
+        $mlmAmount = round(
+            $offerPool * ($mlmValue / 100),
+            2
+        );
+
+    } else {
+
+        // Fixed MLM amount
+        $mlmAmount = round($mlmValue, 2);
     }
 
-    /* ================= BUILD OFFERS ================= */
+    // 8. Validate MLM amount
+    if ($mlmAmount > $offerPool) {
+        return back()
+            ->withInput()
+            ->withErrors([
+                'mlm_value' => 'MLM amount cannot exceed the available offer pool.'
+            ]);
+    }
 
+    // 9. Calculate remaining offer pool
+    $finalOfferPool = round(
+        max(0, $offerPool - $mlmAmount),
+        2
+    );
+
+    // 10. Build and validate offers
     $offers = [];
 
-    if ($request->offers) {
+    foreach ($validated['offers'] ?? [] as $mainOffer) {
 
-        foreach ($request->offers as $mainOffer) {
+        $items = [];
+        $subTotal = 0;
 
-            $subTotal = 0;
-            $items = [];
+        foreach ($mainOffer['items'] ?? [] as $sub) {
 
-            if (!empty($mainOffer['items'])) {
+            $subAmount = (float) $sub['amount'];
+            $subTotal += $subAmount;
 
-                foreach ($mainOffer['items'] as $sub) {
-                    $subTotal += $sub['amount'];
-
-                    $items[] = [
-                        'label'       => $sub['label'],
-                        'description' => $sub['description'] ?? null,
-                        'image'       => $sub['image'] ?? null,
-                        'amount'      => $sub['amount'],
-                    ];
-                }
-
-                if ($subTotal != $mainOffer['amount']) {
-                    return back()->withErrors(
-                        'Sub items total must equal main offer amount'
-                    );
-                }
-            }
-
-            $offers[] = [
-                'label'  => $mainOffer['label'],
-                'amount' => $mainOffer['amount'],
-                'items'  => $items
+            $items[] = [
+                'label'       => $sub['label'],
+                'description' => $sub['description'] ?? null,
+                'image'       => $sub['image'] ?? null,
+                'amount'      => $subAmount,
             ];
         }
+
+        // Validate sub-item total
+        if (
+            !empty($items) &&
+            abs($subTotal - (float) $mainOffer['amount']) > 0.01
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'offers' => 'Sub items total must equal the main offer amount.'
+                ]);
+        }
+
+        // Main offer cannot exceed remaining offer pool
+        if ((float) $mainOffer['amount'] > $finalOfferPool) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'offers' => 'Main offer amount cannot exceed the available offer pool.'
+                ]);
+        }
+
+        $offers[] = [
+            'label'  => $mainOffer['label'],
+            'amount' => (float) $mainOffer['amount'],
+            'items'  => $items,
+        ];
     }
 
-    /* ================= SAVE ================= */
-
+    // 11. Save all booking and MLM details
     $booking->update([
-        'agreement_cost'        => $request->agreement_cost,
-        'commission_percentage' => $request->commission_percentage,
-        'tds_percentage'        => $request->tds_percentage,
-        'gst_percentage'        => $request->gst_percentage,
+        'agreement_cost'        => $agreementCost,
+        'commission_percentage' => $commissionPercentage,
+        'tds_percentage'        => $tdsPercentage,
+        'gst_percentage'        => $gstPercentage,
 
         'actual_commission' => $actualCommission,
         'tds_amount'        => $tdsAmount,
         'gst_amount'        => $gstAmount,
         'net_commission'    => $netCommission,
 
-        'mlm_amount'        => $request->mlm_amount,
+        // Save MLM details exactly once
+        'mlm_type'   => $mlmType,
+        'mlm_value'  => $mlmValue,
+        'mlm_amount' => $mlmAmount,
 
-        'offer_pool'        => $finalOfferPool,
-        'final_commission'  => $companyShare,
+        'offer_pool'       => $finalOfferPool,
+        'final_commission' => $companyShare,
 
-        'offers' => !empty($offers) ? json_encode($offers) : null,
+        'offers' => !empty($offers)
+    ? json_encode($offers)
+    : null,
 
-        'status' => !empty($offers)
-            ? 'waiting_customer_confirmation'
-            : 'completed',
+// Always wait for customer confirmation after submitting.
+'status' => 'waiting_customer_confirmation',
     ]);
 
+    // 12. Redirect after saving
     return redirect()
         ->route('admin.property.bookings')
-        ->with('success', 'Offer sent successfully');
+        ->with('success', 'Offer sent successfully.');
 }
 
 
@@ -1051,23 +1122,115 @@ public function adminEdit($id)
 public function adminUpdate(Request $request, $id)
 {
     $booking = PropertyBooking::findOrFail($id);
+    // Lock the booking after customer acceptance.
+if (in_array($booking->status, [
+    'customer_confirmed',
+    'completed'
+])) {
+    return back()->with(
+        'error',
+        'This booking is locked because the customer has accepted the offer.'
+    );
+}
 
-    // ❌ LOCK
-    if (in_array($booking->status, ['customer_confirmed','completed'])) {
-        return redirect()->back()->with('error','Editing not allowed');
+    // 1. Prevent editing locked bookings
+    if (in_array($booking->status, ['customer_confirmed', 'completed'])) {
+        return redirect()->back()
+            ->with('error', 'Editing not allowed.');
     }
 
+    // 2. Validate form data
+    $validated = $request->validate([
+        'agreement_cost'        => 'required|numeric|min:1',
+        'commission_percentage' => 'required|numeric|min:0|max:100',
+        'tds_percentage'        => 'required|numeric|min:0|max:100',
+        'gst_percentage'        => 'required|numeric|min:0|max:100',
+
+        'mlm_type'              => 'required|in:amount,percent',
+        'mlm_value'             => 'required|numeric|min:0',
+
+        'offers'                => 'nullable|array',
+        'offers.*.label'        => 'required|string|max:255',
+        'offers.*.amount'       => 'required|numeric|min:0',
+        'offers.*.items'        => 'nullable|array',
+        'offers.*.items.*.label' => 'required|string|max:255',
+        'offers.*.items.*.image' => 'nullable|string',
+        'offers.*.items.*.amount' => 'required|numeric|min:0',
+        'offers.*.items.*.description' => 'nullable|string',
+    ]);
+
+    // 3. Calculate commission
+    $agreementCost = (float) $validated['agreement_cost'];
+    $commissionPercentage = (float) $validated['commission_percentage'];
+    $tdsPercentage = (float) $validated['tds_percentage'];
+    $gstPercentage = (float) $validated['gst_percentage'];
+
+    $actualCommission = $agreementCost * ($commissionPercentage / 100);
+
+    $tdsAmount = $actualCommission * ($tdsPercentage / 100);
+    $gstAmount = $actualCommission * ($gstPercentage / 100);
+
+    $netCommission = $actualCommission - $tdsAmount - $gstAmount;
+
+    // 4. Calculate offer pool and company share
+    $offerPool = max(0, $netCommission / 2);
+    $companyShare = max(0, $netCommission / 2);
+
+    // 5. Calculate MLM amount
+    $mlmType = $validated['mlm_type'];
+    $mlmValue = (float) $validated['mlm_value'];
+
+    if ($mlmType === 'percent') {
+        if ($mlmValue > 100) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors([
+                    'mlm_value' => 'MLM percentage cannot exceed 100%.',
+                ]);
+        }
+
+        $mlmAmount = round($offerPool * ($mlmValue / 100), 2);
+    } else {
+        $mlmAmount = round($mlmValue, 2);
+    }
+
+    // 6. MLM cannot exceed the offer pool
+    if ($mlmAmount > $offerPool) {
+        return redirect()->back()
+            ->withInput()
+            ->withErrors([
+                'mlm_value' => 'MLM amount cannot exceed the available offer pool.',
+            ]);
+    }
+
+    $finalOfferPool = round(max(0, $offerPool - $mlmAmount), 2);
+
+    // 7. Save booking details
     $booking->update([
-        'agreement_cost' => $request->agreement_cost,
-        'commission_percentage' => $request->commission_percentage,
-        'tds_percentage' => $request->tds_percentage,
-        'gst_percentage' => $request->gst_percentage,
-        'mlm_amount' => $request->mlm_amount,
-        'offers' => $request->offers ? json_encode($request->offers) : null,
+        'agreement_cost'        => $agreementCost,
+        'commission_percentage' => $commissionPercentage,
+        'tds_percentage'        => $tdsPercentage,
+        'gst_percentage'        => $gstPercentage,
+
+        'actual_commission'     => round($actualCommission, 2),
+        'tds_amount'            => round($tdsAmount, 2),
+        'gst_amount'            => round($gstAmount, 2),
+        'net_commission'        => round($netCommission, 2),
+
+        'mlm_type'              => $mlmType,
+        'mlm_value'             => $mlmValue,
+        'mlm_amount'            => $mlmAmount,
+
+        'offer_pool'            => $finalOfferPool,
+        'final_commission'      => round($companyShare, 2),
+
+        'offers' => !empty($validated['offers'])
+            ? json_encode($validated['offers'])
+            : null,
     ]);
 
     return redirect()->route('admin.property.bookings')
-        ->with('success','Booking updated successfully');
+        ->with('success', 'Booking updated successfully.');
 }
 public function checkReferral(Request $request)
 {

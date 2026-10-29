@@ -40,6 +40,10 @@ use Illuminate\Database\Eloquent\Model;
 
     'net_commission',
     'mlm_amount',
+    'net_commission',
+'mlm_type',
+'mlm_value',
+'mlm_amount',
 
     'offer_pool',
     'final_commission',

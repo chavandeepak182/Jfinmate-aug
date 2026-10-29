@@ -121,19 +121,20 @@ public function storeService(Request $request)
 public function update(Request $request, $id)
 {
     $request->validate([
-        'blog_name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'slug' => 'nullable|string|max:255',
-        'meta_title' => 'nullable|string|max:255',
-        'meta_keywords' => 'nullable|string',
-        'publish_date' => 'nullable|date',
-        'status' => 'nullable|string',
-        'author_name' => 'nullable|string|max:255',
-        'tag' => 'nullable|string',
-        'schema_markup' => 'nullable|string',
-        'meta_description' => 'nullable|string',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
-    ]);
+    'category_id'      => 'required|integer',
+    'blog_name'        => 'required|string|max:255',
+    'description'      => 'nullable|string',
+    'slug'             => 'required|string|max:255',
+    'meta_title'       => 'nullable|string|max:255',
+    'meta_keywords'    => 'nullable|string',
+    'publish_date'     => 'nullable|date',
+    'status'           => 'required|in:active,inactive',
+    'author_name'      => 'nullable|string|max:255',
+    'tag'              => 'nullable|string',
+    'schema_markup'    => 'nullable|string',
+    'meta_description' => 'nullable|string',
+    'image'            => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
+]);
 
     $blog = DB::table('blog')->where('id', $id)->first();
 
@@ -153,21 +154,22 @@ public function update(Request $request, $id)
         $imagePath = $request->file('image')->store('blogs', 'public');
     }
 
-    DB::table('blog')->where('id', $id)->update([
-        'blog_name' => $request->blog_name,
-        'description' => $request->description,
-        'slug' => $request->slug,
-        'meta_title' => $request->meta_title,
-        'meta_keywords' => $request->meta_keywords,
-        'meta_description' => $request->meta_description,
-        'publish_date' => $request->publish_date,
-        'status' => $request->status ?? 'inactive',
-        'schema_markup' => $request->schema_markup,
-        'tag' => $request->tag,
-        'author_name' => $request->author_name,
-        'image' => $imagePath,
-        'updated_at' => now(),
-    ]);
+   DB::table('blog')->where('id', $id)->update([
+    'category_id'     => $request->category_id,
+    'blog_name'       => $request->blog_name,
+    'description'     => $request->description,
+    'slug'            => $request->slug,
+    'meta_title'      => $request->meta_title,
+    'meta_keywords'   => $request->meta_keywords,
+    'meta_description'=> $request->meta_description,
+    'publish_date'    => $request->publish_date,
+    'status'          => strtolower(trim($request->status ?? 'inactive')),
+    'schema_markup'   => $request->schema_markup,
+    'tag'             => $request->tag,
+    'author_name'     => $request->author_name,
+    'image'           => $imagePath,
+    'updated_at'      => now(),
+]);
 
     return redirect()->route('blogs.index')->with('success', 'Blog updated successfully.');
 }

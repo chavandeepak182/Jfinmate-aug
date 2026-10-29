@@ -1,6 +1,130 @@
+{{-- SEO META DATA FOR SERVICES PAGE --}}
+@section('title', 'Loan Services in Pune | Financial Services | JFinserve')
+@section('meta_description', 'Explore loan services in Pune wi. Get expert assistance for home loans, LAP, project loans, MSME loans, overdraft and LRD solutions.')
+@section('meta_keywords', 'Loan Services in Pune, Financial Services in Pune, Loan Consultant in Pune, Home Loan in Pune, Loan Against Property in Pune, Project Loan in Pune, MSME Loan in Pune, Overdraft Facility in Pune, Lease Rental Discounting in Pune, Business Loan Services in Pune')
+
+@section('content')
+@push('schema')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": "https://jfinserv.com/services#webpage",
+  "url": "https://jfinserv.com/services",
+  "name": "Financial Services | JF Finserve",
+  "description": "Explore financial solutions from JF Finserve, including home loans, loans against property, project loans, MSME loans, overdraft facilities and lease rental discounting.",
+  "inLanguage": "en-IN",
+  "isPartOf": {
+    "@type": "WebSite",
+    "@id": "https://jfinserv.com/#website",
+    "url": "https://jfinserv.com/",
+    "name": "JF Finserve"
+  },
+  "about": {
+    "@type": "Organization",
+    "@id": "https://jfinserv.com/#organization",
+    "name": "JF Finserve",
+    "url": "https://jfinserv.com/"
+  },
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "JF Finserve Financial Services",
+    "numberOfItems": 6,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "Service",
+          "name": "Home Loan",
+          "url": "https://jfinserv.com/home-loan",
+          "provider": {
+            "@id": "https://jfinserv.com/#organization"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "Service",
+          "name": "Loan Against Property",
+          "url": "https://jfinserv.com/loan-against-property",
+          "provider": {
+            "@id": "https://jfinserv.com/#organization"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@type": "Service",
+          "name": "Project Loan",
+          "url": "https://jfinserv.com/project-loan",
+          "provider": {
+            "@id": "https://jfinserv.com/#organization"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": {
+          "@type": "Service",
+          "name": "MSME Loan",
+          "provider": {
+            "@id": "https://jfinserv.com/#organization"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "item": {
+          "@type": "Service",
+          "name": "Overdraft Facility",
+          "provider": {
+            "@id": "https://jfinserv.com/#organization"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "item": {
+          "@type": "Service",
+          "name": "Lease Rental Discounting",
+          "provider": {
+            "@id": "https://jfinserv.com/#organization"
+          }
+        }
+      }
+    ]
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://jfinserv.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Services",
+        "item": "https://jfinserv.com/services"
+      }
+    ]
+  }
+}
+</script>
+@endpush
 @include('dhara-jfin.layout.header')
 <main>
-<section class="video-hero">
+<!-- <section class="video-hero">
         <video id="videobcg" preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
         <source src="{{ asset('theme/dhara-jfin/videos/jfinserv_banner_services.mp4') }}" type="video/mp4">
         </video>
@@ -9,7 +133,27 @@
             <h1>We Handle All Your <span>Lending Needs</span></h1>
         </div>
     </div>
-</section>
+</section> -->
+<div class="section-header" > 
+
+            <h4 class="finserv-eyebrow" style="color:#295cab;">
+                Our Services
+            </h4>
+
+            <h2 class="finserv-trusted" style="color:#295cab;">
+                We Handle All Your 
+                <strong style="color:#00abeb">Lending Needs</strong>
+            </h2>
+            
+
+            <p>
+    Explore flexible and reliable lending solutions designed around your
+    financial needs. From home loans to business financing, Jfinserv helps
+    you find the right solution with transparency, expert guidance, and a
+    hassle-free process.
+</p>
+
+        </div>
 
     <!-- Services Section -->
     <section class="service-page-services-section">
@@ -19,7 +163,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                       <img src="{{ asset('theme/dhara-jfin/img/home_loan.jpg') }}" alt="Home loan services offered by JF Finserve">
+                       <img src="{{ asset('theme/dhara-jfin/img/homeloan.jpeg') }}" alt="Home loan services offered by JF Finserve">
                     </div>
                     <div class="service-page-service-badge">Popular</div>
                 </div>
@@ -47,7 +191,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-<img src="{{ asset('theme/dhara-jfin/img/loan_against_property.jpg') }}" alt="Loan against property services offered by JF Finserve">                    </div>
+<img src="{{ asset('theme/dhara-jfin/img/lap.jpeg') }}" alt="Loan against property services offered by JF Finserve">                    </div>
                     <div class="service-page-service-badge">Featured</div>
                 </div>
                 <div class="service-page-service-content">
@@ -74,7 +218,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-<img src="{{ asset('theme/dhara-jfin/img/project_loan.jpg') }}" alt="Project loan financing services offered by JF Finserve">                    </div>
+<img src="{{ asset('theme/dhara-jfin/img/projectloan.jpeg') }}" alt="Project loan financing services offered by JF Finserve">                    </div>
                 </div>
                 <div class="service-page-service-content">
                     <h3 class="service-page-service-title">Project Loan</h3>
@@ -100,7 +244,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{ asset('theme/dhara-jfin/img/msme_loan.jpg') }}" alt="MSME business loan from JF Finserve">
+                        <img src="{{ asset('theme/dhara-jfin/img/msmeloan.jpeg') }}" alt="MSME business loan from JF Finserve">
                     </div>
                     <div class="service-page-service-badge">New</div>
                 </div>
@@ -128,7 +272,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{asset('theme/dhara-jfin/img/overdraft_loan.jpg')}}" alt="Overdraft loan solutions from JF Finserve">
+                        <img src="{{asset('theme/dhara-jfin/img/overdraft.jpeg')}}" alt="Overdraft loan solutions from JF Finserve">
                     </div>
                 </div>
                 <div class="service-page-service-content">
@@ -155,7 +299,7 @@
                 <div class="service-page-shine"></div>
                 <div class="service-page-service-image">
                     <div class="service-page-service-illustration">
-                        <img src="{{asset('theme/dhara-jfin/img/lrd_loan.jpg')}}" alt="Lease rental discounting loan services">
+                        <img src="{{asset('theme/dhara-jfin/img/lrd.jpeg')}}" alt="Lease rental discounting loan services">
                     </div>
                 </div>
                 <div class="service-page-service-content">
@@ -178,6 +322,267 @@
             </div>
         </div>
     </section>
+
+<section class="jfin-why-choose">
+    <div class="container">
+
+        <!-- Section Heading -->
+        <div class="jfin-section-heading">
+            <h5>Our Features</h5>
+
+            <h2>
+                Why Choose <span>JFinserv?</span>
+            </h2>
+
+            <!-- <p>
+                We help you navigate the financing process with clarity and confidence.
+                From exploring suitable financing options to understanding eligibility
+                and documentation, our team supports you at every step.
+            </p> -->
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="jfin-feature-grid">
+
+            <!-- Card 1 -->
+            <div class="jfin-feature-card">
+                <div class="jfin-feature-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+
+                <h3>Financing Guidance</h3>
+
+                <p>
+                    Guidance in exploring suitable financing options
+                    based on your needs and financial goals.
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="jfin-feature-card">
+                <div class="jfin-feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+
+                <h3>Eligibility & Documentation</h3>
+
+                <p>
+                    Support in understanding eligibility criteria
+                    and the documentation required for financing.
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="jfin-feature-card">
+                <div class="jfin-feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+
+                <h3>End-to-End Support</h3>
+
+                <p>
+                    Assistance throughout the financing process
+                    to help you move forward with confidence.
+                </p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="jfin-feature-card">
+                <div class="jfin-feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+
+                <h3>Lending Partner Network</h3>
+
+                <p>
+                    Access financing options from relevant lending
+                    partners to explore suitable solutions.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+  <style>
+/* Why Choose JFinserv Section */
+.jfin-why-choose {
+    padding: 20px 0 65px;
+    background: #fff;
+    font-family: inherit;
+}
+
+.jfin-why-choose .container {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 25px;
+}
+
+/* Heading */
+.jfin-section-heading {
+    text-align: center;
+    max-width: 1100px;
+    margin: 0 auto 50px;
+}
+
+.jfin-section-heading h5 {
+    color: #295cab;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 14px;
+}
+
+.jfin-section-heading h2 {
+    color: #295cab;
+    font-size: 33px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 20px;
+}
+
+.jfin-section-heading h2 span {
+    color: #00abeb;
+}
+
+.jfin-section-heading p {
+    color: #555b65;
+    font-size: 18px;
+    line-height: 1.8;
+    margin: 0 auto;
+    max-width: 1100px;
+}
+
+/* Feature Grid */
+.jfin-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 35px;
+    max-width: 1450px;
+    margin: 0 auto;
+}
+
+/* Feature Card */
+.jfin-feature-card {
+    background: #fff;
+    border: 1px solid #c8dcff;
+    border-radius: 25px;
+    padding: 33px 25px 30px;
+    min-height: 280px;
+    box-shadow: 0 5px 12px rgba(41, 92, 171, 0.07);
+    transition: transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+}
+
+.jfin-feature-card:hover {
+    transform: translateY(-5px);
+    border-color: #00abeb;
+    box-shadow: 0 10px 24px rgba(41, 92, 171, 0.12);
+}
+
+/* Feature Icon */
+.jfin-feature-icon {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dce8fc;
+    color: #295cab;
+    border-radius: 5px;
+    margin-bottom: 27px;
+}
+
+.jfin-feature-icon i {
+    font-size: 23px;
+}
+
+/* Card Title */
+.jfin-feature-card h3 {
+    color: #343434;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 10px;
+}
+
+/* Card Description */
+.jfin-feature-card p {
+    color: #50545c;
+    font-size: 16px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* Tablet */
+@media (max-width: 1100px) {
+    .jfin-feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px;
+    }
+
+    .jfin-section-heading h2 {
+        font-size: 36px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .jfin-why-choose {
+        padding: 35px 0 45px;
+    }
+
+    .jfin-why-choose .container {
+        padding: 0 18px;
+    }
+
+    .jfin-section-heading {
+        margin-bottom: 30px;
+    }
+
+    .jfin-section-heading h5 {
+        font-size: 17px;
+        margin-bottom: 10px;
+    }
+
+    .jfin-section-heading h2 {
+        font-size: 29px;
+        line-height: 1.3;
+        margin-bottom: 14px;
+    }
+
+    .jfin-section-heading p {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .jfin-feature-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .jfin-feature-card {
+        min-height: auto;
+        padding: 25px 22px;
+        border-radius: 20px;
+    }
+
+    .jfin-feature-icon {
+        margin-bottom: 20px;
+    }
+
+    .jfin-feature-card h3 {
+        font-size: 21px;
+    }
+
+    .jfin-feature-card p {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+}
+</style>
 
     <!-- CTA Section -->
     <section class="service-page-cta-section" id="apply">

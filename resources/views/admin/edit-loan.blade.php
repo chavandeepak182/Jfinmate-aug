@@ -424,25 +424,34 @@
                             </div>
 
                             <!-- Actions -->
-                            <div class="document-actions">
+                          <!-- Actions -->
+<div class="document-actions">
 
-                                <!-- View -->
-                                <a href="{{ $fileUrl }}"
-                                   target="_blank"
-                                   class="document-action view-document"
-                                   title="View Document">
-                                    <i class="fas fa-eye"></i>
-                                </a>
+    <!-- View -->
+    <a href="{{ $fileUrl }}"
+       target="_blank"
+       class="document-action view-document"
+       title="View Document">
+        <i class="fas fa-eye"></i>
+    </a>
 
-                                <!-- Download -->
-                                <a href="{{ $fileUrl }}"
-                                   download
-                                   class="document-action download-document"
-                                   title="Download Document">
-                                    <i class="fas fa-download"></i>
-                                </a>
+    <!-- Download -->
+    <a href="{{ $fileUrl }}"
+       download
+       class="document-action download-document"
+       title="Download Document">
+        <i class="fas fa-download"></i>
+    </a>
 
-                            </div>
+    <!-- Delete -->
+    <button type="button"
+            class="document-action delete-document"
+            title="Delete Document"
+            onclick="deleteDocument({{ $doc->document_id }}, this)">
+        <i class="fas fa-trash"></i>
+    </button>
+
+</div>
 
                         </div>
 
@@ -509,6 +518,18 @@
     </div>
 </div>
 <style>
+
+    .delete-document {
+    border: none;
+    cursor: pointer;
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+.delete-document:hover {
+    color: #fff;
+    background: #dc2626;
+}
     /* =========================================
    DOCUMENT SECTION
 ========================================= */
@@ -916,117 +937,258 @@
 <script>
 $(document).ready(function () {
 
-    $('#editLoanForm').on('submit', function (e) {
+    /*
+    |--------------------------------------------------------------------------
+    | LOAN UPDATE FORM
+    |--------------------------------------------------------------------------
+    */
+
+    $('#editLoanForm').off('submit').on('submit', function (e) {
 
         e.preventDefault();
+        e.stopImmediatePropagation();
 
-        let form = this;
-        let formData = new FormData(form);
-        let btn = $(form).find('button[type="submit"]');
+        const form = this;
+        const formData = new FormData(form);
+        const btn = $('#updateLoanBtn');
+
+        const originalText = btn.html();
+
 
         // Disable button
         btn.prop('disabled', true);
 
+        btn.html(`
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Updating...
+        `);
+
+
         $.ajax({
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE URL
+            |--------------------------------------------------------------------------
+            */
+
             url: $(form).attr('action'),
+
             type: 'POST',
+
             data: formData,
 
             processData: false,
+
             contentType: false,
+
+            dataType: 'json',
 
             headers: {
                 'Accept': 'application/json'
             },
 
-        success: function (response) {
 
-    console.log('SUCCESS:', response);
+            /*
+            |--------------------------------------------------------------------------
+            | SUCCESS
+            |--------------------------------------------------------------------------
+            */
 
-    Swal.fire({
-        icon: 'success',
-        title: response.msg || 'Loan Updated Successfully',
-        confirmButtonText: 'OK'
-    }).then(function () {
+            success: function (response) {
 
-        @if(session('role_id') == 6)
+                console.log(
+                    'LOAN UPDATE SUCCESS:',
+                    response
+                );
 
-            // DSA
-            window.location.href = "{{ route('dsa.loans') }}";
 
-        @elseif(session('role_id') == 4)
+                if (
+                    response.status == 1 ||
+                    response.status === true
+                ) {
 
-            // Admin
-            window.location.href = "{{ route('admin.loans') }}";
 
-        @else
+                    Swal.fire({
 
-            // Fallback
-            window.location.href = "{{ route('dashboard') }}";
+                        icon: 'success',
 
-        @endif
+                        title: 'Success!',
 
-    });
-},
+                        text:
+                            response.msg ||
+                            'Loan updated successfully!',
+
+                        confirmButtonText: 'OK',
+
+                        allowOutsideClick: false,
+
+                        allowEscapeKey: false,
+
+                        allowEnterKey: true
+
+                    }).then(function (result) {
+
+
+                        if (result.isConfirmed) {
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | ADMIN ALL LOANS PAGE
+                            |--------------------------------------------------------------------------
+                            */
+
+                            window.location.href =
+                                "{{ url('/admin/loans-list') }}";
+
+                        }
+
+                    });
+
+
+                } else {
+
+
+                    Swal.fire({
+
+                        icon: 'error',
+
+                        title: 'Update Failed',
+
+                        text:
+                            response.msg ||
+                            'Loan update failed.',
+
+                        confirmButtonText: 'OK'
+
+                    });
+
+                }
+
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | ERROR
+            |--------------------------------------------------------------------------
+            */
+
             error: function (xhr) {
 
-                console.log('STATUS:', xhr.status);
-                console.log('RESPONSE:', xhr.responseText);
-                console.log('JSON:', xhr.responseJSON);
+                console.log(
+                    'LOAN UPDATE ERROR:',
+                    xhr
+                );
 
-                let msg = 'Something went wrong';
+                console.log(
+                    'STATUS:',
+                    xhr.status
+                );
 
-                // Laravel validation error
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                console.log(
+                    'RESPONSE:',
+                    xhr.responseText
+                );
 
-                    msg = Object.values(xhr.responseJSON.errors)
+
+                let message =
+                    'Something went wrong while updating the loan.';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | VALIDATION ERRORS
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.errors
+                ) {
+
+                    message =
+                        Object.values(
+                            xhr.responseJSON.errors
+                        )
                         .flat()
                         .join('<br>');
 
                 }
 
-                // Controller error
-                else if (xhr.responseJSON && xhr.responseJSON.msg) {
 
-                    msg = xhr.responseJSON.msg;
+                /*
+                |--------------------------------------------------------------------------
+                | CUSTOM MESSAGE
+                |--------------------------------------------------------------------------
+                */
+
+                else if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.msg
+                ) {
+
+                    message =
+                        xhr.responseJSON.msg;
 
                 }
 
-                // If Laravel returned HTML
-                else if (xhr.responseText) {
 
-                    console.error(xhr.responseText);
+                /*
+                |--------------------------------------------------------------------------
+                | LARAVEL MESSAGE
+                |--------------------------------------------------------------------------
+                */
 
-                    if (xhr.status === 419) {
-                        msg = 'Page expired. Please refresh the page and try again.';
-                    }
-                    else if (xhr.status === 404) {
-                        msg = 'Update Loan route not found.';
-                    }
-                    else if (xhr.status === 500) {
-                        msg = 'Server error occurred. Check Laravel log.';
-                    }
+                else if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
                 }
+
 
                 Swal.fire({
+
                     icon: 'error',
-                    title: 'Error',
-                    html: msg
+
+                    title: 'Update Failed',
+
+                    html: message,
+
+                    confirmButtonText: 'OK'
+
                 });
+
             },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | COMPLETE
+            |--------------------------------------------------------------------------
+            */
 
             complete: function () {
 
                 btn.prop('disabled', false);
 
+                btn.html(originalText);
+
             }
+
         });
+
+
+        return false;
 
     });
 
 });
 </script>
-
 
 
     <script>
@@ -1067,23 +1229,34 @@ $(document).ready(function () {
             // }
         }
 
-        function addDocumentUploadRow() {
-            var documentUploadSection = document.getElementById('document-upload-section');
-            var newRow = document.createElement('div');
-            newRow.className = 'document-upload-row mb-3';
-            newRow.innerHTML = `
-            <div class="row">
-                <div class="col-md-12 mb-2">
-                    <input type="text" name="document_name[]" class="form-control" placeholder="Document Name">
-                </div>
-                <div class="col-md-12">
-                    <input type="file" name="documents[]" class="form-control">
-                </div>
+      function addDocumentUploadRow() {
+    var documentUploadSection = document.getElementById('document-upload-section');
+    var newRow = document.createElement('div');
+    newRow.className = 'document-upload-row mb-3';
+    newRow.innerHTML = `
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <input type="text" name="document_name[]" class="form-control" placeholder="Document Name">
             </div>
-        `;
-            documentUploadSection.appendChild(newRow);
-        }
+            <div class="col-md-12 mb-2">
+                <input type="file" name="documents[]" class="form-control">
+            </div>
+            <div class="col-md-12 text-end">
+                <button type="button" class="btn btn-sm btn-danger remove-row">
+                    <i class="fas fa-trash"></i> Remove
+                </button>
+            </div>
+        </div>
+    `;
+    documentUploadSection.appendChild(newRow);
+}
 
+// Remove row handler
+document.addEventListener('click', function(e){
+    if (e.target.closest('.remove-row')) {
+        e.target.closest('.document-upload-row').remove();
+    }
+});
        function toggleSanctionLetterBox(status) {
     if (status === 'approved' || status === 'disbursed') {
         document.getElementById('sanctionLetterBox').style.display = 'block';
@@ -1161,6 +1334,84 @@ $(document).ready(function(){
     });
 
 });
+
+</script>
+<script>
+function deleteDocument(documentId, button) {
+
+    Swal.fire({
+        title: 'Delete Document?',
+        text: 'This document will be permanently deleted.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, Delete',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        $.ajax({
+            url: "{{ url('/admin/document') }}/" + documentId,
+            type: "DELETE",
+            data: {
+                _token: "{{ csrf_token() }}"
+            },
+
+            beforeSend: function () {
+                $(button).prop('disabled', true);
+                $(button).html(
+                    '<i class="fas fa-spinner fa-spin"></i>'
+                );
+            },
+
+            success: function (response) {
+
+                if (response.status) {
+
+                    // Remove document card immediately
+                    $(button).closest('.document-card').fadeOut(300, function () {
+                        $(this).remove();
+                    });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: response.msg,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                } else {
+
+                    $(button).prop('disabled', false);
+                    $(button).html('<i class="fas fa-trash"></i>');
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.msg
+                    });
+                }
+            },
+
+            error: function (xhr) {
+
+                $(button).prop('disabled', false);
+                $(button).html('<i class="fas fa-trash"></i>');
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.msg || 'Unable to delete document.'
+                });
+            }
+        });
+    });
+}
 </script>
 
 @endsection

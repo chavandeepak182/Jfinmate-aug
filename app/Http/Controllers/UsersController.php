@@ -1714,96 +1714,398 @@ public function updateUser(Request $request)
     }
 }
 
- public function deleteUser(Request $request)
-{
-    try {
-        $user = User::where('id', $request->user_id)
-                    ->whereNull('deleted_at') // 🔥 ADD THIS
-                    ->first();
+//  public function deleteUser(Request $request)
+// {
+//     try {
+//         $user = User::where('id', $request->user_id)
+//                     ->whereNull('deleted_at') // 🔥 ADD THIS
+//                     ->first();
 
-        if ($user) {
-            $user->delete(); // Soft delete
-            return response()->json([
-                'status' => 1,
-                'msg' => 'User deleted successfully!'
-            ]);
-        } else {
+//         if ($user) {
+//             $user->delete(); // Soft delete
+//             return response()->json([
+//                 'status' => 1,
+//                 'msg' => 'User deleted successfully!'
+//             ]);
+//         } else {
+//             return response()->json([
+//                 'status' => 0,
+//                 'error' => 'User not found or already deleted'
+//             ]);
+//         }
+
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => 0,
+//             'error' => $e->getMessage()
+//         ]);
+//     }
+// }
+public function deleteUser(Request $request)
+{
+    $request->validate([
+        'user_id' => 'required|integer|exists:users,id',
+    ]);
+
+    $userId = $request->user_id;
+
+    DB::beginTransaction();
+
+    try {
+
+        // =====================================================
+        // 1. CHECK ACTIVE USER
+        // =====================================================
+
+        $user = DB::table('users')
+            ->where('id', $userId)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (!$user) {
+
+            DB::rollBack();
+
             return response()->json([
                 'status' => 0,
-                'error' => 'User not found or already deleted'
-            ]);
+                'msg' => 'User not found or already deleted.'
+            ], 404);
         }
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 0,
-            'error' => $e->getMessage()
-        ]);
-    }
-}
-    //user register
-    public function register(Request $request)
-    {
-        DB::beginTransaction();
 
-        try {
+        // =====================================================
+        // 2. CHECK DISBURSED LOAN
+        // =====================================================
 
-            $validator = Validator::make($request->all(), [
-                'full_name' => 'required|string|max:255',
-                'email_id' => 'required|email|unique:users,email_id',
-                'password' => 'required|string|min:8|confirmed',
-                'mobile_no' => 'required|numeric|digits_between:10,15',
-            ]);
+        $hasDisbursedLoan = DB::table('loans')
+            ->where('user_id', $userId)
+            ->where('status', 'disbursed')
+            ->exists();
 
-            if (!$validator->passes()) {
-                return response()->json(['status' => 0, 'error' => $validator->errors()->toArray()]);
-            } else {
+        if ($hasDisbursedLoan) {
 
-                $six_digit_random_number = random_int(100000, 999999);
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 0,
+                'cannot_delete' => true,
+                'msg' => 'This user cannot be deleted because a disbursed loan exists.'
+            ], 422);
+        }
 
 
-                $user = new User;
-                $user->name = $request->full_name;
-                $user->email_id = $request->email_id;
-                $user->password = md5($request->password);
-                $user->role_id = 1;  //role_id = 1 for the customer hardcoded
-                $user->email_otp = $six_digit_random_number;
+        // =====================================================
+        // 3. DELETE DOCUMENT FILES FROM STORAGE
+        // =====================================================
 
-                $user->save();
+        $documents = DB::table('documents')
+            ->where('user_id', $userId)
+            ->get();
 
-                $profile = new Profile;
-                $profile->user_id = $user->id;
-                $profile->mobile_no = $request->mobile_no;
-                $profile->save();
+        foreach ($documents as $document) {
 
-                //fetching data after insertion in user and profile table
-                $user_id = $user->id;
-                $profile_id = $profile->profile_id;
+            if (!empty($document->file_path)) {
 
-                //update the profile id in users table
-                $update_user = User::where('id', $user_id)->update(['profile_id' => $profile_id]);
+                $filePath = $document->file_path;
 
-                $msg = "http://127.0.0.1:8000/userAuth/" . $user_id . "/" . $six_digit_random_number;
-                $temp_id = 1;
-
-                //activity logs
-                $username = Session::get('username');
-                $user_id = Session::get('user_id');
-                $details = "Customer user register successfully by " . $username;
-                app(UsersController::class)->insertActivityLogs($user_id, $details);
-                //end of activity logs   
-
-                if ($user && $profile) {
-                    DB::commit();
-                    $this->temail($request->email_id, $request->full_name, $msg, $temp_id);
-                    return response()->json(['status' => 1, 'msg' => 'User added successfully']);
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
                 }
             }
-        } catch (\Exception $e) {
-            DB::rollback();
-            dd($e->getMessage());
         }
+
+
+        // =====================================================
+        // 4. PERMANENTLY DELETE DOCUMENT RECORDS
+        // =====================================================
+
+        DB::table('documents')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 5. PERMANENTLY DELETE LOANS
+        // =====================================================
+
+        DB::table('loans')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 6. PERMANENTLY DELETE PROFILE
+        // =====================================================
+
+        DB::table('profile')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 7. PERMANENTLY DELETE PROFESSIONAL DETAILS
+        // =====================================================
+
+        DB::table('professional_details')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 8. PERMANENTLY DELETE EDUCATION DETAILS
+        // =====================================================
+
+        DB::table('education_details')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 9. PERMANENTLY DELETE CUSTOMER BANK DETAILS
+        // =====================================================
+
+        DB::table('customer_banks')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 10. PERMANENTLY DELETE WALLET
+        // =====================================================
+
+        DB::table('wallet')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 11. PERMANENTLY DELETE OTP RECORDS
+        // =====================================================
+
+        DB::table('otp')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 12. PERMANENTLY DELETE DSA CUSTOMER RECORD
+        // =====================================================
+
+        DB::table('dsa_customers')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 13. PERMANENTLY DELETE CATEGORY / MLM RECORDS
+        // =====================================================
+
+        DB::table('categories')
+            ->where('user_id', $userId)
+            ->delete();
+
+
+        // =====================================================
+        // 14. SOFT DELETE USER
+        // =====================================================
+
+        DB::table('users')
+            ->where('id', $userId)
+            ->update([
+                'deleted_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+
+        // =====================================================
+        // 15. COMMIT TRANSACTION
+        // =====================================================
+
+        DB::commit();
+
+        return response()->json([
+            'status' => 1,
+            'msg' => 'User and all related data deleted successfully.'
+        ]);
+
+
+    } catch (\Exception $e) {
+
+        // =====================================================
+        // ROLLBACK EVERYTHING
+        // =====================================================
+
+        DB::rollBack();
+
+        Log::error('User deletion failed', [
+            'user_id' => $userId,
+            'error' => $e->getMessage(),
+        ]);
+
+        return response()->json([
+            'status' => 0,
+            'msg' => 'User deletion failed. No data was deleted.',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}   
+ //user register
+   public function register(Request $request)
+{
+    DB::beginTransaction();
+
+    try {
+
+        // =====================================================
+        // 1. VALIDATION
+        // =====================================================
+
+        $validator = Validator::make($request->all(), [
+            'full_name'  => 'required|string|max:255',
+            'email_id'   => 'required|email|unique:users,email_id',
+            'password'   => 'required|string|min:8|confirmed',
+            'mobile_no'  => 'required|numeric|digits_between:10,15',
+        ]);
+
+        if (!$validator->passes()) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 0,
+                'error'  => $validator->errors()->toArray()
+            ]);
+        }
+
+
+        // =====================================================
+        // 2. CHECK EMAIL AGAINST ALL USERS
+        //    INCLUDING SOFT-DELETED USERS
+        // =====================================================
+
+        $existingUser = DB::table('users')
+            ->where('email_id', $request->email_id)
+            ->first();
+
+        if ($existingUser) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 0,
+                'msg'    => 'This email already exists.'
+            ], 422);
+        }
+
+
+        // =====================================================
+        // 3. GENERATE OTP
+        // =====================================================
+
+        $six_digit_random_number = random_int(100000, 999999);
+
+
+        // =====================================================
+        // 4. CREATE USER
+        // =====================================================
+
+        $user = new User;
+
+        $user->name       = $request->full_name;
+        $user->email_id   = $request->email_id;
+        $user->password   = md5($request->password);
+        $user->role_id    = 1;
+        $user->email_otp  = $six_digit_random_number;
+
+        $user->save();
+
+
+        // =====================================================
+        // 5. CREATE PROFILE
+        // =====================================================
+
+        $profile = new Profile;
+
+        $profile->user_id   = $user->id;
+        $profile->mobile_no = $request->mobile_no;
+
+        $profile->save();
+
+
+        // =====================================================
+        // 6. UPDATE PROFILE ID IN USERS
+        // =====================================================
+
+        $user->profile_id = $profile->profile_id;
+        $user->save();
+
+
+        // =====================================================
+        // 7. ACTIVITY LOG
+        // =====================================================
+
+        $username = Session::get('username');
+        $loggedUserId = Session::get('user_id');
+
+        $details = "Customer user register successfully by " . $username;
+
+        app(UsersController::class)
+            ->insertActivityLogs($loggedUserId, $details);
+
+
+        // =====================================================
+        // 8. EMAIL VERIFICATION LINK
+        // =====================================================
+
+        $msg = "http://127.0.0.1:8000/userAuth/"
+            . $user->id
+            . "/"
+            . $six_digit_random_number;
+
+        $temp_id = 1;
+
+
+        // =====================================================
+        // 9. COMMIT
+        // =====================================================
+
+        DB::commit();
+
+
+        // =====================================================
+        // 10. SEND EMAIL
+        // =====================================================
+
+        $this->temail(
+            $request->email_id,
+            $request->full_name,
+            $msg,
+            $temp_id
+        );
+
+
+        return response()->json([
+            'status' => 1,
+            'msg'    => 'User added successfully'
+        ]);
+
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        Log::error('User registration failed', [
+            'email' => $request->email_id,
+            'error' => $e->getMessage()
+        ]);
+
+        return response()->json([
+            'status' => 0,
+            'msg'    => 'Registration failed.',
+            'error'  => $e->getMessage()
+        ], 500);
+    }
+}
 
     //Roles related functions
 

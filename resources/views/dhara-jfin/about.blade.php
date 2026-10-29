@@ -1,495 +1,992 @@
-@section('title', 'About Us')
-@section('content')
+@section('title', 'Financial Services Company in Pune | JFinserve')
+
+@section('meta_description', 'A financial services provider in Pune offering home loans, MSME loans, project finance, LAP and personalized loan solutions.')
+
+@section('meta_keywords', 'Financial Services Company in Pune, Financial Services Provider in Pune, Financial Consultant in Pune, Loan Consultant in Pune, Financial Consulting Services in Pune, Loan Services in Pune, Financial Services in PCMC')
+
+@push('schema')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": "https://jfinserv.com/about#aboutpage",
+  "url": "https://jfinserv.com/about",
+  "name": "About JF Finserve",
+  "description": "JF Finserve is a financial consulting company that helps individuals, business owners, entrepreneurs and property developers explore suitable financing solutions. Its services include home loans, loans against property, project finance, MSME loans and overdraft facilities.",
+  "mainEntity": {
+    "@type": "Organization",
+    "@id": "https://jfinserv.com/#organization",
+    "name": "JF Finserve",
+    "url": "https://jfinserv.com/",
+    "description": "JF Finserve provides financial consulting and loan assistance services to individuals and businesses. The company helps clients explore financing options for residential property purchases, commercial projects, business expansion and property-backed funding through lending partners.",
+    "knowsAbout": [
+      "Home Loans",
+      "Loan Against Property",
+      "Project Finance",
+      "MSME Loans",<div class="container-fluid">
+      "Overdraft Facilities",
+      "Business Loans",
+      "Property Financing",
+      "Financial Consulting"
+    ],
+    "areaServed": {
+      "@type": "Country",
+      "name": "India"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "JF Finserve Financial Services",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Home Loan",
+            "url": "https://jfinserv.com/home-loan"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Loan Against Property",
+            "url": "https://jfinserv.com/loan-against-property"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Project Loan",
+            "url": "https://jfinserv.com/project-loan"
+          }
+        }
+      ]
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "@id": "https://jfinserv.com/#website",
+    "url": "https://jfinserv.com/",
+    "name": "JF Finserve"
+  },
+  "inLanguage": "en-IN"
+}
+</script>
+@endpush
 @include('dhara-jfin.layout.header')
 
-<style>
-    /* ============================================================
-   OUR TEAM SECTION – MOBILE RESPONSIVE (UI unchanged)
-   Only adds responsive behavior, preserves all existing styles
-   ============================================================ */
 
-/* ----- force images to be responsive & maintain aspect ratio ----- */
-.about-page-team-image img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* ----- mobile first: ensure grid stacks properly on small screens ----- */
-.about-page-team-grid {
-  display: grid;
-  grid-template-columns: 1fr; /* single column on mobile */
-  gap: 1.5rem;
-  justify-items: center;
-}
-
-/* ----- cards take full width on mobile, but keep max-width for readability ----- */
-.about-page-team-card {
-  width: 100%;
-  max-width: 320px; /* prevents cards from becoming too wide on mobile */
-  margin: 0 auto;
-}
-
-/* ----- tablet (portrait) – 2 columns ----- */
-@media (min-width: 600px) {
-  .about-page-team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-  }
-  .about-page-team-card {
-    max-width: 340px;
-  }
-}
-
-/* ----- desktop – 3 columns ----- */
-@media (min-width: 1024px) {
-  .about-page-team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem;
-  }
-  .about-page-team-card {
-    max-width: 360px;
-  }
-}
-
-/* ----- large screens – 4 columns (optional, but matches your grid) ----- */
-@media (min-width: 1280px) {
-  .about-page-team-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .about-page-team-card {
-    max-width: 100%;
-  }
-}
-
-/* ----- extra small devices (below 380px) – prevent overflow ----- */
-@media (max-width: 380px) {
-  .about-page-team-grid {
-    gap: 1.2rem;
-  }
-  .about-page-team-card {
-    max-width: 100%;
-  }
-  .about-page-team-info {
-    padding: 0.8rem 0.5rem 1.2rem;
-  }
-  .about-page-team-name {
-    font-size: 1rem;
-  }
-  .about-page-team-designation {
-    font-size: 0.8rem;
-  }
-}
-
-/* ----- preserve all existing styles: no UI changes ----- */
-/* The following ensures that your existing styles (colors, fonts, shadows, etc.)
-   remain untouched. Only layout & spacing are adjusted for responsiveness. */
-
-.about-page-team-section {
-  /* your existing styles remain */
-}
-
-.about-page-section-container {
-  /* your existing styles remain */
-}
-
-.about-page-section-header {
-  /* your existing styles remain */
-}
-
-.about-page-section-label {
-  /* your existing styles remain */
-}
-
-.about-page-team-overlay {
-  /* your existing styles remain */
-}
-
-.about-page-team-social {
-  /* your existing styles remain */
-}
-
-.about-page-social-icon {
-  /* your existing styles remain */
-}
-
-/* ====== END – NO UI CHANGES, ONLY RESPONSIVE BEHAVIOR ====== */
-</style>
 <main>
-        <section class="video-hero">
+        <!-- <section class="video-hero">
         <video id="videobcg" preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
         <source src="{{ asset('theme/dhara-jfin/videos/about_us_banner.mp4') }}" type="video/mp4">
         </video>
     <div class="video-banner-overlay">
         <div class="video-overlay-content">
             <h1>Empowering your<span> Financial </span>Journey</h1>
-            <!-- <p>Tailored financial solutions for large-scale construction and infrastructure projects.</p>
-            <a href="{{ url('/apply') }}" class="btn-primary">
-                Apply Now
-            </a> -->
+           
         </div>
     </div>
-</section>
+</section> -->
 
-        <section class="about-section-main">
-            <div class="container-tab">
-                <div class="about-grid">
-                    <div class="about-content-left">
-                        <h4>About Our Company</h4>
-                        <h2 class="finserv-trusted" style="color:#295cab;">We Promise To <br><strong style="color:#00abeb">Deliver</strong> The Best</h2>
-                        <p>Jfinserv Consultant India Private Limited with many finance partners strives to get you the best loan deals and offers online in just a few clicks. You can compare various loan products online with latest interest rates from Nationalized/Government banks and NBFCs in India including Indian Bank, BOM, PNB, RBL, UBI, BOB, Kotak, Axis, ICICI Bank, Aditya Birla Capital and other partners. Our team of financial experts works hard to find and get you the best deal. 
-                            <a href="#" class="incorp-cert">INCORPORATION CERTIFICATE <i class="fas fa-arrow-right"></i></a></p>
-                        
-                        <p>Jfinserv Can Help With All Your Home Lending Needs.</p>
-                        
-                        <ul class="about-features-list">
-                            <li><i class="fas fa-check"></i> Calculate Your Purchasing Power</li>
-                            <li><i class="fas fa-check"></i> Buy Your Home</li>
-                            <li><i class="fas fa-check"></i> Renovate Or Upgrade Your Home</li>
-                            <li><i class="fas fa-check"></i> Use the Equity In Your Home For A Personal Investment</li>
-                            <li><i class="fas fa-check"></i> Expand Your Property Portfolio</li>
-                            <li><i class="fas fa-check"></i> Refinance Your Existing Loan</li>
-                        </ul>
-                    </div>
-                    <div class="about-content-right">
-                        <div class="about-image-wrapper">
-                            <!-- Placeholder image based on reference -->
-                            <img src="{{asset('theme/dhara-jfin/img/about-1.jpg')}}" alt="JF Finserve team and financial services">
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-box">
-                                <h3>250 +</h3>
-                                <p>Disbursed Loans</p>
-                            </div>
-                            <div class="stat-box">
-                                <h3>7 +</h3>
-                                <p>Awards Won</p>
-                            </div>
-                            <div class="stat-box">
-                                <h3>50 +</h3>
-                                <p>Skilled Agents</p>
-                            </div>
-                            <div class="stat-box">
-                                <h3>75 +</h3>
-                                <p>Team Members</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="mission-vision-section">
-            <div class="container-tab">
-                <div class="mission-vision-grid">
-                    <div class="mission-vision-image">
-                        <img src="{{asset('theme/dhara-jfin/img/mision.jpg')}}" alt="Mission Vision Values">
-                    </div>
-                    <div class="mission-vision-content">
-                        <h4>Future Ready</h4>
-                        <h2 class="finserv-trusted" style="color:#295cab;">Mission, Vision <strong style="color:#00abeb">& Values</strong></h2>
-                        
-                        <div class="mission-box">
-                            <h3>Our Mission</h3>
-                            <p>Our mission is to be the leading finance company, offering secured loans at competitive rates. We focus on maximizing shareholder value while delivering exceptional, customer-centered service.</p>
-                        </div>
-                        
-                        <div class="mission-box">
-                            <h3>Our Values</h3>
-                            <p>We are transitioning into a knowledge-driven organization by enhancing operational autonomy and fostering a strong sense of ownership among employees.</p>
-                        </div>
-                        
-                        <div class="mission-box">
-                            <h3>Our Vision</h3>
-                            <p>To be a leading financial consulting firm, delivering innovative, customized solutions for sustainable client growth, while upholding a culture of excellence and integrity.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<!-- Financial Journey Section -->
+<section class="financial-journey-section">
 
-       
-<section class="awards-section">
-    <div class="container-tab">
+    <div class="container">
 
-        <div class="section-header">
-            <h4 class="finserv-eyebrow" style="color:#295cab;">Our Awards</h4>
+        <!-- Heading -->
+        <div class="section-header mt-6">
+
+            <h4 class="finserv-eyebrow" style="color:#295cab;">
+                About Company
+            </h4>
+
             <h2 class="finserv-trusted" style="color:#295cab;">
-                Top Corporate <strong style="color:#00abeb">Recognitions</strong>
+                Empowering your
+                <strong style="color:#00abeb">financial journey</strong>
             </h2>
+
+            <p>
+                Jfinserv Consultant India Private Limited with many finance partners
+                strives to get the best loan deals and offers online in just a few clicks.
+            </p>
+
         </div>
 
-        <div class="awards-grid">
 
-            <!-- Award 1 -->
-            <div class="award-card">
-                <div class="award-logo">
-                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/home_rank.jpg"
-                         alt="Home Loan Sourcing Rank 1 Award"
-                         class="award-logo-img">
-                </div>
+        <!-- Images -->
+        <div class="financial-journey-images">
 
-                <h3>Home Loan Sourcing - Rank 1<sup>st</sup></h3>
-                <p>Year 2023-24</p>
+            <!-- Left Image -->
+            <div class="journey-image journey-image-left">
+
+                <img
+                    src="{{ asset('theme/dhara-jfin/img/financial-growth.png') }}"
+                    alt="Financial growth and loan solutions"
+                >
+
             </div>
 
 
-            <!-- Award 2 -->
-            <div class="award-card">
-                <div class="award-logo">
-                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/Preferred Business Partner.jpg"
-                         alt="ARKA Preferred Business Partner Award"
-                         class="award-logo-img">
-                </div>
+            <!-- Center Image -->
+            <div class="journey-image journey-image-center">
 
-                <h3>Preferred Business Partner</h3>
-                <p>Year 2023-24</p>
+                <img
+                    src="{{ asset('theme/dhara-jfin/img/financial-planning.png') }}"
+                    alt="Financial planning and loan consultation"
+                >
+
             </div>
 
 
-            <!-- Award 3 -->
-            <!-- <div class="award-card">
-                <div class="award-logo">
-                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/bom.jpg"
-                         alt="Best Performing Home Loan Sourcing Award"
-                         class="award-logo-img">
-                </div>
+            <!-- Right Image -->
+            <div class="journey-image journey-image-right">
 
-                <h3>Best Performing in Home Loan Sourcing</h3>
-                <p>Year 2023-24</p>
-            </div> -->
+                <img
+                    src="{{ asset('theme/dhara-jfin/img/loan-consultation.png') }}"
+                    alt="Loan consultation and financial services"
+                >
+
+            </div>
+
+        </div>
 
 
-            <!-- Award 4 -->
-            <div class="award-card">
-                <div class="award-logo">
-                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/pnb.jpg"
-                         alt="Mortgage Loan Mobilizing Rank 1 Award"
-                         class="award-logo-img">
-                </div>
+        <!-- Statistics -->
+        <div class="journey-statistics">
 
-                <h3>For Mobilizing Mortgage Loan - Rank 1<sup>st</sup></h3>
-                <p>Year 2022-23</p>
+            <div class="journey-stat">
+
+                <h3>
+                    250 <span>+</span>
+                </h3>
+
+                <p>
+                    Disbursed Loans
+                </p>
+
             </div>
 
 
-            <!-- Award 5 -->
-            <div class="award-card">
-                <div class="award-logo">
-                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/Best Category in Business.jpg"
-                         alt="ANAND RATHI Best Category in Business Award"
-                         class="award-logo-img">
-                </div>
+            <div class="journey-stat">
 
-                <h3>Best Category in Business</h3>
-                <p>Year 2022-23</p>
+                <h3>
+                    7 <span>+</span>
+                </h3>
+
+                <p>
+                    Awards Won
+                </p>
+
             </div>
 
 
-            <!-- Award 6 -->
-            <div class="award-card">
-                <div class="award-logo">
-                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/bom.jpg"
-                         alt="Mortgage Loan Mobilizing Rank 1 Award"
-                         class="award-logo-img">
-                </div>
+            <div class="journey-stat">
 
-                <h3>For Mobilizing Mortgage Loan - Rank 1<sup>st</sup></h3>
-                <p>Year 2021-22</p>
+                <h3>
+                    50 <span>+</span>
+                </h3>
+
+                <p>
+                    Skilled Agents
+                </p>
+
             </div>
 
 
-            <!-- Award 7 -->
-            <div class="award-card">
-                <div class="award-logo">
-                    <img src="{{ asset('theme') }}/dhara-jfin/img/award_logo/tpd.png"
-                         alt="Top Performing DSA Award"
-                         class="award-logo-img">
+            <div class="journey-stat">
+
+                <h3>
+                    75 <span>+</span>
+                </h3>
+
+                <p>
+                    Team Members
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+<!-- Property Financing Section -->
+<section class="property-financing-section">
+
+    <div class="property-financing-container">
+
+        <!-- Heading -->
+      
+
+
+<div class="section-header mt-6">
+
+    
+  
+            <h2 class="finserv-trusted" style="color:#295cab;">
+                We Take Care of All
+                <strong style="color:#00abeb">Your Property Financing Needs</strong>
+            </h2>
+
+            <!-- <p>
+                Jfinserv Consultant India Private Limited with many finance partners
+                strives to get the best loan deals and offers online in just a few clicks.
+            </p> -->
+
+        </div>
+        <!-- Main Content -->
+        <div class="property-financing-content">
+
+            <!-- LEFT SIDE -->
+            <div class="property-financing-left">
+
+                <div class="financing-item">
+                    <div class="financing-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+
+                    <div class="financing-text">
+                        Calculate your purchasing power
+                    </div>
                 </div>
 
-                <h3>Top Performing DSA</h3>
-                <p>Year 2021-22</p>
+
+                <div class="financing-item">
+                    <div class="financing-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+
+                    <div class="financing-text">
+                        Renovate or upgrade your home
+                    </div>
+                </div>
+
+
+                <div class="financing-item">
+                    <div class="financing-icon">
+                        <i class="fas fa-weight-hanging"></i>
+                    </div>
+
+                    <div class="financing-text">
+                        Refinance your existing loan
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- CENTER IMAGE -->
+            <div class="property-financing-image">
+
+                <img
+                    src="{{ asset('theme/dhara-jfin/img/about-home.png') }}"
+                    alt="Property financing home"
+                >
+
+            </div>
+
+
+            <!-- RIGHT SIDE -->
+            <div class="property-financing-right">
+
+                <div class="financing-item">
+                    <div class="financing-icon">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+
+                    <div class="financing-text">
+                        Use the equity in your home for a
+                        personal investment
+                    </div>
+                </div>
+
+
+                <div class="financing-item">
+                    <div class="financing-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+
+                    <div class="financing-text">
+                        Buy your home
+                    </div>
+                </div>
+
+
+                <div class="financing-item">
+                    <div class="financing-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+
+                    <div class="financing-text">
+                        Expand your property portfolio
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- Mission / Values / Vision Section -->
+<section class="mission-values-section">
+    <div class="container">
+
+        <div class="mission-values-row">
+
+            <!-- Our Mission -->
+            <div class="mission-values-item">
+
+                <div class="mission-values-image">
+                    <img src="{{ asset('theme/dhara-jfin/img/mission.png') }}"
+                         alt="Our Mission - JFinserv">
+                </div>
+
+                <div class="mission-values-content">
+                    <h3>Our Mission</h3>
+
+                    <p>
+                        Our mission is to be the leading finance company,
+                        offering secured loans at competitive rates. We
+                        focus on maximizing shareholder value while
+                        delivering exceptional, customer-centered service.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- Our Values -->
+            <div class="mission-values-item">
+
+                <div class="mission-values-image">
+                    <img src="{{ asset('theme/dhara-jfin/img/values.png') }}"
+                         alt="Our Values - JFinserv">
+                </div>
+
+                <div class="mission-values-content">
+                    <h3>Our Values</h3>
+
+                    <p>
+                        We are transitioning into a knowledge-driven
+                        organization by enhancing operational autonomy
+                        and fostering a strong sense of ownership among
+                        employees.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- Our Vision -->
+            <div class="mission-values-item">
+
+                <div class="mission-values-image">
+                    <img src="{{ asset('theme/dhara-jfin/img/vision.png') }}"
+                         alt="Our Vision - JFinserv">
+                </div>
+
+                <div class="mission-values-content">
+                    <h3>Our Vision</h3>
+
+                    <p>
+                        To be a leading financial consulting firm, delivering
+                        innovative, customized solutions for sustainable
+                        client growth, while upholding a culture of
+                        excellence and integrity.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Our Principles Section -->
+<section class="jfin-principles">
+<div class="container-fluid">
+        <div class="section-header mt-6">
+
+    
+  
+            <h2 class="finserv-trusted" style="color:#295cab;">
+                Our 
+                <strong style="color:#00abeb">Principles</strong>
+            </h2>
+
+            <p>
+                Every financial decision deserves clear guidance, transparent communication
+                and support you can trust. Here's how we approach your loan journey.
+            </p>
+
+        </div>
+
+        <!-- Principles Cards -->
+        <div class="jfin-principles-grid">
+
+            <!-- Card 1 -->
+            <div class="jfin-principle-card">
+                <div class="jfin-principle-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="jfin-principle-content">
+                    <h4>Transparent Guidance</h4>
+                    <p>
+                        We help you understand available loan options based on your
+                        financial profile, eligibility and requirements, so you can
+                        make informed decisions.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="jfin-principle-card">
+                <div class="jfin-principle-icon">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <div class="jfin-principle-content">
+                    <h4>Customer-Focused Support</h4>
+                    <p>
+                        We guide you through the loan process, from understanding
+                        eligibility and preparing documents to coordinating with
+                        relevant financial partners.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="jfin-principle-card">
+                <div class="jfin-principle-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="jfin-principle-content">
+                    <h4>Local Market Understanding</h4>
+                    <p>
+                        With a focus on Pune and PCMC, we help customers navigate
+                        financing requirements with practical guidance tailored
+                        to their needs.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="jfin-principle-card">
+                <div class="jfin-principle-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="jfin-principle-content">
+                    <h4>Convenient Assistance</h4>
+                    <p>
+                        Get support with documentation, application preparation
+                        and process coordination to make your loan journey
+                        more convenient.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="jfin-principle-card">
+                <div class="jfin-principle-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="jfin-principle-content">
+                    <h4>Efficient Processing Support</h4>
+                    <p>
+                        We help you prepare the required documents and coordinate
+                        with financial partners to keep your application moving
+                        efficiently. Approval timelines depend on the lender
+                        and your eligibility.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="jfin-principle-card">
+                <div class="jfin-principle-icon">
+                    <i class="fas fa-chart-column"></i>
+                </div>
+                <div class="jfin-principle-content">
+                    <h4>Honest Financial Assessment</h4>
+                    <p>
+                        We explain eligibility requirements, highlight potential
+                        challenges and help you understand your options without
+                        making unrealistic promises about loan approval or
+                        interest rates.
+                    </p>
+                </div>
             </div>
 
         </div>
     </div>
 </section>
 
+<!-- Font Awesome -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
-/* ================================
-   AWARDS SECTION
-================================ */
-.awards-section {
-    padding: 70px 0;
-    background: #f8fbff;
+/* ==============================
+   OUR PRINCIPLES SECTION
+================================= */
+
+.jfin-principles {
+    width: 100%;
+    padding: 18px 0 72px;
+    background: #f9fbfe;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
 }
 
-.awards-section .section-header {
+.jfin-principles *,
+.jfin-principles *::before,
+.jfin-principles *::after {
+    box-sizing: border-box;
+}
+
+.jfin-principles .container-fluid {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 6%;
+}
+
+/* Heading */
+
+.jfin-principles-heading {
     text-align: center;
-    margin-bottom: 45px;
+    margin-bottom: 24px;
 }
 
-.awards-section .finserv-eyebrow {
-    margin-bottom: 10px;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.awards-section .finserv-trusted {
-    margin: 0;
-    font-size: 36px;
+.jfin-principles-heading h2 {
+    margin: 0 0 2px;
+    color: #333333;
+    font-size: 14px;
+    line-height: 1.4;
     font-weight: 700;
 }
 
+.jfin-principles-heading h3 {
+    margin: 0 0 5px;
+    color: #2670e8;
+    font-size: 9px;
+    line-height: 1.5;
+    font-weight: 400;
+}
 
-/* ================================
-   AWARDS GRID
-================================ */
-.awards-grid {
+.jfin-principles-heading p {
+    margin: 0 auto;
+    color: #777777;
+    font-size: 8px;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+/* Grid */
+
+.jfin-principles-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
 }
 
+/* Cards */
 
-/* ================================
-   AWARD CARD
-================================ */
-.award-card {
+.jfin-principle-card {
+    position: relative;
+    min-width: 0;
+    min-height: 149px;
+    height: 246px;
+    width: 325px;
+    padding: 0;
+    overflow: hidden;
     background: #ffffff;
-    border-radius: 14px;
-    padding: 28px 22px;
-    text-align: center;
-    min-height: 260px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-
-    border: 1px solid #e8eef7;
-
-    box-shadow: 0 8px 25px rgba(41, 92, 171, 0.08);
-
-    transition: all 0.3s ease;
+    border: 1px solid #edf2fc;
+    border-radius: 6px;
+    box-shadow: 0 2px 7px rgba(36, 94, 180, 0.07);
+    transition: transform 0.25s ease,
+                box-shadow 0.25s ease;
 }
 
-.award-card:hover {
-    transform: translateY(-7px);
-    box-shadow: 0 15px 35px rgba(41, 92, 171, 0.16);
-    border-color: #00abeb;
+.jfin-principle-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(36, 94, 180, 0.12);
 }
 
+/* Blue Icon Box */
 
-/* ================================
-   AWARD LOGO BOX
-================================ */
-.award-logo {
-    width: 120px;
-    height: 100px;
-
+.jfin-principle-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    margin-bottom: 22px;
-
-    background: #ffffff;
-    border-radius: 10px;
+    width: 53px;
+    height: 53px;
+    background: #2c6fe8;
+    color: #ffffff;
+    border-radius: 0 0 4px 0;
 }
 
-
-/* ================================
-   AWARD IMAGE
-================================ */
-.award-logo-img {
-    max-width: 110px;
-    max-height: 90px;
-
-    width: auto;
-    height: auto;
-
-    object-fit: contain;
-
-    display: block;
+.jfin-principle-icon i {
+    font-size: 13px;
+    line-height: 1;
 }
 
+/* Card Text */
 
-/* ================================
-   AWARD TITLE
-================================ */
-.award-card h3 {
-    margin: 0 0 8px;
-
-    color: #173b70;
-
-    font-size: 17px;
-    line-height: 1.45;
-
-    font-weight: 700;
+.jfin-principle-content {
+    padding: 25px 13px 15px;
 }
 
-.award-card h3 sup {
-    font-size: 10px;
-    top: -0.4em;
-    position: relative;
+.jfin-principle-content h4 {
+    margin: 0 0 5px;
+    color: #303030;
+    font-size: 18px;
+    line-height: 1.35;
+    font-weight: 600;
 }
 
-
-/* ================================
-   YEAR
-================================ */
-.award-card p {
+.jfin-principle-content p {
     margin: 0;
-
-    color: #6b7280;
-
-    font-size: 14px;
-    font-weight: 500;
+    color: #737373;
+    font-size: 16px;
+    line-height: 1.35;
+    font-weight: 400;
 }
 
+/* Tablet */
 
-/* ================================
-   TABLET
-================================ */
 @media (max-width: 991px) {
-
-    .awards-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .jfin-principles .container-fluid {
+        padding: 0 25px;
     }
 
-    .awards-section .finserv-trusted {
-        font-size: 30px;
+    .jfin-principles-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .jfin-principle-card {
+        min-height: 155px;
+    }
+
+    .jfin-principle-content h4 {
+        font-size: 14px;
+    }
+
+    .jfin-principle-content p {
+        font-size: 11px;
     }
 }
 
+/* Mobile */
 
-/* ================================
-   MOBILE
-================================ */
-@media (max-width: 575px) {
-
-    .awards-section {
-        padding: 50px 15px;
+@media (max-width: 576px) {
+    .jfin-principles {
+        padding: 30px 0 45px;
     }
 
-    .awards-grid {
+    .jfin-principles .container-fluid {
+        padding: 0 16px;
+    }
+
+    .jfin-principles-heading {
+        margin-bottom: 22px;
+    }
+
+    .jfin-principles-heading h2 {
+        font-size: 21px;
+    }
+
+    .jfin-principles-heading h3 {
+        font-size: 12px;
+    }
+
+    .jfin-principles-heading p {
+        max-width: 360px;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .jfin-principles-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 15px;
     }
 
-    .awards-section .finserv-trusted {
-        font-size: 26px;
+    .jfin-principle-card {
+        min-height: 145px;
     }
 
-    .award-card {
-        min-height: 240px;
+    .jfin-principle-icon {
+        width: 45px;
+        height: 42px;
     }
+
+    .jfin-principle-icon i {
+        font-size: 15px;
+    }
+
+    .jfin-principle-content {
+        padding: 20px 15px 18px;
+    }
+
+    .jfin-principle-content h4 {
+        font-size: 15px;
+        margin-bottom: 7px;
+    }
+
+    .jfin-principle-content p {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+    /* Mobile only – center the principle cards */
+@media (max-width: 576px) {
+    .jfin-principles-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .jfin-principle-card {
+        width: 100%;
+        max-width: 340px;
+        height: auto;
+        margin: 0 auto;
+    }
+}
 }
 </style>
-```
+
+
+
+       
+<!-- ==========================================
+     AWARDS SECTION
+========================================== -->
+
+<section class="awards-section">
+
+    <div class="container-tab">
+
+        <!-- Heading -->
+        
+        <div class="section-header mt-6">
+            <h4 class="finserv-eyebrow" style="color:#295cab;">Our awards</h4>
+            <h2 class="finserv-trusted" style="color:#295cab;">
+               Top Corporate <strong style="color:#00abeb">Recognitions</strong>
+            </h2>
+            
+        </div>
+
+
+        <!-- Awards Grid -->
+        <div class="awards-grid">
+
+
+            <!-- ==============================
+                 AWARD 1
+            =============================== -->
+            <div class="award-card">
+
+                <!-- Trophy -->
+                <div class="award-trophy">
+                    <img src="{{ asset('theme/dhara-jfin/img/trophy.png') }}"
+                         alt="Award Trophy">
+                </div>
+
+                <!-- Award Information -->
+                <div class="award-info">
+
+                    <!-- Bank Logo -->
+                    <div class="bank-logo">
+                        <img src="{{ asset('theme/dhara-jfin/img/award_logo/home_rank.jpg') }}"
+                             alt="PNB">
+                    </div>
+
+                    <!-- Award Name -->
+                    <div class="award-name">
+                        Home Loan Sourcing
+                    </div>
+
+                    <div class="award-bottom">
+                        Rank 1<sup>st</sup>
+                        <span>(Year 2023-24)</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================
+                 AWARD 2
+            =============================== -->
+            <div class="award-card">
+
+                <div class="award-trophy">
+                    <img src="{{ asset('theme/dhara-jfin/img/trophy.png') }}"
+                         alt="Award Trophy">
+                </div>
+
+                <div class="award-info">
+
+                    <div class="bank-logo">
+                        <img src="{{ asset('theme/dhara-jfin/img/award_logo/Preferred Business Partner.jpg') }}"
+                             alt="ARKA FinCap">
+                    </div>
+
+                    <div class="award-name">
+                        Preferred Business Partner
+                    </div>
+
+                    <div class="award-bottom">
+                        <span>(Year 2023-24)</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================
+                 AWARD 3
+            =============================== -->
+            <div class="award-card">
+
+                <div class="award-trophy">
+                    <img src="{{ asset('theme/dhara-jfin/img/trophy.png') }}"
+                         alt="Award Trophy">
+                </div>
+
+                <div class="award-info">
+
+                    <div class="bank-logo">
+                        <img src="{{ asset('theme/dhara-jfin/img/award_logo/pnb.jpg') }}"
+                             alt="Bank of Maharashtra">
+                    </div>
+
+                    <div class="award-name">
+                        For Mobilizing Mortgage Loan -
+                    </div>
+
+                    <div class="award-bottom">
+                        Rank 1<sup>st</sup>
+                        <span>(Year 2021-22)</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================
+                 AWARD 4
+            =============================== -->
+            <div class="award-card">
+
+                <div class="award-trophy">
+                    <img src="{{ asset('theme/dhara-jfin/img/trophy.png') }}"
+                         alt="Award Trophy">
+                </div>
+
+                <div class="award-info">
+
+                    <div class="bank-logo">
+                        <img src="{{ asset('theme/dhara-jfin/img/award_logo/Best Category in Business.jpg') }}"
+                             alt="ANAND RATHI">
+                    </div>
+
+                    <div class="award-name">
+                        Best Category in Business
+                    </div>
+
+                    <div class="award-bottom">
+                        <span>(Year 2022-23)</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================
+                 AWARD 5
+            =============================== -->
+            <div class="award-card">
+
+                <div class="award-trophy">
+                    <img src="{{ asset('theme/dhara-jfin/img/trophy.png') }}"
+                         alt="Award Trophy">
+                </div>
+
+                <div class="award-info">
+
+                    <div class="bank-logo">
+                        <img src="{{ asset('theme/dhara-jfin/img/award_logo/bom.jpg') }}"
+                             alt="PNB">
+                    </div>
+
+                    <div class="award-name">
+                        For Mobilizing Mortgage Loan -
+                    </div>
+
+                    <div class="award-bottom">
+                        Rank 1<sup>st</sup>
+                        <span>(Year 2022-23)</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================
+                 AWARD 6
+            =============================== -->
+            <div class="award-card">
+
+                <div class="award-trophy">
+                    <img src="{{ asset('theme/dhara-jfin/img/trophy.png') }}"
+                         alt="Award Trophy">
+                </div>
+
+                <div class="award-info">
+
+                    <div class="bank-logo">
+                        <img src="{{ asset('theme/dhara-jfin/img/award_logo/tpd.png') }}"
+                             alt="Top Performing DSA">
+                    </div>
+
+                    <div class="award-name">
+                        Top Performing DSA
+                    </div>
+
+                    <div class="award-bottom">
+                        <span>(Year 2021-22)</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
 
 
 
@@ -505,9 +1002,14 @@
     <section class="about-page-team-section">
         <div class="about-page-section-container">
             <div class="about-page-section-header">
-                <div class="about-page-section-label">Our Team</div>
-                <!-- <h2 class="about-page-section-title">Expert Financial Advisors</h2>
-                <p class="about-page-section-subtitle">Dedicated professionals committed to helping you make smart financial decisions and achieve your dreams.</p> -->
+                <!-- <div class="about-page-section-label">Our Team</div> -->
+                 <h2 class="finserv-trusted" style="color:#295cab;">
+               The Team Behind 
+
+                <strong style="color:#00abeb">Your Financial Journey</strong>
+            </h2>
+               
+                <p class="about-page-section-subtitle">Our team provides expert guidance and personalised support to help you navigate your financial needs with confidence.</p>
             </div>
             
             <div class="about-page-team-grid">

@@ -1171,16 +1171,27 @@ $(document).ready(function() {
                                 <tr>
                                     <td style="padding: 5px;"><strong>Requested Amount:</strong></td>
                                     <td style="padding: 5px; text-align: right;">₹${data.amount}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 5px;"><strong>GST (2%):</strong></td>
-                                    <td style="padding: 5px; text-align: right;">₹${data.gst}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 5px;"><strong>TDS (2%):</strong></td>
-                                    <td style="padding: 5px; text-align: right;">₹${data.tds}</td>
-                                </tr>
-                                <tr style="border-top: 2px solid #000;">
+                                </tr> 
+                                
+<tr>
+    <td style="padding: 5px;">
+        <strong>GST (${Number(data.gst_percentage ?? 0).toFixed(2)}%):</strong>
+    </td>
+    <td style="padding: 5px; text-align: right;">
+        ₹${Number(data.gst ?? 0).toFixed(2)}
+    </td>
+</tr>
+
+<tr>
+    <td style="padding: 5px;">
+        <strong>TDS (${Number(data.tds_percentage ?? 0).toFixed(2)}%):</strong>
+    </td>
+    <td style="padding: 5px; text-align: right;">
+        ₹${Number(data.tds ?? 0).toFixed(2)}
+    </td>
+</tr>
+
+                            <tr style="border-top: 2px solid #000;">
                                     <td style="padding: 5px;"><strong>Final Amount:</strong></td>
                                     <td style="padding: 5px; text-align: right; font-weight: bold;">₹${data.final_amount}</td>
                                 </tr>
