@@ -20,6 +20,9 @@
     top: 0;
     overflow: hidden; /* Prevents double scrollbars */
 }
+.logo {
+    width: 57px;
+}
 
 .sidebar-nav {
     flex: 1;

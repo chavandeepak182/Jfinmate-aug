@@ -30,28 +30,36 @@ class AuthV3Controller extends Controller
         return view('authv3.login');
     }
 
-    public function loginSubmit(Request $request)
-    {
-        $request->validate([
-            'mobile_no' => 'required|digits:10',
+  public function loginSubmit(Request $request)
+{
+    $request->validate([
+        'mobile_no' => 'required|digits:10',
+    ]);
+
+    // Find active OR soft-deleted user
+    $user = User::withTrashed()
+        ->where('mobile_no', $request->mobile_no)
+        ->first();
+
+    if (!$user) {
+        return back()->withErrors([
+            'mobile_no' => 'Mobile number not registered'
         ]);
-
-        $user = User::where('mobile_no', $request->mobile_no)->first();
-
-        if (!$user) {
-            return back()->withErrors([
-                'mobile_no' => 'Mobile number not registered'
-            ]);
-        }
-
-        $this->generateOtp($user->id);
-
-        session()->put('otp_user_id', $user->id);
-        session()->put('otp_mobile', $request->mobile_no);
-
-        return redirect()->route('authv3.otp.form')
-            ->with('success', 'OTP sent to your mobile');
     }
+
+    // Send OTP
+    if (!$this->generateOtp($user->id)) {
+        return back()->withErrors([
+            'mobile_no' => 'Unable to send OTP. Please try again.'
+        ]);
+    }
+
+    session()->put('otp_user_id', $user->id);
+    session()->put('otp_mobile', $request->mobile_no);
+
+    return redirect()->route('authv3.otp.form')
+        ->with('success', 'OTP sent to your mobile');
+}
 
     /* ================= OTP ================= */
 
@@ -64,7 +72,7 @@ class AuthV3Controller extends Controller
         return view('authv3.verify_otp');
     }
 
- public function verifyOtp(Request $request)
+public function verifyOtp(Request $request)
 {
     $request->validate([
         'otp' => 'required|digits_between:4,6',
@@ -77,6 +85,22 @@ class AuthV3Controller extends Controller
             ->withErrors('Session expired. Please try again.');
     }
 
+    // Find active OR soft-deleted user
+    $user = User::withTrashed()
+        ->where('id', $userId)
+        ->first();
+
+    if (!$user) {
+        session()->forget([
+            'otp_user_id',
+            'otp_mobile',
+            'otp_purpose'
+        ]);
+
+        return redirect()->route('authv3.login.form')
+            ->withErrors('User account not found.');
+    }
+
     $otpRow = Otp::where('user_id', $userId)
         ->where('otp', $request->otp)
         ->where('is_verify', 0)
@@ -85,66 +109,74 @@ class AuthV3Controller extends Controller
         ->first();
 
     if (!$otpRow) {
-        return back()->withErrors(['otp' => 'Invalid or expired OTP']);
+        return back()->withErrors([
+            'otp' => 'Invalid or expired OTP'
+        ]);
     }
 
     try {
 
-        // ✅ mark verified
-        $otpRow->update(['is_verify' => 1]);
-
-        // login user
-      Auth::loginUsingId($userId);
-
-$user = User::find($userId);
-
-$user->update([
-    'last_login_at' => now(),
-    'is_email_verify' => 1,
-
-    // 🔥 ADD THIS LINE (MOST IMPORTANT)
-    'mobile_no' => $user->mobile_no ?? request('mobile_no')
-]);
-
-        session([
-            'user_id'  => Auth::id(),
-            'username' => Auth::user()->name,
-            'role_id'  => Auth::user()->role_id,
+        // Mark OTP verified
+        $otpRow->update([
+            'is_verify' => 1
         ]);
 
+        // Forgot password flow
         $purpose = session('otp_purpose');
 
-// mark OTP verified
-$otpRow->update(['is_verify' => 1]);
+        if ($purpose === 'forgot_password') {
 
-if ($purpose === 'forgot_password') {
+            // Restore deleted user if correct OTP was entered
+            if ($user->deleted_at !== null) {
+                $user->restore();
 
-    session()->forget('otp_purpose');
+                $user->refresh();
+            }
 
-    return redirect()->route('authv3.reset.form');
-}
+            session()->forget('otp_purpose');
 
-// NORMAL LOGIN / SIGNUP FLOW
-Auth::loginUsingId($userId);
+            return redirect()->route('authv3.reset.form');
+        }
 
-User::where('id', $userId)->update([
-    'last_login_at' => now()
-]);
+        // Restore soft-deleted user
+        if ($user->deleted_at !== null) {
+            $user->restore();
 
-session([
-    'user_id'  => Auth::id(),
-    'username' => Auth::user()->name,
-    'role_id'  => Auth::user()->role_id,
-]);
+            $user->refresh();
+        }
 
-session()->forget('otp_user_id');
+        // Login
+        Auth::login($user);
 
-return $this->redirectByRole(Auth::user());
+        // Update login information
+        $user->update([
+            'last_login_at' => now(),
+            'is_email_verify' => 1,
+        ]);
 
+        session([
+            'user_id'  => $user->id,
+            'username' => $user->name,
+            'role_id'   => $user->role_id,
+        ]);
+
+        session()->forget([
+            'otp_user_id',
+            'otp_mobile'
+        ]);
+
+        return $this->redirectByRole($user);
 
     } catch (\Throwable $e) {
-        \Log::error('OTP verify failed', ['error' => $e->getMessage()]);
-        return back()->withErrors(['otp' => 'OTP verification failed']);
+
+        \Log::error('OTP verify failed', [
+            'user_id' => $userId,
+            'error'   => $e->getMessage()
+        ]);
+
+        return back()->withErrors([
+            'otp' => 'OTP verification failed'
+        ]);
     }
 }
 
@@ -179,27 +211,29 @@ return $this->redirectByRole(Auth::user());
     // }
 private function generateOtp($userId)
 {
-    $user = User::find($userId);
-    if (!$user) return false;
+    $user = User::where('id', $userId)
+        ->whereNull('deleted_at')
+        ->first();
+
+    if (!$user) {
+        return false;
+    }
 
     try {
 
         $apiKey = config('services.twofactor.api_key');
+
         $mobile = "91" . $user->mobile_no;
         $templateName = "Register";
 
-        // Generate OTP
         $otp = rand(100000, 999999);
 
-        // 2Factor Endpoint
         $url = "https://2factor.in/API/V1/{$apiKey}/SMS/{$mobile}/{$otp}/{$templateName}";
 
-        // FORCE IPv4 (fix for server 404)
         $response = Http::withOptions([
             'force_ip_resolve' => 'v4'
         ])->timeout(20)->get($url);
 
-        // Raw log
         \Log::info("OTP API RAW", [
             'status' => $response->status(),
             'body'   => $response->body()
@@ -211,24 +245,16 @@ private function generateOtp($userId)
 
         $json = $response->json();
 
-        // If response is not JSON
         if (!is_array($json)) {
-            \Log::error("OTP INVALID RESPONSE", [
-                'raw' => $response->body()
-            ]);
             return false;
         }
 
-        // If API failed
         if (($json['Status'] ?? '') !== 'Success') {
-            \Log::error("OTP API FAILED", $json);
             return false;
         }
 
-        // Delete old OTPs
         Otp::where('user_id', $userId)->delete();
 
-        // Insert new OTP
         Otp::create([
             'user_id'    => $userId,
             'otp'        => $otp,
@@ -240,9 +266,11 @@ private function generateOtp($userId)
         return true;
 
     } catch (\Throwable $e) {
+
         \Log::error("OTP Send Exception", [
             'error' => $e->getMessage()
         ]);
+
         return false;
     }
 }
@@ -254,39 +282,48 @@ public function loginWithEmail(Request $request)
         'password' => 'required',
     ]);
 
- $user = User::where('email_id', $request->email_id)->first();
+    // Find ACTIVE OR SOFT-DELETED user
+    $user = User::withTrashed()
+        ->where('email_id', $request->email_id)
+        ->first();
 
-if (!$user) {
-    return back()->withErrors([
-        'email_id' => 'Email not registered'
-    ]);
-}
+    if (!$user) {
+        return back()->withErrors([
+            'email_id' => 'Email not registered'
+        ])->withInput();
+    }
 
-// CHECK ACCOUNT STATUS
-if ((int) $user->status !== 1) {
-    return back()->withErrors([
-        'email_id' => 'Your account is inactive. Please contact the administrator.'
-    ]);
-}
+    // Check password
     if (!Hash::check($request->password, $user->password)) {
         return back()->withErrors([
             'password' => 'Invalid email or password'
+        ])->withInput();
+    }
+
+    // If user was soft deleted, restore ONLY users record
+    if ($user->deleted_at !== null) {
+        $user->restore();
+    }
+
+    // Check account status
+    if ((int) $user->status !== 1) {
+        return back()->withErrors([
+            'email_id' => 'Your account is inactive. Please contact the administrator.'
         ]);
     }
 
-    Auth::loginUsingId($user->id);
-    /* ✅ UPDATE LAST LOGIN TIME */
-$user->update([
-    'last_login_at' => now()
-]);
+    Auth::login($user);
+
+    $user->update([
+        'last_login_at' => now(),
+    ]);
 
     session([
         'user_id'  => $user->id,
         'username' => $user->name,
-        'role_id'  => $user->role_id,
+        'role_id'   => $user->role_id,
     ]);
 
-    // return redirect('/loans-list');
     return $this->redirectByRole($user);
 }
 
@@ -294,13 +331,13 @@ $user->update([
 
 public function loginWithOtp(Request $request)
 {
-    // 1️⃣ Validate input
     $request->validate([
         'mobile_no' => 'required|digits:10',
     ]);
 
-    // 2️⃣ Find user by mobile number
-    $user = User::where('mobile_no', $request->mobile_no)->first();
+    $user = User::withTrashed()
+        ->where('mobile_no', $request->mobile_no)
+        ->first();
 
     if (!$user) {
         return back()->withErrors([
@@ -308,13 +345,15 @@ public function loginWithOtp(Request $request)
         ]);
     }
 
-    // 3️⃣ Generate OTP (same helper used everywhere)
-    $this->generateOtp($user->id);
+    if (!$this->generateOtp($user->id)) {
+        return back()->withErrors([
+            'mobile_no' => 'Unable to send OTP. Please try again.'
+        ]);
+    }
 
-    // 4️⃣ Store user id in session (same as signup OTP)
     session()->put('otp_user_id', $user->id);
+    session()->put('otp_mobile', $request->mobile_no);
 
-    // 5️⃣ Redirect to OTP verification page
     return redirect()->route('authv3.otp.form')
         ->with('success', 'OTP sent to your mobile');
 }
@@ -339,31 +378,40 @@ public function signupSubmit(Request $request)
                 'required',
                 'min:6',
             ],
-        ],
-        [
-            'name.required'      => 'Full name is required',
-            'name.regex'         => 'Name can contain only letters and spaces',
-            'mobile_no.required' => 'Mobile number is required',
-            'mobile_no.digits'   => 'Mobile number must be exactly 10 digits',
-            'email_id.required'  => 'Email address is required',
-            'email_id.email'     => 'Please enter a valid email address',
-            'password.required'  => 'Password is required',
-            'password.min'       => 'Password must be at least 6 characters',
         ]
     );
 
-    $user = User::where('mobile_no', $request->mobile_no)
-                ->orWhere('email_id', $request->email_id)
-                ->first();
+    // CHECK ACTIVE + DELETED USERS
+    $user = User::withTrashed()
+        ->where(function ($query) use ($request) {
+            $query->where('mobile_no', $request->mobile_no)
+                  ->orWhere('email_id', $request->email_id);
+        })
+        ->first();
 
     if ($user) {
 
-        if ($user->role_id == 1) {
+        // Existing active customer
+        if ($user->deleted_at === null && $user->role_id == 1) {
+
             return back()
-                ->withErrors(['mobile_no' => 'You already have a Finance account'])
+                ->withErrors([
+                    'mobile_no' => 'You already have a Finance account.'
+                ])
                 ->withInput();
         }
 
+        // Existing deleted customer
+        if ($user->deleted_at !== null) {
+
+            return back()
+                ->withErrors([
+                    'mobile_no' => 'This account already exists. Please login using your existing email/mobile number.'
+                ])
+                ->withInput();
+        }
+
+        // Existing non-customer account
         $user->update([
             'role_id' => 1
         ]);
@@ -372,7 +420,11 @@ public function signupSubmit(Request $request)
 
         do {
             $referralCode = Str::upper(Str::random(8));
-        } while (User::where('referral_code', $referralCode)->exists());
+        } while (
+            User::withTrashed()
+                ->where('referral_code', $referralCode)
+                ->exists()
+        );
 
         $user = User::create([
             'name'          => $request->name,
@@ -385,9 +437,11 @@ public function signupSubmit(Request $request)
     }
 
     $this->generateOtp($user->id);
+
     session()->put('otp_user_id', $user->id);
 
-    return redirect()->route('authv3.otp.form')
+    return redirect()
+        ->route('authv3.otp.form')
         ->with('success', 'OTP sent to your mobile');
 }
 
@@ -403,7 +457,9 @@ public function handleGoogleCallback()
     $googleUser = Socialite::driver('google')->user();
 
     // find existing user
-    $user = User::where('email_id', $googleUser->getEmail())->first();
+   $user = User::where('email_id', $googleUser->getEmail())
+    ->whereNull('deleted_at')
+    ->first();
 
     // signup if not exists
     if (!$user) {
@@ -483,10 +539,28 @@ public function forgotSubmit(Request $request)
     $user = User::where('mobile_no', $request->mobile_no)->first();
 
     if (!$user) {
-        return back()->withErrors(['mobile_no' => 'Mobile number not registered']);
+        return back()->withErrors([
+            'mobile_no' => 'Mobile number not registered'
+        ]);
     }
 
-    $this->generateOtp($user->id);
+    if (!empty($user->deleted_at)) {
+        return back()->withErrors([
+            'mobile_no' => 'This account has been deleted and cannot be recovered.'
+        ]);
+    }
+
+    if ((int) $user->status !== 1) {
+        return back()->withErrors([
+            'mobile_no' => 'Your account is inactive.'
+        ]);
+    }
+
+    if (!$this->generateOtp($user->id)) {
+        return back()->withErrors([
+            'mobile_no' => 'Unable to send OTP. Please try again.'
+        ]);
+    }
 
     session()->put('otp_user_id', $user->id);
     session()->put('otp_purpose', 'forgot_password');
@@ -509,10 +583,20 @@ public function resetPassword(Request $request)
     ]);
 
     $userId = session('otp_user_id');
+$user = User::where('id', $userId)
+    ->whereNull('deleted_at')
+    ->first();
 
-    User::where('id', $userId)->update([
-        'password' => Hash::make($request->password),
-    ]);
+if (!$user) {
+    session()->forget('otp_user_id');
+
+    return redirect()->route('authv3.login.form')
+        ->withErrors('This account has been deleted.');
+}
+
+$user->update([
+    'password' => Hash::make($request->password),
+]);
 
     session()->forget('otp_user_id');
 
@@ -677,7 +761,16 @@ public function apiVerifyOtp(Request $request)
     // ✅ mark verified
     $otpRow->update(['is_verify'=>1]);
 
-    $user = User::find($request->user_id);
+    $user = User::where('id', $request->user_id)
+    ->whereNull('deleted_at')
+    ->first();
+
+if (!$user) {
+    return response()->json([
+        'status' => false,
+        'message' => 'This account has been deleted.'
+    ], 403);
+}
 
     $user->update([
         'last_login_at'=>now(),
@@ -713,7 +806,9 @@ public function apiForgotPassword(Request $request)
         'mobile_no'=>'required|digits:10'
     ]);
 
-    $user = User::where('mobile_no',$request->mobile_no)->first();
+  $user = User::where('mobile_no', $request->mobile_no)
+    ->whereNull('deleted_at')
+    ->first();
 
     if (!$user) {
         return response()->json([

@@ -59,7 +59,7 @@
                         <td>{{ $blog->author_name }}</td>
                         <td>{{ $blog->publish_date }}</td>
                         <td>
-                            @if($blog->status === 'Active')
+                           @if(strtolower(trim($blog->status)) === 'active')
                                 <span class="badge bg-success">Active</span>
                             @else
                                 <span class="badge bg-secondary">Inactive</span>

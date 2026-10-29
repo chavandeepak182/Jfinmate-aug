@@ -283,267 +283,409 @@ public function viewWithdrawalRequests()
     //     }
     // }
     // Approve a withdrawal request
+// public function approveWithdrawal(Request $request, $id)
+// {
+//     // ==========================================
+//     // 1. Validate admin input
+//     // ==========================================
+//     $request->validate([
+//         'gst' => [
+//             'required',
+//             'numeric',
+//             'in:0,2,5,12,18'
+//         ],
+
+//         'tds' => [
+//             'required',
+//             'numeric',
+//             'in:0,1,2,5'
+//         ],
+
+//         // Accept any transaction ID format
+//         'transaction_id' => [
+//             'required',
+//             'string',
+//             'max:255'
+//         ],
+//     ]);
+
+//     DB::beginTransaction();
+
+//     try {
+
+//         // ==========================================
+//         // 2. Get withdrawal request
+//         // ==========================================
+//         $withdrawal = DB::table('withdrawal_requests')
+//             ->where('id', $id)
+//             ->lockForUpdate()
+//             ->first();
+
+//         if (!$withdrawal) {
+
+//             DB::rollBack();
+
+//             return redirect()
+//                 ->back()
+//                 ->with(
+//                     'error',
+//                     'Withdrawal request not found.'
+//                 );
+//         }
+
+
+//         // ==========================================
+//         // 3. Check request status
+//         // ==========================================
+//         if ($withdrawal->status !== 'pending') {
+
+//             DB::rollBack();
+
+//             return redirect()
+//                 ->back()
+//                 ->with(
+//                     'error',
+//                     'This withdrawal request has already been processed.'
+//                 );
+//         }
+
+
+//         // ==========================================
+//         // 4. Get Transaction ID
+//         // ==========================================
+//         $transactionId = trim(
+//             $request->input('transaction_id')
+//         );
+
+
+//         // ==========================================
+//         // 5. Calculate GST / TDS
+//         // ==========================================
+//         $requestedAmount = (float) $withdrawal->amount;
+
+//         $gstPercentage = (float) $request->gst;
+
+//         $tdsPercentage = (float) $request->tds;
+
+
+//         $gstAmount = (
+//             $requestedAmount * $gstPercentage
+//         ) / 100;
+
+
+//         $tdsAmount = (
+//             $requestedAmount * $tdsPercentage
+//         ) / 100;
+
+
+//         $finalAmount =
+//             $requestedAmount
+//             - $gstAmount
+//             - $tdsAmount;
+
+
+//         // ==========================================
+//         // 6. Check final amount
+//         // ==========================================
+//         if ($finalAmount <= 0) {
+
+//             DB::rollBack();
+
+//             return redirect()
+//                 ->back()
+//                 ->with(
+//                     'error',
+//                     'Invalid final withdrawal amount.'
+//                 );
+//         }
+
+
+//         // ==========================================
+//         // 7. Get wallet
+//         // ==========================================
+//         $wallet = DB::table('wallet')
+//             ->where(
+//                 'user_id',
+//                 $withdrawal->user_id
+//             )
+//             ->lockForUpdate()
+//             ->first();
+
+
+//         if (!$wallet) {
+
+//             DB::rollBack();
+
+//             return redirect()
+//                 ->back()
+//                 ->with(
+//                     'error',
+//                     'Wallet not found.'
+//                 );
+//         }
+
+
+//         // ==========================================
+//         // 8. Check wallet balance
+//         // ==========================================
+//         if (
+//             (float) $wallet->wallet_balance
+//             < $requestedAmount
+//         ) {
+
+//             DB::rollBack();
+
+//             return redirect()
+//                 ->back()
+//                 ->with(
+//                     'error',
+//                     'Insufficient wallet balance for this transaction.'
+//                 );
+//         }
+
+
+//         // ==========================================
+//         // 9. Deduct wallet amount
+//         // ==========================================
+//         DB::table('wallet')
+//             ->where(
+//                 'user_id',
+//                 $withdrawal->user_id
+//             )
+//             ->decrement(
+//                 'wallet_balance',
+//                 $requestedAmount
+//             );
+
+
+//         // ==========================================
+//         // 10. Update withdrawal request
+//         // ==========================================
+//         DB::table('withdrawal_requests')
+//             ->where('id', $id)
+//             ->update([
+
+//                 'status' => 'approved',
+
+//                 'gst' => $gstAmount,
+
+//                 'tds' => $tdsAmount,
+
+//                 'final_amount' => $finalAmount,
+
+//                 'transaction_id' => $transactionId,
+
+//                 'updated_at' => now(),
+
+//             ]);
+
+
+//         // ==========================================
+//         // 11. Create transaction history
+//         // ==========================================
+//         DB::table('transactions')
+//             ->insert([
+
+//                 'user_id' => $withdrawal->user_id,
+
+//                 'amount' => $requestedAmount,
+
+//                 'transaction_id' => $transactionId,
+
+//                 'status' => 'completed',
+
+//                 'gst' => $gstAmount,
+
+//                 'tds' => $tdsAmount,
+
+//                 'final_amount' => $finalAmount,
+
+//                 'created_at' => now(),
+
+//             ]);
+
+
+//         // ==========================================
+//         // 12. Commit transaction
+//         // ==========================================
+//         DB::commit();
+
+
+//         return redirect()
+//             ->back()
+//             ->with(
+//                 'success',
+//                 'Withdrawal approved successfully.'
+//             );
+
+
+//     } catch (\Throwable $e) {
+
+//         // ==========================================
+//         // Rollback if anything fails
+//         // ==========================================
+//         DB::rollBack();
+
+//         Log::error(
+//             'Withdrawal approval failed',
+//             [
+//                 'withdrawal_id' => $id,
+//                 'error' => $e->getMessage()
+//             ]
+//         );
+
+
+//         return redirect()
+//             ->back()
+//             ->with(
+//                 'error',
+//                 'Unable to approve withdrawal: '
+//                 . $e->getMessage()
+//             );
+//     }
+// }
+
+
 public function approveWithdrawal(Request $request, $id)
 {
-    // ==========================================
     // 1. Validate admin input
-    // ==========================================
-    $request->validate([
-        'gst' => [
-            'required',
-            'numeric',
-            'in:0,2,5,12,18'
-        ],
-
-        'tds' => [
-            'required',
-            'numeric',
-            'in:0,1,2,5'
-        ],
-
-        // Accept any transaction ID format
-        'transaction_id' => [
-            'required',
-            'string',
-            'max:255'
-        ],
+    $validated = $request->validate([
+        'gst' => ['required', 'numeric', 'in:0,2,5,12,18'],
+        'tds' => ['required', 'numeric', 'in:0,1,2,5'],
+        'transaction_id' => ['required', 'string', 'max:255'],
     ]);
 
     DB::beginTransaction();
 
     try {
-
-        // ==========================================
-        // 2. Get withdrawal request
-        // ==========================================
+        // 2. Lock withdrawal request
         $withdrawal = DB::table('withdrawal_requests')
             ->where('id', $id)
             ->lockForUpdate()
             ->first();
 
         if (!$withdrawal) {
-
             DB::rollBack();
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Withdrawal request not found.'
-                );
+            return redirect()->back()
+                ->with('error', 'Withdrawal request not found.');
         }
 
-
-        // ==========================================
-        // 3. Check request status
-        // ==========================================
+        // 3. Verify request status
         if ($withdrawal->status !== 'pending') {
-
             DB::rollBack();
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'This withdrawal request has already been processed.'
-                );
+            return redirect()->back()
+                ->with('error', 'This withdrawal request has already been processed.');
         }
 
+        // 4. Read selected values
+        $transactionId = trim($validated['transaction_id']);
+        $requestedAmount = round((float) $withdrawal->amount, 2);
 
-        // ==========================================
-        // 4. Get Transaction ID
-        // ==========================================
-        $transactionId = trim(
-            $request->input('transaction_id')
+        // Preserve the selected percentages
+        $gstPercentage = (float) $validated['gst'];
+        $tdsPercentage = (float) $validated['tds'];
+
+        // 5. Calculate amounts using the selected percentages
+        $gstAmount = round(
+            $requestedAmount * $gstPercentage / 100,
+            2
         );
 
+        $tdsAmount = round(
+            $requestedAmount * $tdsPercentage / 100,
+            2
+        );
 
-        // ==========================================
-        // 5. Calculate GST / TDS
-        // ==========================================
-        $requestedAmount = (float) $withdrawal->amount;
+        $finalAmount = round(
+            $requestedAmount - $gstAmount - $tdsAmount,
+            2
+        );
 
-        $gstPercentage = (float) $request->gst;
-
-        $tdsPercentage = (float) $request->tds;
-
-
-        $gstAmount = (
-            $requestedAmount * $gstPercentage
-        ) / 100;
-
-
-        $tdsAmount = (
-            $requestedAmount * $tdsPercentage
-        ) / 100;
-
-
-        $finalAmount =
-            $requestedAmount
-            - $gstAmount
-            - $tdsAmount;
-
-
-        // ==========================================
-        // 6. Check final amount
-        // ==========================================
         if ($finalAmount <= 0) {
-
             DB::rollBack();
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Invalid final withdrawal amount.'
-                );
+            return redirect()->back()
+                ->with('error', 'Invalid final withdrawal amount.');
         }
 
-
-        // ==========================================
-        // 7. Get wallet
-        // ==========================================
+        // 6. Lock and check wallet
         $wallet = DB::table('wallet')
-            ->where(
-                'user_id',
-                $withdrawal->user_id
-            )
+            ->where('user_id', $withdrawal->user_id)
             ->lockForUpdate()
             ->first();
 
-
         if (!$wallet) {
-
             DB::rollBack();
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Wallet not found.'
-                );
+            return redirect()->back()
+                ->with('error', 'Wallet not found.');
         }
 
-
-        // ==========================================
-        // 8. Check wallet balance
-        // ==========================================
-        if (
-            (float) $wallet->wallet_balance
-            < $requestedAmount
-        ) {
-
+        if ((float) $wallet->wallet_balance < $requestedAmount) {
             DB::rollBack();
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Insufficient wallet balance for this transaction.'
-                );
+            return redirect()->back()
+                ->with('error', 'Insufficient wallet balance.');
         }
 
-
-        // ==========================================
-        // 9. Deduct wallet amount
-        // ==========================================
+        // 7. Deduct the requested amount from wallet
         DB::table('wallet')
-            ->where(
-                'user_id',
-                $withdrawal->user_id
-            )
-            ->decrement(
-                'wallet_balance',
-                $requestedAmount
-            );
+            ->where('user_id', $withdrawal->user_id)
+            ->decrement('wallet_balance', $requestedAmount);
 
-
-        // ==========================================
-        // 10. Update withdrawal request
-        // ==========================================
+        // 8. Update withdrawal request
         DB::table('withdrawal_requests')
             ->where('id', $id)
             ->update([
-
-                'status' => 'approved',
-
-                'gst' => $gstAmount,
-
-                'tds' => $tdsAmount,
-
-                'final_amount' => $finalAmount,
-
+                'status'         => 'approved',
+                'gst'            => $gstAmount,
+                'tds'            => $tdsAmount,
+                'final_amount'   => $finalAmount,
                 'transaction_id' => $transactionId,
-
-                'updated_at' => now(),
-
+                'updated_at'     => now(),
             ]);
 
+        // 9. Save transaction with percentages and amounts separately
+        DB::table('transactions')->insert([
+            'user_id'        => $withdrawal->user_id,
+            'amount'         => $requestedAmount,
+            'transaction_id' => $transactionId,
+            'status'         => 'completed',
 
-        // ==========================================
-        // 11. Create transaction history
-        // ==========================================
-        DB::table('transactions')
-            ->insert([
+            // GST amount and selected GST percentage
+            'gst'            => $gstAmount,
+            'gst_percentage' => $gstPercentage,
 
-                'user_id' => $withdrawal->user_id,
+            // TDS amount and selected TDS percentage
+            'tds'            => $tdsAmount,
+            'tds_percentage' => $tdsPercentage,
 
-                'amount' => $requestedAmount,
+            'final_amount'   => $finalAmount,
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
 
-                'transaction_id' => $transactionId,
-
-                'status' => 'completed',
-
-                'gst' => $gstAmount,
-
-                'tds' => $tdsAmount,
-
-                'final_amount' => $finalAmount,
-
-                'created_at' => now(),
-
-            ]);
-
-
-        // ==========================================
-        // 12. Commit transaction
-        // ==========================================
         DB::commit();
 
-
-        return redirect()
-            ->back()
-            ->with(
-                'success',
-                'Withdrawal approved successfully.'
-            );
-
+        return redirect()->back()
+            ->with('success', 'Withdrawal approved successfully.');
 
     } catch (\Throwable $e) {
-
-        // ==========================================
-        // Rollback if anything fails
-        // ==========================================
         DB::rollBack();
 
-        Log::error(
-            'Withdrawal approval failed',
-            [
-                'withdrawal_id' => $id,
-                'error' => $e->getMessage()
-            ]
-        );
+        Log::error('Withdrawal approval failed', [
+            'withdrawal_id' => $id,
+            'error' => $e->getMessage(),
+        ]);
 
-
-        return redirect()
-            ->back()
-            ->with(
-                'error',
-                'Unable to approve withdrawal: '
-                . $e->getMessage()
-            );
+        return redirect()->back()
+            ->with('error', 'Unable to approve withdrawal. Check the application logs.');
     }
 }
+
+
     public function showAllTransactions(Request $request)
 {
     $search = $request->input('search');
@@ -635,6 +777,34 @@ public function showAllTransactionsUser(Request $request)
 //     return response()->json($transaction);
 // }
 
+// public function showTransactionHistoryadmin($transactionId)
+// {
+//     $transaction = DB::table('transactions')
+//         ->join('users', 'transactions.user_id', '=', 'users.id')
+//         ->leftJoin('profile', 'users.id', '=', 'profile.user_id')
+//         ->select(
+//             'transactions.transaction_id',
+//             'users.name as user_name',
+//             'users.email_id as email_id',
+//             'profile.mobile_no as contact',
+//             'transactions.amount',
+//             'transactions.gst',
+//             'transactions.tds',
+//             'transactions.final_amount',
+//             'transactions.status',
+//             'transactions.created_at'
+//         )
+//         ->where('transactions.transaction_id', $transactionId)
+//         ->first();
+
+//     if (!$transaction) {
+//         return response()->json([
+//             'error' => 'Transaction not found.'
+//         ], 404);
+//     }
+
+//     return response()->json($transaction);
+// }
 public function showTransactionHistoryadmin($transactionId)
 {
     $transaction = DB::table('transactions')
@@ -648,6 +818,8 @@ public function showTransactionHistoryadmin($transactionId)
             'transactions.amount',
             'transactions.gst',
             'transactions.tds',
+            'transactions.gst_percentage',
+            'transactions.tds_percentage',
             'transactions.final_amount',
             'transactions.status',
             'transactions.created_at'
@@ -663,6 +835,8 @@ public function showTransactionHistoryadmin($transactionId)
 
     return response()->json($transaction);
 }
+
+
     //users & agent
     public function showTransactionHistory()
     {

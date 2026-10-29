@@ -11,17 +11,129 @@
     
 <script src="{{ asset('js/script.js') }}"></script>
     <style>
+```css
+/* =========================================================
+   DASHBOARD PAGE - HEADER FIX
+   ========================================================= */
 
-        .topbar {
-    height: 4.375rem;
-    background-color:#f7f7f7;
+/* Do NOT allow this page to hide the common header */
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+}
+
+/* Keep Laravel/common header above dashboard content */
+.topbar,
+.navbar,
+header,
+.site-header,
+.main-header {
+    position: relative !important;
+    z-index: 9999 !important;
+}
+
+/* Prevent dashboard CSS from covering the common header */
+#wrapper {
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Content should start normally below header */
+#content-wrapper {
+    width: 100%;
+    min-height: calc(100vh - 70px);
+}
+
+/* Bootstrap content wrapper */
+#content-wrapper #content {
+    width: 100%;
+    min-height: auto !important;
+    overflow: visible !important;
+}
+
+/* Dashboard container must not clip header */
+.dashboard-container {
+    width: 100%;
+    min-height: 100vh;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Main dashboard content */
+.main-content {
+    min-width: 0;
+    width: 100%;
+    height: auto !important;
+    min-height: calc(100vh - 70px);
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+}
+
+/* Make sure dashboard content doesn't sit above header */
+.container-fluid {
+    position: relative;
+    z-index: 1;
+}
+
+/* Keep dropdowns visible */
+.dropdown-menu {
+    z-index: 10000 !important;
+}
+
+/* Mobile fix */
+@media (max-width: 768px) {
+
+    html,
+    body {
+        width: 100%;
+        height: auto !important;
+        min-height: 100%;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
     }
 
-    #wrapper #content-wrapper #content {
-    flex: 1 0 auto;
-    background-color: #fff;
+    #wrapper {
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    #content-wrapper {
+        width: 100%;
+        min-height: calc(100vh - 60px);
+    }
+
+    #content {
+        width: 100%;
+        overflow: visible !important;
+    }
+
+    .main-content {
+        width: 100%;
+        height: auto !important;
+        min-height: calc(100vh - 60px);
+        margin-left: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Don't let this page hide the common mobile header */
+    .topbar,
+    .navbar,
+    header,
+    .site-header,
+    .main-header {
+        position: relative !important;
+        z-index: 9999 !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
 }
-    </style>
+
+  </style>
 
 
 

@@ -2,6 +2,9 @@
 @section('title', "Edit Blog")
 
 @section('content')
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+@endpush
 <div class="dashboard-body">
     
         <!-- Breadcrumb Start -->
@@ -44,7 +47,7 @@
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label for="category" class="form-label">Select Blog Category:</label>
-                            <select name="pid" id="category" class="form-control" required>
+                            <select name="category_id" id="category" class="form-control" required>
                                 <option value="">-- Select Blog Category --</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->pid }}" {{ $blog->category_id == $category->pid ? 'selected' : '' }}>
@@ -133,4 +136,23 @@
         </div>
     </div>
 </div>
+@push('scripts')
+
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+
+<script>
+$(document).ready(function () {
+
+    $('#summernote').summernote({
+        height: 350,
+        minHeight: 250,
+        maxHeight: 600,
+        focus: false,
+        placeholder: 'Write your blog description here...'
+    });
+
+});
+</script>
+
+@endpush
 @endsection

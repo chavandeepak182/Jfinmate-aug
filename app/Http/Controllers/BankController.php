@@ -129,14 +129,40 @@ public function loanCategoryUpdate(Request $request)
 
 public function loanCategoryDelete(Request $request)
 {
-    DB::table('loan_category')
-        ->where('loan_category_id', $request->loan_category_id)
-        ->delete();
-
-    return response()->json([
-        'status' => true,
-        'message' => 'Category Deleted Successfully'
+    $request->validate([
+        'loan_category_id' => 'required|integer|exists:loan_category,loan_category_id',
     ]);
+
+    try {
+
+        // Optional: prevent delete if used by a loan
+        $inUse = DB::table('loans')
+            ->where('loan_category_id', $request->loan_category_id)
+            ->exists();
+
+        if ($inUse) {
+            return response()->json([
+                'status' => 0,
+                'msg'    => 'This category is in use and cannot be deleted.'
+            ]);
+        }
+
+        DB::table('loan_category')
+            ->where('loan_category_id', $request->loan_category_id)
+            ->delete();
+
+        return response()->json([
+            'status' => 1,
+            'msg'    => 'Category deleted successfully'
+        ]);
+
+    } catch (\Exception $e) {
+
+        return response()->json([
+            'status' => 0,
+            'msg'    => 'Delete failed: ' . $e->getMessage()
+        ]);
+    }
 }
 
     public function listreferral()

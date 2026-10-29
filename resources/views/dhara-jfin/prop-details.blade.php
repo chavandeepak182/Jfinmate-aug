@@ -28,1240 +28,21 @@
             $select_bhk = $v->select_bhk;
 ?>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<style>
-    :root {
-        --primary-color: #4c5fd7;
-        --secondary-color: #295cab;
-        --text-dark: #1a1a2e;
-        --text-muted: #6b7280;
-        --bg-light: #f8f9fc;
-        --white: #ffffff;
-        --shadow: 0 10px 30px rgba(0,0,0,0.05);
-        --border-color: #e2e8f0;
-    }
 
-    /* Brochure Modal Styles */
-#enquiryModal .modal-content-prop {
-    background: #ffffff;
-    width: 500px;
-    padding: 0;
-    border-radius: 20px;
-    overflow: hidden;
-    color: #1a1a2e;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-    animation: slideUp 0.4s ease;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-#enquiryModal .modal-header-prop {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 28px 30px 20px;
-    background: linear-gradient(135deg, #4c5fd7 0%, #295cab 100%);
-    color: #ffffff;
-}
-
-#enquiryModal .modal-header-title h2 {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 4px 0;
-    color: #ffffff;
-}
-
-#enquiryModal .modal-header-title p {
-    font-size: 14px;
-    color: rgba(255,255,255,0.8);
-    margin: 0;
-}
-
-#enquiryModal .modal-close-prop {
-    margin-top: -4px;
-}
-
-#enquiryModal .close-btn {
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: #ffffff;
-    font-size: 18px;
-    cursor: pointer;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-}
-
-#enquiryModal .close-btn:hover {
-    background: rgba(255,255,255,0.3);
-    transform: rotate(90deg);
-}
-
-#enquiryModal .modal-body {
-    padding: 24px 30px 30px;
-}
-
-#enquiryModal .form-group {
-    margin-bottom: 16px;
-}
-
-#enquiryModal .form-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #2c3e80;
-    margin-bottom: 5px;
-}
-
-#enquiryModal .form-group .required {
-    color: #ef4444;
-}
-
-#enquiryModal .brochure-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    background-color: #f9fafb;
-    color: #1a1a2e;
-    outline: none;
-    box-sizing: border-box;
-}
-
-#enquiryModal .brochure-input:focus {
-    border-color: #4c5fd7;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 4px rgba(76, 95, 215, 0.1);
-}
-
-#enquiryModal .brochure-input::placeholder {
-    color: #9ca3af;
-}
-
-#enquiryModal .brochure-info-box {
-    display: flex;
-    gap: 12px;
-    margin: 18px 0 20px;
-    padding: 12px 0;
-    border-top: 1px solid #f1f3f9;
-    border-bottom: 1px solid #f1f3f9;
-}
-
-#enquiryModal .brochure-info-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #4b5563;
-}
-
-#enquiryModal .brochure-info-item i {
-    color: #4c5fd7;
-    font-size: 16px;
-}
-
-#enquiryModal .brochure-submit-btn {
-    width: 100%;
-    padding: 14px 24px;
-    background: linear-gradient(135deg, #4c5fd7 0%, #295cab 100%);
-    color: #ffffff;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-#enquiryModal .brochure-submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(76, 95, 215, 0.4);
-}
-
-#enquiryModal .brochure-submit-btn:active {
-    transform: translateY(0);
-}
-
-#enquiryModal .brochure-submit-btn i {
-    font-size: 18px;
-}
-
-/* Modal Backdrop */
-.modal-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 999;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Modal Container */
-.modal {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    visibility: hidden;
-}
-
-#enquiryModal.modal.active {
-    visibility: visible;
-}
-
-/* Responsive */
-@media (max-width: 540px) {
-    #enquiryModal .modal-content-prop {
-        width: 92%;
-        margin: 0 10px;
-        border-radius: 16px;
-    }
-    
-    #enquiryModal .modal-header-prop {
-        padding: 20px 20px 16px;
-    }
-    
-    #enquiryModal .modal-header-title h2 {
-        font-size: 20px;
-    }
-    
-    #enquiryModal .modal-body {
-        padding: 20px;
-    }
-    
-    #enquiryModal .brochure-info-box {
-        flex-direction: column;
-        gap: 6px;
-    }
-}
-
-    * { box-sizing: border-box; }
-
-    .custom-container {
-        max-width: 1440px;
-        margin: 8px auto;
-        padding: 0 20px;
-    }
-
-    .main-wrapper {
-        padding: 4rem 0;
-        background: var(--bg-light);
-    }
-
-    .custom-row {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 -15px;
-    }
-
-    .content-main {
-        flex: 0 0 66.666667%;
-        max-width: 66.666667%;
-        padding: 0 15px;
-    }
-
-    .content-sidebar {
-        flex: 0 0 33.333333%;
-        max-width: 33.333333%;
-        padding: 0 15px;
-    }
-
-    @media (max-width: 992px) {
-        .content-main, .content-sidebar {
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
-        .content-sidebar { margin-top: 2rem; }
-    }
-
-    .property-hero {
-        background: var(--white);
-        padding: 2rem 0;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow);
-    }
-
-    .breadcrumb-nav {
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
-    }
-
-    .breadcrumb-nav a {
-        color: var(--primary-color);
-        text-decoration: none;
-    }
-
-    .property-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 1.5rem;
-        flex-wrap: nowrap;
-        gap: 2rem;
-    }
-
-    .property-main-info {
-        flex: 1;
-    }
-
-    .property-main-info h1 {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: var(--text-dark);
-        margin-bottom: 0.25rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .rera-badge {
-        background: #e6fffa;
-        color: #2d3748;
-        font-size: 0.7rem;
-        padding: 2px 8px;
-        border-radius: 4px;
-        border: 1px solid #cbd5e0;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-weight: 600;
-    }
-
-    .developer-link {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-    }
-
-    .property-location {
-        color: var(--text-muted);
-        margin-top: 0.5rem;
-        font-size: 1rem;
-    }
-
-    .property-price-box {
-        text-align: right;
-        min-width: 250px;
-    }
-
-    .price-value {
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--text-dark);
-        line-height: 1;
-    }
-
-    .emi-info {
-        color: var(--primary-color);
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-top: 4px;
-    }
-
-    .agreement-label {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-    }
-
-    .btn-contact-top {
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 700;
-        margin-top: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s;
-        width: 100%;
-        justify-content: center;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    /* Grid Gallery Layout */
-    .grid-gallery {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 10px;
-        margin-bottom: 2rem;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    .gallery-wrapper {
-    width: 100%;
-    margin-bottom: 2rem;
-}
-
-    .gallery-main {
-        /* position: relative;
-        height: 450px; */
-        position: relative;
-    height: 450px;
-    border-radius: 12px;
-    overflow: hidden;
-    }
-
-    .gallery-main img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .nav-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    border: none;
-    font-size: 2rem;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
-}
-.nav-arrow.left { left: 15px; }
-.nav-arrow.right { right: 15px; }
-
-.thumbnail-bar {
-    display: flex;
-    gap: 10px;
-    margin-top: 12px;
-    overflow-x: auto;
-    padding-bottom: 5px;
-}
-.thumbnail-bar::-webkit-scrollbar {
-    height: 6px;
-}
-
-.thumbnail-bar::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
-}
-
-.thumbnail {
-    height: 80px;
-    min-width: 120px;
-    object-fit: cover;
-    border-radius: 8px;
-    cursor: pointer;
-    opacity: 0.6;
-    border: 2px solid transparent;
-    transition: 0.3s ease;
-}
-
-.thumbnail:hover,
-.thumbnail.active {
-    opacity: 1;
-    border-color: #000;
-}
-
-    .gallery-side {
-        display: grid;
-        grid-template-rows: 1fr 1fr;
-        gap: 10px;
-        height: 450px;
-    }
-
-    .side-item {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .side-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .overlay-badge {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        background: rgba(0,0,0,0.4);
-        color: white;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-
-    .gallery-actions {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn-action {
-        background: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.85rem;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        cursor: pointer;
-        color: var(--text-dark);
-        text-transform: uppercase;
-    }
-
-    .video-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .play-btn {
-        width: 60px;
-        height: 60px;
-        background: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: var(--text-dark);
-    }
-
-    .more-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 1.5rem;
-    }
-
-    .more-overlay span {
-        font-size: 1.1rem;
-        margin-bottom: -5px;
-    }
-
-    @media (max-width: 992px) {
-        .grid-gallery { grid-template-columns: 1fr; }
-        .gallery-side { display: none; }
-        .property-header { flex-direction: column; gap: 1rem; }
-        .property-price-box { text-align: left; width: 100%; min-width: auto; }
-    }
-
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .info-card {
-        background: var(--white);
-        padding: 1.5rem;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        box-shadow: var(--shadow);
-        transition: transform 0.3s;
-    }
-
-    .info-card:hover { transform: translateY(-5px); }
-
-    .info-icon {
-        width: 50px;
-        height: 50px;
-        background: #f0f4ff;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-color);
-        font-size: 1.5rem;
-    }
-
-    .info-details span { display: block; }
-    .info-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
-    .info-value { font-weight: 700; font-size: 1.1rem; }
-
-    .details-section {
-        background: var(--white);
-        padding: 2.5rem;
-        border-radius: 24px;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow);
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f1f3f9;
-        color: var(--secondary-color);
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    .description-content{
-        padding-left:1rem;
-    }
-
-    .amenities-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .amenity-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1.25rem;
-        border: 1px solid #f1f3f9;
-        border-radius: 16px;
-        transition: all 0.3s;
-    }
-
-    .amenity-item:hover { border-color: var(--primary-color); background: #f8f9fc; }
-    .amenity-item img { width: 40px; height: 40px; }
-
-    .sidebar-card {
-        background: var(--white);
-        padding: 1.5rem;
-        border-radius: 20px;
-        box-shadow: var(--shadow);
-        position: sticky;
-        top: 100px;
-        z-index: 10;
-    }
-
-    .sidebar-card h3 { font-size: 1.3rem; font-weight: 700; }
-    .sidebar-card .form-control, .sidebar-card .form-select {
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
-        border-radius: 10px;
-        border: 1px solid #e2e8f0;
-    }
-
-    .btn-contact {
-        width: 100%;
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        color: white;
-        border: none;
-        padding: 0.8rem;
-        border-radius: 10px;
-        font-weight: 700;
-        margin-top: 0.5rem;
-        transition: all 0.3s;
-    }
-
-    .nearby-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-
-    .nearby-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 1rem;
-        background: #f8fafc;
-        border-radius: 12px;
-        transition: all 0.3s;
-    }
-
-    .nearby-icon {
-        width: 40px;
-        height: 40px;
-        background: white;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-color);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        flex-shrink: 0;
-    }
-
-    .nearby-info h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.2rem; }
-    .nearby-info p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
-
-    .popular-searches { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
-    .search-tag {
-        padding: 8px 16px;
-        background: #f1f5f9;
-        color: #475569;
-        border-radius: 30px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    .search-tag:hover { background: var(--primary-color); color: white; transform: translateY(-2px); }
-
-    /* Utility Classes */
-    .mb-1 { margin-bottom: 0.25rem; }
-    .mb-2 { margin-bottom: 0.5rem; }
-    .mb-3 { margin-bottom: 1rem; }
-    .mt-2 { margin-top: 0.5rem; }
-    .mt-3 { margin-top: 1rem; }
-    .pt-3 { padding-top: 1rem; }
-    .border-top { border-top: 1px solid var(--border-color); }
-    .d-flex { display: flex; }
-    .justify-content-between { justify-content: space-between; }
-    .fw-bold { font-weight: 700; }
-    .text-muted { color: var(--text-muted); }
-    .small { font-size: 0.85rem; }
-    .w-100 { width: 100%; }
-    
-    .btn-brochure {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.6rem 1.2rem;
-        border: 2px solid var(--primary-color);
-        color: var(--primary-color);
-        background: transparent;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-decoration: none;
-        transition: all 0.3s;
-        cursor: pointer;
-        width: 100%;
-    }
-    
-    .btn-brochure:hover {
-        background: var(--primary-color);
-        color: white;
-    }
-
-    /* Gallery Modal Styles */
-    .gallery-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.95);
-        z-index: 9999;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .gallery-modal.active {
-        display: flex;
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 20px;
-        right: 30px;
-        color: white;
-        font-size: 2.5rem;
-        cursor: pointer;
-        z-index: 10001;
-    }
-
-    .modal-main-img {
-        max-width: 90%;
-        max-height: 70vh;
-        object-fit: contain;
-        margin-bottom: 20px;
-        border-radius: 8px;
-    }
-
-    .modal-thumbnails-wrapper {
-        width: 100%;
-        display:flex;
-        justify-content:center;
-        padding: 20px 0;
-        background: rgba(255, 255, 255, 0.05);
-        overflow-x: auto;
-        white-space: nowrap;
-        scrollbar-width: thin;
-        scrollbar-color: var(--primary-color) rgba(255,255,255,0.1);
-    }
-
-    .modal-thumbnails-wrapper::-webkit-scrollbar {
-        height: 6px;
-    }
-
-    .modal-thumbnails-wrapper::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.1);
-    }
-
-    .modal-thumbnails-wrapper::-webkit-scrollbar-thumb {
-        background: var(--primary-color);
-        border-radius: 10px;
-    }
-
-    .modal-thumbnails-container {
-        display: inline-flex;
-        gap: 15px;
-        padding: 0 40px;
-    }
-
-    .modal-thumb {
-        width: 120px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 6px;
-        cursor: pointer;
-        opacity: 0.6;
-        transition: all 0.3s;
-        border: 2px solid transparent;
-    }
-
-    .modal-thumb:hover {
-        opacity: 1;
-    }
-
-    .modal-thumb.active {
-        opacity: 1;
-        border-color: var(--primary-color);
-        transform: scale(1.05);
-    }
-
-    .form-group { margin-bottom: 1rem; }
-    .form-control, .form-select {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        outline: none;
-        transition: border-color 0.3s;
-    }
-    .form-control:focus, .form-select:focus {
-        border-color: var(--primary-color);
-    }
-
-    //thank you pop up
-    .popup-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 999;
-}   
-    .blur{
-        filter: blur(6px);
-        transition: filter 0.3s ease;
-    }
-
-    .pop-up{
-        width:500px;
-        background: #fff;
-        border-radius: 6px;
-        position:fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align:center;
-        padding:0 30px;
-        z-index:1000;
-        box-shadow:0 0 15px rgba(0,0,0,0.3);
-        visibility: hidden;
-    }
-    .pop-up i{
-        font-size:100px;
-        color: #4c5fd7;
-        background: #fff;
-        margin-top:-50px;
-        border-radius:50%;
-        box-shadow:0 2px 5px rgba(0,0,0,0.5);
-    }
-    .pop-up h2{
-        font-size:38px;
-        font-weight:500;
-        margin: 30px 0 10px;
-    }
-
-    .pop-up p{
-        font-size:16px;
-        color:#333;
-        margin-bottom:20px;
-    }
-    .pop-up button{
-        width:100%;
-        margin-top:20px;
-        margin-bottom:20px;
-        padding:10px 0;
-        background: #4c5fd7;
-        color: #fff;
-        border:0;
-        outline:none;
-        font-size:18px;
-        border-radius:6px;
-        cursor:pointer;
-    }
-
-    .modal-backdrop{
-        display:none;
-        position:fixed;
-        inset:0;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 999;
-    }
-    .modal{
-        /* display:none; */
-        position:fixed;
-        inset:0;
-        z-index: 1000;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        visibility: hidden;
-    }
-    .modal-content-prop{
-        background:#000;
-        width:500px;
-        padding:15px 30px 20px;
-        border-radius:6px;
-        overflow:hidden;
-        color:#fff;
-    }
-    
-    .modal-header-prop{
-        display:flex;
-        justify-content:space-between;
-    }
-    .modal-header-title{
-        display:grid;
-        padding:12px 16px;
-        background:#000;
-    }
-    .modal-header-title h2{
-        font-size:25px;
-        font-weight:500;
-    }
-    .modal-close-prop{
-        text-align:right;
-        margin-top:-7px;
-
-    }
-    .close-btn{
-        text-align:right;
-        background:transparent;
-        border:none;
-        color:#fff;
-        font-size:26px;
-        cursor:pointer;
-    }
-    .modal-body{
-        padding:16px;
-    }
-    .enquiry-form {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-    .enquiry-form input{
-        padding:10px;
-        border-radius:4px;
-        border:none;
-        outline:none;
-    }
-    .enquiry-form button{
-        margin-top:15px;
-        padding:10px;
-        border:none;
-        border-radius:10px;
-        background:#fff;
-        color:#295cab;  
-        font-size:20px;
-        cursor:pointer;
-    }
-
-    .form-container-overlay{
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 999;
-    }
-    .form-container {
-            position: fixed;
-            top:18%;
-            right:50%;
-            transform: translate(50%, -10%);
-            z-index: 1000;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            padding: 40px;
-            max-width: 530px;
-            width: 100%;
-            visibility: hidden;
-        }
-        .form-header{
-            display: flex;
-            justify-content: space-between;
-        }
-        .form-header-title {
-            text-align: center;
-            margin-bottom: 12px;
-        }
-
-        .form-header-title h1 {
-            color: #2c3e80;
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .form-header-title p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .visit-close{
-            position:fixed;
-            top:3%;
-            right:5%;
-            text-align:right;
-            background:transparent;
-            border:none;
-            color:#000;
-            font-size:26px;
-            cursor:pointer;
-        }
-        label {
-            display: block;
-            color: #2c3e80;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 15px;
-            /* transition: all 0.3s ease; */
-            background-color: #f9fafb;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="tel"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .radio-group {
-            display: grid;
-            grid-template-columns: repeat(2,1fr);
-            gap: 12px;
-        }
-
-        .radio-option {
-            display: flex;
-            align-items: center;
-            padding: 7px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            cursor: pointer;
-            /* transition: all 0.3s ease; */
-            background-color: #f9fafb;
-        }
-
-        .radio-option:hover {
-            border-color: #667eea;
-            background-color: white;
-        }
-
-        .radio-option input[type="radio"] {
-            width: 10px;
-            height: 10px;
-            border: 2px solid #d1d5db;
-            border-radius: 50%;
-            margin-right: 12px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .radio-option input[type="radio"]:checked {
-            border-color: #667eea;
-            border-width: 6px;
-        }
-
-        .radio-option input[type="radio"]:checked ~ .radio-label {
-            color: #2c3e80;
-            font-weight: 600;
-        }
-
-        .radio-option:has(input[type="radio"]:checked) {
-            border-color: #667eea;
-            background-color: #f0f4ff;
-        }
-
-        .radio-label {
-            color: #4b5563;
-            font-size: 15px;
-            cursor: pointer;
-            flex-grow: 1;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 14px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            /* transition: all 0.3s ease; */
-            margin-top: 8px;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .required {
-            color: #ef4444;
-            margin-left: 2px;
-        }
-
-        @media (max-width: 480px) {
-            .form-container {
-                padding: 28px 20px;
-            }
-
-            .form-header h1 {
-                font-size: 24px;
-            }
-        }
-</style>
 
 <main class="main-wrapper">
     <div class="custom-container">
-        <!-- Breadcrumb -->
-        <div class="breadcrumb-nav">
-            <a href="{{ url('/') }}">Home</a> &nbsp;/&nbsp; 
-            <a href="{{ url('/properties') }}">Properties</a> &nbsp;/&nbsp; 
-            <span>{{ $title }}</span>
-        </div>
+      
         <div class="custom-row" id="mainwrapper">
             
             <div class="content-main">
                 <!-- Hero Header -->
-                <div class="property-header">
-                    <div class="property-main-info">
-                        <h1>{{ $title }} @if($rera)<span class="rera-badge"><i class="fas fa-check-circle"></i> RERA</span>@endif</h1>
-                        <div class="developer-info">
-                            By <span class="developer-link">{{ $builder_name }}</span>
-                        </div>
-                        <div class="property-location">
-                            <i class="fas fa-map-marker-alt"></i> {{ $address }}
-                        </div>
-                    </div>
-                    <div class="property-price-box">
-                        <div class="price-value">₹{{ number_format($s_price, 0, '.', ',') }}*</div>
-                        <div class="agreement-label"> Onwords</div>
-                        <button  class="btn-contact-top" onclick="openFormOverlay()">
-                            <i class="fas fa-phone-alt"></i> Book your Visit
-                        </button>
-                    </div>
-                </div>
+               
+{{-- Property Summary Header --}}
 
-                <!-- Gallery -->
-                <!-- <div class="grid-gallery">
-                    <div class="gallery-main">
-                        <span class="overlay-badge">Main Image</span>
-                        <img src="{{ asset($data['additional_images'][0]->image_url) }}" alt="{{ $title }}">
-                        
-                    </div>
-                    <div class="gallery-side">
-                        @if(isset($data['additional_images'][1]))
-                        <div class="side-item">
-                            <img src="{{ asset($data['additional_images'][1]->image_url) }}" alt="Gallery Image 1">
-                        </div>
-                        @endif
-                        @if(isset($data['additional_images'][2]))
-                        <div class="side-item" style="cursor: pointer;" onclick="openGallery(0)">
-                            <img src="{{ asset($data['additional_images'][2]->image_url) }}" alt="Gallery Image 2">
-                            <div class="more-overlay">
-                                <span>+</span>
-                                {{ count($data['additional_images'])-2 }} more
-                            </div>
-                        </div>
-                        @endif
-                    </div>
-                </div> -->
+
+   
+        
 
                 <div class="gallery-wrapper">
                     <div class="gallery-main">
@@ -1301,6 +82,71 @@
 
 </div>
                 </div>
+               
+               
+
+                 
+<div class="property-summary-card">
+
+    <div class="property-summary-left">
+
+        {{-- Property Name --}}
+        <h2 class="summary-property-title">
+            <i class="fas fa-city"></i>
+
+            <span>{{ $title }}</span>
+
+            @if($builder_name)
+                <small class="summary-builder">
+                    Project by
+                    <span>{{ $builder_name }}</span>
+                </small>
+            @endif
+        </h2>
+
+        {{-- Property Address --}}
+        <div class="summary-property-location">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ $address }}</span>
+        </div>
+
+        {{-- Book Visit and RERA --}}
+        <div class="summary-actions">
+
+            <button type="button"
+                    class="summary-book-btn"
+                    onclick="openFormOverlay()">
+                <i class="fas fa-phone-alt"></i>
+                Book visit
+            </button>
+
+            @if(!empty($rera))
+                <div class="summary-rera-badge">
+                    <i class="fas fa-certificate"></i>
+                    <span>Approved by RERA</span>
+                </div>
+            @endif
+
+        </div>
+
+    </div>
+
+    {{-- Property Price --}}
+    <div class="property-summary-right">
+
+        <div class="summary-price">
+            ₹{{ number_format((float) $s_price, 0, '.', ',') }}
+            <span class="summary-price-star">*</span>
+        </div>
+
+        <!-- <div class="summary-price-caption">
+            Onwards
+        </div> -->
+
+    </div>
+
+</div>
+
 
                 <div id="galleryModal" class="gallery-modal">
                     <span class="modal-close" onclick="closeGallery()">&times;</span>
@@ -1317,48 +163,309 @@
                     </div>
                 </div>
 
-                <!-- Quick Info Cards -->
-                <div class="info-grid">
-                    @if($select_bhk)
-                    <div class="info-card">
-                        <div class="info-icon"><i class="fas fa-home"></i></div>
-                        <div class="info-details">
-                            <span class="info-label">Configuration</span>
-                            <span class="info-value">{{ $select_bhk }} BHK</span>
-                        </div>
-                    </div>
-                    @endif
-                    
-                    @if($area)
-                    <div class="info-card">
-                        <div class="info-icon"><i class="fas fa-vector-square"></i></div>
-                        <div class="info-details">
-                            <span class="info-label">Carpet Area</span>
-                            <span class="info-value">{{ $area }} Sq. Ft.</span>
-                        </div>
-                    </div>
-                    @endif
+            
+{{-- Quick Info Cards --}}
 
-                    @if($land_type)
-                    <div class="info-card">
-                        <div class="info-icon"><i class="fas fa-building"></i></div>
-                        <div class="info-details">
-                            <span class="info-label">Property Type</span>
-                            <span class="info-value">{{ $land_type }}</span>
-                        </div>
-                    </div>
-                    @endif
+<div class="info-grid">
 
-                    @if($builder_name)
-                    <div class="info-card">
-                        <div class="info-icon"><i class="fas fa-user-tie"></i></div>
-                        <div class="info-details">
-                            <span class="info-label">Developer</span>
-                            <span class="info-value">{{ $builder_name }}</span>
-                        </div>
+    <div class="info-card">
+        <div class="info-icon"><i class="fas fa-bed"></i></div>
+        <div class="info-details">
+            <span class="info-value">
+                {{ $select_bhk ? $select_bhk . ' BHK' : 'N/A' }}
+            </span>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="info-icon"><i class="fas fa-ruler-combined"></i></div>
+        <div class="info-details">
+            <span class="info-value">
+                {{ $area ? $area . ' Sq. Ft.' : 'N/A' }}
+            </span>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="info-icon"><i class="fas fa-parking"></i></div>
+        <div class="info-details">
+            <span class="info-value">
+                {{ $land_type ?: 'N/A' }}
+            </span>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="info-icon"><i class="fas fa-user-tie"></i></div>
+        <div class="info-details">
+            <span class="info-value">
+                {{ $builder_name ?: 'N/A' }}
+            </span>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+{{-- =========================================
+     DYNAMIC FLOOR PLAN SECTION
+     Place below your existing Quick Info Grid
+========================================= --}}
+
+@php
+    $bhkOptions = [];
+
+    if (!empty($select_bhk)) {
+        preg_match_all('/\d+/', (string) $select_bhk, $matches);
+        $bhkOptions = array_values(array_unique($matches[0]));
+    }
+@endphp
+
+@if(!empty($bhkOptions))
+<div class="dynamic-floor-plan">
+
+    {{-- Heading --}}
+    <div class="floor-plan-heading">
+        <h2>Floor Plans</h2>
+        <p>Explore the floor plan for your preferred configuration.</p>
+    </div>
+
+    {{-- BHK Tabs --}}
+    <div class="floor-plan-tabs">
+        @foreach($bhkOptions as $bhk)
+            <button
+                type="button"
+                class="floor-plan-tab {{ $loop->first ? 'active' : '' }}"
+                data-bhk="{{ $bhk }}"
+            >
+                {{ $bhk }} BHK
+            </button>
+        @endforeach
+    </div>
+
+    {{-- Generated Floor Plan --}}
+    <div class="floor-plan-content">
+        @foreach($bhkOptions as $bhk)
+            <div
+                class="floor-plan-item {{ $loop->first ? 'active' : '' }}"
+                data-plan-bhk="{{ $bhk }}"
+                style="{{ $loop->first ? '' : 'display:none;' }}"
+            >
+                <div class="auto-floor-plan">
+                    <div class="auto-floor-plan-title">Floor plan</div>
+
+                    <div class="floor-drawing" data-bhk="{{ $bhk }}">
+                        <svg
+                            class="floor-plan-svg"
+                            viewBox="0 0 600 300"
+                            role="img"
+                            aria-label="{{ $bhk }} BHK illustrative floor plan"
+                        >
+                            {{-- Outer boundary --}}
+                            <rect
+                                x="10" y="10"
+                                width="580" height="280"
+                                class="plan-wall"
+                            />
+
+                            {{-- Living Room --}}
+                            <rect
+                                x="10" y="10"
+                                width="290" height="140"
+                                class="plan-room"
+                            />
+                            <text
+                                x="155" y="80"
+                                class="plan-label"
+                            >Living</text>
+
+                            {{-- Kitchen --}}
+                            <rect
+                                x="300" y="10"
+                                width="290" height="140"
+                                class="plan-room"
+                            />
+                            <text
+                                x="445" y="80"
+                                class="plan-label"
+                            >Kitchen</text>
+
+                            {{-- Bottom rooms generated using JavaScript --}}
+                            <g class="generated-bottom-rooms"></g>
+                        </svg>
                     </div>
-                    @endif
+
+                    <p class="floor-plan-note">
+                        Illustrative layout for {{ $bhk }} BHK.
+                        Actual room sizes and layouts may differ.
+                    </p>
                 </div>
+            </div>
+        @endforeach
+    </div>
+
+</div>
+@endif
+
+
+
+
+
+<script>
+(function () {
+    'use strict';
+
+    /*
+     * Generate the lower part of the floor plan.
+     * This is an illustrative diagram, not an architectural drawing.
+     */
+    function generateFloorPlan(container) {
+        const bhk = parseInt(container.dataset.bhk, 10);
+
+        if (!Number.isInteger(bhk) || bhk < 1) {
+            return;
+        }
+
+        const svg = container.querySelector('.floor-plan-svg');
+        const group = container.querySelector('.generated-bottom-rooms');
+
+        if (!svg || !group) {
+            return;
+        }
+
+        // Prevent duplicate rooms if the function runs again.
+        group.replaceChildren();
+
+        const ns = 'http://www.w3.org/2000/svg';
+
+        const startX = 10;
+        const startY = 150;
+        const totalWidth = 580;
+        const roomHeight = 140;
+
+        // Reserve part of the lower row for the balcony.
+        const balconyWidth = 145;
+        const bedroomCount = Math.max(1, Math.min(bhk, 6));
+        const bedroomAreaWidth = totalWidth - balconyWidth;
+        const bedroomWidth = bedroomAreaWidth / bedroomCount;
+
+        function createSvgElement(tag, attributes, textContent) {
+            const element = document.createElementNS(ns, tag);
+
+            Object.entries(attributes).forEach(function ([key, value]) {
+                element.setAttribute(key, value);
+            });
+
+            if (textContent !== undefined) {
+                element.textContent = textContent;
+            }
+
+            return element;
+        }
+
+        // Draw bedrooms.
+        for (let i = 0; i < bedroomCount; i++) {
+            const x = startX + (i * bedroomWidth);
+
+            const rect = createSvgElement('rect', {
+                x: x,
+                y: startY,
+                width: bedroomWidth,
+                height: roomHeight,
+                class: 'plan-room'
+            });
+
+            const label = createSvgElement('text', {
+                x: x + (bedroomWidth / 2),
+                y: startY + (roomHeight / 2),
+                class: 'plan-label',
+                'font-size': bedroomWidth < 100 ? 12 : 17
+            }, 'Bed ' + (i + 1));
+
+            group.appendChild(rect);
+            group.appendChild(label);
+        }
+
+        // Draw balcony.
+        const balconyX = startX + bedroomAreaWidth;
+
+        const balcony = createSvgElement('rect', {
+            x: balconyX,
+            y: startY,
+            width: balconyWidth,
+            height: roomHeight,
+            class: 'plan-room'
+        });
+
+        const balconyLabel = createSvgElement('text', {
+            x: balconyX + (balconyWidth / 2),
+            y: startY + (roomHeight / 2),
+            class: 'plan-label',
+            'font-size': 14
+        }, 'Balcony');
+
+        group.appendChild(balcony);
+        group.appendChild(balconyLabel);
+    }
+
+    function initializeFloorPlans() {
+        document.querySelectorAll('.floor-drawing').forEach(
+            generateFloorPlan
+        );
+
+        document.querySelectorAll('.dynamic-floor-plan').forEach(
+            function (section) {
+                const tabs = section.querySelectorAll('.floor-plan-tab');
+                const plans = section.querySelectorAll('.floor-plan-item');
+
+                tabs.forEach(function (tab) {
+                    tab.addEventListener('click', function () {
+                        const selectedBhk = tab.dataset.bhk;
+
+                        tabs.forEach(function (item) {
+                            const active = item === tab;
+
+                            item.classList.toggle('active', active);
+                            item.setAttribute(
+                                'aria-pressed',
+                                active ? 'true' : 'false'
+                            );
+                        });
+
+                        plans.forEach(function (plan) {
+                            const active =
+                                plan.dataset.planBhk === selectedBhk;
+
+                            plan.style.display = active ? 'block' : 'none';
+                            plan.classList.toggle('active', active);
+                        });
+                    });
+
+                    tab.setAttribute(
+                        'aria-pressed',
+                        tab.classList.contains('active') ? 'true' : 'false'
+                    );
+                });
+            }
+        );
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener(
+            'DOMContentLoaded',
+            initializeFloorPlans
+        );
+    } else {
+        initializeFloorPlans();
+    }
+})();
+</script>
+
+
 
                 <!-- Description -->
                <div class="details-section">
@@ -1371,258 +478,922 @@
             </div>
 
                 <!-- Amenities -->
-                <div class="details-section">
-                    <h2 class="section-title"><i class="fas fa-swimming-pool"></i> Amenities</h2>
-                    @if(isset($facilities) && !empty($facilities))
-                        @php
-                            if (is_string($facilities)) {
-                                $decoded = json_decode($facilities, true);
-                                $facilitiesArray = is_array($decoded) ? $decoded : explode(',', $facilities);
-                            } else {
-                                $facilitiesArray = (array)$facilities;
-                            }
-                            $facilitiesArray = array_filter(array_map('trim', (array)$facilitiesArray));
+            
+{{-- =========================================
+     AMENITIES SECTION - DYNAMIC UI
+========================================= --}}
 
-                            $icons = [
-                                'WiFi' => 'theme/frontend/img/icons/wifi.svg',
-                                'Parking' => 'theme/frontend/img/icons/parking.svg',
-                                'Swimming Pool' => 'theme/frontend/img/icons/pool.svg',
-                                'Balcony' => 'theme/frontend/img/icons/balcony.svg',
-                                'Garden' => 'theme/frontend/img/icons/garden.svg',
-                                'Security' => 'theme/frontend/img/icons/security.svg',
-                                'Fitness Center' => 'theme/frontend/img/icons/gym.svg',
-                                'Air Conditioning' => 'theme/frontend/img/icons/ac.svg',
-                                'Central Heating' => 'theme/frontend/img/icons/central-heating.svg',
-                                'Laundry Room' => 'theme/frontend/img/icons/laundry.svg',
-                                'Pets Allowed' => 'theme/frontend/img/icons/pet.svg',
-                                'Spa & Massage' => 'theme/frontend/img/icons/spa.svg',
-                                'Gym' => 'theme/frontend/img/icons/gym.svg',
-                                'Clubhouse' => 'theme/frontend/img/icons/clubhouse.svg',
-                                'Play Area' => 'theme/frontend/img/icons/play-area.svg'
-                            ];
-                        @endphp
+<div class="details-section amenities-section">
 
-                        <div class="amenities-grid">
-                            @foreach($facilitiesArray as $facility)
-                                @php 
-                                    $facility = trim($facility, '"');
-                                    $iconPath = $icons[$facility] ?? 'theme/frontend/img/icons/default.svg';
-                                @endphp
-                                <div class="amenity-item">
-                                    <img src="{{ asset($iconPath) }}" alt="{{ $facility }}">
-                                    <span class="small fw-bold">{{ $facility }}</span>
+    <h2 class="amenities-main-title">Amenities</h2>
+
+    @if(isset($facilities) && !empty($facilities))
+
+        @php
+            if (is_string($facilities)) {
+                $decoded = json_decode($facilities, true);
+
+                $facilitiesArray = is_array($decoded)
+                    ? $decoded
+                    : explode(',', $facilities);
+            } else {
+                $facilitiesArray = (array) $facilities;
+            }
+
+            $facilitiesArray = array_filter(
+                array_map(function ($facility) {
+                    return trim(trim((string) $facility), '"');
+                }, $facilitiesArray),
+                function ($facility) {
+                    return $facility !== '';
+                }
+            );
+
+            $amenityCategories = [
+                'Sports and fitness' => [
+                    'swimming pool',
+                    'gym',
+                    'fitness center',
+                    'badminton court',
+                    'jogging track',
+                    'tennis court',
+                    'basketball court',
+                    'sports facility',
+                    'yoga',
+                    'fitness centre'
+                ],
+
+                'Lifestyle' => [
+                    'clubhouse',
+                    'garden',
+                    'landscaped garden',
+                    'kids play area',
+                    'play area',
+                    'children play area',
+                    'senior citizen zone',
+                    'balcony',
+                    'spa',
+                    'party hall',
+                    'community hall'
+                ],
+
+                'Safety' => [
+                    'security',
+                    '24x7 security',
+                    'cctv',
+                    'cctv surveillance',
+                    'video door phone',
+                    'fire safety',
+                    'intercom',
+                    'gated community'
+                ],
+
+                'Utilities' => [
+                    'power backup',
+                    'rainwater harvesting',
+                    'ev charging',
+                    'covered parking',
+                    'parking',
+                    'wifi',
+                    'wi-fi',
+                    'lift',
+                    'elevator',
+                    'water supply',
+                    'air conditioning',
+                    'laundry room',
+                    'central heating'
+                ]
+            ];
+
+            $amenityIcons = [
+                'swimming pool' => 'fa-swimming-pool',
+                'gym' => 'fa-dumbbell',
+                'fitness center' => 'fa-dumbbell',
+                'fitness centre' => 'fa-dumbbell',
+                'badminton court' => 'fa-table-tennis',
+                'jogging track' => 'fa-shoe-prints',
+                'tennis court' => 'fa-table-tennis',
+                'basketball court' => 'fa-basketball-ball',
+                'sports facility' => 'fa-running',
+                'yoga' => 'fa-spa',
+
+                'clubhouse' => 'fa-home',
+                'garden' => 'fa-tree',
+                'landscaped garden' => 'fa-tree',
+                'kids play area' => 'fa-child',
+                'play area' => 'fa-child',
+                'children play area' => 'fa-child',
+                'senior citizen zone' => 'fa-walking',
+                'balcony' => 'fa-building',
+                'spa' => 'fa-spa',
+                'party hall' => 'fa-glass-cheers',
+                'community hall' => 'fa-users',
+
+                'security' => 'fa-shield-alt',
+                '24x7 security' => 'fa-shield-alt',
+                'cctv' => 'fa-video',
+                'cctv surveillance' => 'fa-video',
+                'video door phone' => 'fa-phone-volume',
+                'fire safety' => 'fa-fire-extinguisher',
+                'intercom' => 'fa-phone',
+                'gated community' => 'fa-shield-alt',
+
+                'power backup' => 'fa-bolt',
+                'rainwater harvesting' => 'fa-cloud-rain',
+                'ev charging' => 'fa-charging-station',
+                'covered parking' => 'fa-parking',
+                'parking' => 'fa-parking',
+                'wifi' => 'fa-wifi',
+                'wi-fi' => 'fa-wifi',
+                'lift' => 'fa-elevator',
+                'elevator' => 'fa-elevator',
+                'water supply' => 'fa-faucet',
+                'air conditioning' => 'fa-snowflake',
+                'laundry room' => 'fa-tshirt',
+                'central heating' => 'fa-temperature-high',
+
+                'pets allowed' => 'fa-paw',
+                'balcony garden' => 'fa-leaf',
+                'default' => 'fa-check'
+            ];
+
+            $categorizedAmenities = [];
+
+            foreach ($amenityCategories as $category => $keywords) {
+                $categorizedAmenities[$category] = [];
+            }
+
+            foreach ($facilitiesArray as $facility) {
+                $normalized = strtolower(trim($facility));
+                $matchedCategory = null;
+
+                foreach ($amenityCategories as $category => $keywords) {
+                    foreach ($keywords as $keyword) {
+                        if (
+                            $normalized === $keyword ||
+                            str_contains($normalized, $keyword)
+                        ) {
+                            $matchedCategory = $category;
+                            break 2;
+                        }
+                    }
+                }
+
+                if ($matchedCategory === null) {
+                    $matchedCategory = 'Other Amenities';
+                }
+
+                $categorizedAmenities[$matchedCategory][] = $facility;
+            }
+
+            $categorizedAmenities = array_filter(
+                $categorizedAmenities,
+                function ($items) {
+                    return !empty($items);
+                }
+            );
+        @endphp
+
+        <div class="amenities-grid">
+
+            @foreach($categorizedAmenities as $category => $items)
+
+                <div class="amenity-category">
+
+                    <h3 class="amenity-category-title">
+                        {{ $category }}
+                    </h3>
+
+                    <div class="amenity-category-list">
+
+                        @foreach($items as $facility)
+
+                            @php
+                                $normalized = strtolower(trim($facility));
+                                $iconClass = $amenityIcons['default'];
+
+                                foreach ($amenityIcons as $keyword => $icon) {
+                                    if (
+                                        $keyword !== 'default' &&
+                                        (
+                                            $normalized === $keyword ||
+                                            str_contains($normalized, $keyword)
+                                        )
+                                    ) {
+                                        $iconClass = $icon;
+                                        break;
+                                    }
+                                }
+                            @endphp
+
+                            <div class="amenity-item">
+
+                                <div class="amenity-icon">
+                                    <i class="fas {{ $iconClass }}"
+                                       aria-hidden="true"></i>
                                 </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-muted">No amenities listed.</p>
-                    @endif
+
+                                <span class="amenity-name">
+                                    {{ $facility }}
+                                </span>
+
+                            </div>
+
+                        @endforeach
+
+                    </div>
+
                 </div>
+
+            @endforeach
+
+        </div>
+
+    @else
+
+        <p class="amenities-empty">
+            No amenities listed.
+        </p>
+
+    @endif
+
+</div>
+
+
+
+
 
                 <!-- Location Map -->
-                <div class="details-section">
-                    <h2 class="section-title"><i class="fas fa-map-marked-alt"></i> Location Advantages</h2>
-                    <div id="map" style="height: 400px; border-radius: 16px;"></div>
-                </div>
+             
+{{-- =========================================
+     LOCATION AND NEARBY SECTION
+========================================= --}}
+<style>
+    
+/* Location Map */
+.location-map-wrapper {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
 
-                <!-- Nearby Locations -->
-                <div class="details-section">
-                    <h2 class="section-title"><i class="fas fa-route"></i> Nearby Locations</h2>
-                    <div class="nearby-grid">
-    @if($nearby_locations && is_array($nearby_locations))
+#map {
+    width: 100%;
+    height: 400px;
+    min-height: 400px;
+    display: block;
+    z-index: 1;
+}
 
-        @foreach($nearby_locations as $category => $locations)
+    </style>
+<div class="details-section location-nearby-section">
 
-            @if(!empty($locations)) {{-- 🔥 IMPORTANT CHECK --}}
+    <h2 class="location-main-title">Location and nearby</h2>
 
-                @if(is_array($locations))
-                    @foreach($locations as $loc)
+    {{-- Location Map --}}
+    <div class="location-map-wrapper">
+        <div id="map"></div>
+    </div>
 
-                        @if(!empty($loc)) {{-- 🔥 EMPTY VALUE SKIP --}}
-                            <div class="nearby-item">
-                                <div class="nearby-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
+    {{-- Nearby Locations --}}
+    @if(isset($nearby_locations) && !empty($nearby_locations))
+
+        @php
+            $nearbyCategories = [];
+
+            if (is_array($nearby_locations)) {
+                foreach ($nearby_locations as $category => $locations) {
+
+                    if (empty($locations)) {
+                        continue;
+                    }
+
+                    $items = is_array($locations)
+                        ? $locations
+                        : [$locations];
+
+                    $items = array_values(array_filter(
+                        $items,
+                        function ($item) {
+                            return is_string($item)
+                                || is_numeric($item)
+                                ? trim((string) $item) !== ''
+                                : !empty($item);
+                        }
+                    ));
+
+                    if (!empty($items)) {
+                        $nearbyCategories[$category] = $items;
+                    }
+                }
+            }
+        @endphp
+
+        @if(!empty($nearbyCategories))
+
+            <div class="nearby-grid">
+
+                @foreach($nearbyCategories as $category => $locations)
+
+                    <div class="nearby-category">
+
+                        <h3 class="nearby-category-title">
+                            {{ $category }}
+                        </h3>
+
+                        <div class="nearby-category-list">
+
+                            @foreach($locations as $loc)
+
+                                <div class="nearby-item">
+
+                                    <span class="nearby-place-name">
+                                        {{ is_array($loc)
+                                            ? ($loc['name'] ?? $loc['location'] ?? '')
+                                            : $loc }}
+                                    </span>
+
+                                    @if(is_array($loc) && !empty($loc['distance']))
+                                        <span class="nearby-distance">
+                                            {{ $loc['distance'] }}
+                                        </span>
+                                    @endif
+
                                 </div>
-                                <div class="nearby-info">
-                                    <h4>{{ $loc }}</h4>
+
+                            @endforeach
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @else
+            <p class="nearby-empty">No nearby locations specified.</p>
+        @endif
+
+    @else
+        <p class="nearby-empty">No nearby locations specified.</p>
+    @endif
+
+</div>
+
+
+
+{{-- Nearby Locations --}}
+<div class="details-section nearby-section">
+
+    <h2 class="section-title">
+        <i class="fas fa-route"></i> Nearby Locations
+    </h2>
+
+    @if(isset($nearby_locations) && is_array($nearby_locations) && count($nearby_locations) > 0)
+
+        <div class="nearby-grid">
+
+            @foreach($nearby_locations as $category => $locations)
+
+                @if(!empty($locations))
+
+                    <div class="nearby-category">
+
+                        <h3 class="nearby-category-title">
+                            {{ $category }}
+                        </h3>
+
+                        <div class="nearby-category-list">
+
+                            @if(is_array($locations))
+
+                                @foreach($locations as $loc)
+
+                                    @if(!empty($loc))
+
+                                        <div class="nearby-item">
+
+                                            <span class="nearby-place-name">
+                                                {{ is_array($loc)
+                                                    ? ($loc['name'] ?? $loc['location'] ?? '')
+                                                    : $loc }}
+                                            </span>
+
+                                            @if(is_array($loc) && !empty($loc['distance']))
+                                                <span class="nearby-distance">
+                                                    {{ $loc['distance'] }}
+                                                </span>
+                                            @endif
+
+                                        </div>
+
+                                    @endif
+
+                                @endforeach
+
+                            @else
+
+                                <div class="nearby-item">
+                                    <span class="nearby-place-name">
+                                        {{ $locations }}
+                                    </span>
                                 </div>
-                            </div>
-                        @endif
 
-                    @endforeach
-                @else
+                            @endif
 
-                    <div class="nearby-item">
-                        <div class="nearby-icon">
-                            <i class="fas fa-map-marker-alt"></i>
                         </div>
-                        <div class="nearby-info">
-                            <h4>{{ $locations }}</h4>
-                        </div>
+
                     </div>
 
                 @endif
 
-            @endif
+            @endforeach
 
-        @endforeach
+        </div>
 
     @else
-        <p class="text-muted">No nearby locations specified.</p>
+
+        <p class="nearby-empty">No nearby locations specified.</p>
+
     @endif
+
 </div>
-                </div>
+
+
+
+
 
                 <!-- Popular Searches -->
-                <div class="details-section">
-                    <h2 class="section-title"><i class="fas fa-search"></i> Popular Searches</h2>
-                    <div class="popular-searches">
-                        <a href="#" class="search-tag">Flats for sale in {{ $v->city }}</a>
-                        <a href="#" class="search-tag">{{ $select_bhk }} BHK in {{ $v->city }}</a>
-                        <a href="#" class="search-tag">Residential Projects in {{ $v->localities }}</a>
-                        <a href="#" class="search-tag">{{ $title }} Price</a>
-                    </div>
-                </div>
+             
+{{-- Popular Searches / Builder Information Card --}}
+
+<div class="popular-searches-section">
+
+    <div class="builder-info">
+        <div class="builder-details">
+            <h3>{{ $builder_name ?? 'Siddhivinayak Realty' }}</h3>
+            <p>Builder since 2008.</p>
+        </div>
+
+        <a href="#popular-searches" class="builder-project-link">
+            Check other projects
+            <i class="fas fa-arrow-up-right-from-square"></i>
+        </a>
+    </div>
+
+</div>
+
+{{-- Existing dynamic Popular Searches --}}
+<div class="details-section popular-searches-content"
+     id="popular-searches">
+
+    <h2 class="section-title">
+        <i class="fas fa-search"></i> Popular Searches
+    </h2>
+
+    <div class="popular-searches">
+        <a href="#" class="search-tag">
+            Flats for sale in {{ $v->city }}
+        </a>
+
+        <a href="#" class="search-tag">
+            {{ $select_bhk }} BHK in {{ $v->city }}
+        </a>
+
+        <a href="#" class="search-tag">
+            Residential Projects in {{ $v->localities }}
+        </a>
+
+        <a href="#" class="search-tag">
+            {{ $title }} Price
+        </a>
+    </div>
+
+</div>
+
             </div>
             
-            <!-- Sidebar -->
-            <div class="content-sidebar">
-                <div id="enquire" class="sidebar-card">
-                    <h3 class="mb-3">Express Interest</h3>
-                    <form method="POST" id="consult-form" action="{{ route('enquiry.store') }}">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input class="form-control" name="name" id="name" type="text" placeholder="Name *" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" name="contact" class="form-control" placeholder="Phone *" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <input class="form-control" name="email" id="email" type="email" placeholder="Email *" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <textarea name="message" class="form-control" rows="5" placeholder="Message *" required></textarea>
-                                        </div>
-                                        <div class="form-group text-center">
-                                            <button class="btn btn-primary btn-md rounded full-width" type="submit">Send Message</button>
-                                        </div>
-                                        
-                                    </div>
-                                </form>
-                    <div id="thank-you-message" style="display: none;" class="alert alert-success mt-3">Thank you! Your message has been submitted.</div>
 
-                    <div class="mt-3 pt-3 border-top"> 
-                        <h4 class="mb-2">Project Status</h4>
-                        <div class="d-flex justify-content-between mb-1" style="font-size: 0.85rem;">
-                            <span>Posted On:</span>
-                            <span class="fw-bold">{{ \Carbon\Carbon::parse($v->created_at)->format('M d, Y') }}</span>
-                        </div>
 
-                        <button class="btn-brochure mt-2" id="downloadBrochureBtn" onclick="openEnquiryModal()">
-                            <i class="fas fa-download"></i> Download Brochure
-                        </button>
+<div class="content-sidebar">
+
+    <div id="enquire" class="sidebar-card">
+
+        {{-- EXISTING EXPRESS INTEREST FORM --}}
+        <div class="sidebar-form-box">
+
+            <h3 class="mb-3">Express Interest</h3>
+
+            <form method="POST"
+                  id="consult-form"
+                  action="{{ route('enquiry.store') }}">
+
+                @csrf
+
+                <div class="row">
+
+                    <div class="form-group">
+                        <label for="name">Your name</label>
+                        <input
+                            class="form-control"
+                            name="name"
+                            id="name"
+                            type="text"
+                            placeholder="Abc"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact">Mobile number</label>
+                        <input
+                            type="text"
+                            name="contact"
+                            id="contact"
+                            class="form-control"
+                            placeholder="Enter mobile number"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input
+                            class="form-control"
+                            name="email"
+                            id="email"
+                            type="email"
+                            placeholder="Enter email address"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea
+                            name="message"
+                            id="message"
+                            class="form-control"
+                            rows="5"
+                            placeholder="Enter your message"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button
+                            class="btn btn-primary btn-md rounded full-width"
+                            type="submit"
+                        >Send Message</button>
+                    </div>
+
+                </div>
+            </form>
+
+            <div id="thank-you-message" style="display: none;">
+    Thank you for your enquiry! Our team will get back to you shortly.
+</div>
+
+            {{-- EXISTING PROJECT STATUS --}}
+            <div class="mt-3 pt-3 border-top project-status">
+
+                <h4 class="mb-2">Project Status</h4>
+
+                <div class="d-flex justify-content-between mb-1"
+                     style="font-size: 0.85rem;">
+
+                    <span>Posted On:</span>
+
+                    <span class="fw-bold">
+                        {{ \Carbon\Carbon::parse($v->created_at)->format('M d, Y') }}
+                    </span>
+
+                </div>
+
+                {{-- EXISTING BROCHURE BUTTON --}}
+                <button
+                    class="btn-brochure mt-2"
+                    id="downloadBrochureBtn"
+                    onclick="openEnquiryModal()"
+                >
+                    <i class="fas fa-download"></i>
+                    Download Brochure
+                </button>
+
+            </div>
+
+        </div>
+
+
+        {{-- EMI CALCULATOR: ADDED BELOW THE EXISTING FORM --}}
+        <div class="emi-calculator-box">
+
+            <h3 class="emi-heading">EMI calculator</h3>
+
+            {{-- Loan Amount --}}
+            <div class="emi-control">
+
+                <div class="emi-control-heading">
+                    <label for="emi-loan-amount">Loan amount</label>
+
+                    <input
+                        type="text"
+                        id="emi-loan-display"
+                        value="2,50,000"
+                        inputmode="numeric"
+                        aria-label="Loan amount"
+                    >
+                </div>
+
+                <input
+                    type="range"
+                    id="emi-loan-amount"
+                    min="50000"
+                    max="5000000"
+                    step="10000"
+                    value="250000"
+                    class="emi-slider"
+                >
+
+                <div class="emi-limits">
+                    <span>50,000</span>
+                    <span>50,00,000</span>
+                </div>
+
+            </div>
+
+
+            {{-- Interest Rate --}}
+            <div class="emi-control">
+
+                <div class="emi-control-heading">
+                    <label for="emi-interest-rate">Interest rate (p.a)</label>
+
+                    <div class="emi-editable-value">
+                        <input
+                            type="number"
+                            id="emi-interest-display"
+                            value="12"
+                            min="5"
+                            max="50"
+                            step="0.1"
+                            aria-label="Interest rate"
+                        >
+                        <span>%</span>
                     </div>
                 </div>
+
+                <input
+                    type="range"
+                    id="emi-interest-rate"
+                    min="5"
+                    max="50"
+                    step="0.1"
+                    value="12"
+                    class="emi-slider"
+                >
+
+                <div class="emi-limits">
+                    <span>5%</span>
+                    <span>50%</span>
+                </div>
+
             </div>
+
+
+            {{-- Loan Tenure --}}
+            <div class="emi-control">
+
+                <div class="emi-control-heading">
+                    <label for="emi-tenure">Loan tenure</label>
+
+                    <div class="emi-editable-value">
+                        <input
+                            type="number"
+                            id="emi-tenure-display"
+                            value="10"
+                            min="5"
+                            max="30"
+                            step="1"
+                            aria-label="Loan tenure in years"
+                        >
+                        <span>years</span>
+                    </div>
+                </div>
+
+                <input
+                    type="range"
+                    id="emi-tenure"
+                    min="5"
+                    max="30"
+                    step="1"
+                    value="10"
+                    class="emi-slider"
+                >
+
+                <div class="emi-limits">
+                    <span>5 years</span>
+                    <span>30 years</span>
+                </div>
+
+            </div>
+
+
+            {{-- Monthly EMI --}}
+            <div class="emi-output">
+
+                <div class="emi-output-label">Monthly EMI</div>
+
+                <div class="emi-output-box">
+                    <span id="emi-monthly-result">₹ 3,586</span>
+                    <span class="emi-month-text">/ Month</span>
+                </div>
+
+            </div>
+
+
+            {{-- Principal And Interest Breakdown --}}
+            <div class="emi-breakdown">
+
+                <div class="emi-breakdown-bar">
+                    <div id="emi-principal-bar"
+                         class="emi-principal-bar"></div>
+
+                    <div id="emi-interest-bar"
+                         class="emi-interest-bar"></div>
+                </div>
+
+                <div class="emi-breakdown-row">
+
+                    <div class="emi-breakdown-column">
+
+                        <span class="emi-breakdown-label">
+                            Principal amount
+                        </span>
+
+                        <div>
+                            <strong id="emi-principal-result">
+                                ₹ 2,50,000
+                            </strong>
+
+                            <small id="emi-principal-percent">(50%)</small>
+                        </div>
+
+                    </div>
+
+                    <div class="emi-breakdown-column emi-align-right">
+
+                        <span class="emi-breakdown-label">
+                            Total interest
+                        </span>
+
+                        <div>
+                            <strong id="emi-interest-result">
+                                ₹ 1,80,000
+                            </strong>
+
+                            <small id="emi-interest-percent">(50%)</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <!-- //thank you popup -->
-        <div class="popup-overlay" id="popupOverlay"></div>
-        <div class="pop-up" id="popup">
-            <i class="fa-solid fa-circle-check"></i>
-            <h2>Thank You!</h2>
-            <p>Our Team will reach out to you shortly.</p>
-            <button type="button" onclick="closePopup()">OK</button>
-        </div>
+    </div>
 
-        <!-- //brouchure modal -->
-<!-- //brouchure modal -->
-<div id="modalBackdrop" class="modal-backdrop" onclick="closeEnquiryModal()"></div>
-<div class="modal" id="enquiryModal">
+</div>
+
+
+<!-- Brochure Modal Backdrop -->
+<div id="modalBackdrop"
+     class="modal-backdrop"
+     onclick="closeEnquiryModal()"
+     style="display: none;">
+</div>
+
+<!-- Download Brochure Modal -->
+<div class="modal" id="enquiryModal" style="visibility: hidden;">
     <div class="modal-content-prop">
+
         <div class="modal-header-prop">
             <div class="modal-header-title">
                 <h2>Download Brochure</h2>
                 <p>Get complete project details in your inbox</p>
             </div>
+
             <div class="modal-close-prop">
-                <span class="close-btn" onclick="closeEnquiryModal()">✕</span>
+                <button type="button"
+                        class="close-btn"
+                        onclick="closeEnquiryModal()"
+                        aria-label="Close">
+                    &times;
+                </button>
             </div>
         </div>
+
         <div class="modal-body">
-            <form id="enquiryForm" class="enquiry-form">
-                <!-- Laravel CSRF -->
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                
+
+            <!-- Success Message -->
+            <div id="brochureSuccess"
+                 class="brochure-success"
+                 style="display: none;">
+                <strong>Thank You!</strong>
+                <p>Your enquiry was submitted successfully. Your brochure download will begin shortly.</p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="brochureError"
+                 class="brochure-error"
+                 style="display: none;">
+            </div>
+
+            <!-- Enquiry Form -->
+            <form id="enquiryForm"
+                  class="enquiry-form"
+                  method="POST"
+                  action="{{ route('enquiry.store') }}">
+
+                @csrf
+
                 <div class="form-group">
-                    <label for="brochure_name">Full Name <span class="required">*</span></label>
-                    <input type="text" 
-                           id="brochure_name" 
-                           name="name" 
+                    <label for="brochure_name">
+                        Full Name <span class="required">*</span>
+                    </label>
+
+                    <input type="text"
+                           id="brochure_name"
+                           name="name"
                            placeholder="Enter your full name"
                            class="brochure-input"
+                           maxlength="255"
                            required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="brochure_phone">Phone Number <span class="required">*</span></label>
-                    <input type="text"
-                           name="contact"
+                    <label for="brochure_phone">
+                        Phone Number <span class="required">*</span>
+                    </label>
+
+                    <input type="tel"
                            id="brochure_phone"
+                           name="contact"
                            placeholder="Enter 10 digit mobile number"
                            class="brochure-input"
                            maxlength="10"
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                           inputmode="numeric"
+                           pattern="[0-9]{10}"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
                            required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="brochure_email">Email Address <span class="required">*</span></label>
-                    <input type="email" 
+                    <label for="brochure_email">
+                        Email Address <span class="required">*</span>
+                    </label>
+
+                    <input type="email"
                            id="brochure_email"
-                           name="email" 
+                           name="email"
                            placeholder="your.email@example.com"
                            class="brochure-input"
+                           maxlength="255"
                            required>
                 </div>
-                
-                <input type="hidden" name="enquiry_type" value="brochure">
-                
+
+                <input type="hidden"
+                       name="enquiry_type"
+                       value="brochure">
+
                 <div class="brochure-info-box">
                     <div class="brochure-info-item">
                         <i class="fas fa-file-pdf"></i>
                         <span>Instant PDF Download</span>
                     </div>
+
                     <div class="brochure-info-item">
                         <i class="fas fa-lock"></i>
                         <span>Your data is secure</span>
                     </div>
                 </div>
-                
-                <button type="submit" class="brochure-submit-btn">
-                    <i class="fas fa-download"></i> Download Brochure Now
+
+                <button type="submit"
+                        id="brochureSubmitBtn"
+                        class="brochure-submit-btn">
+                    <i class="fas fa-download"></i>
+                    Download Brochure Now
                 </button>
+
             </form>
         </div>
     </div>
 </div>
-        <script>
-document.getElementById("enquiryForm").addEventListener("submit", function(e){
-
-    let mobile = document.getElementById("contact").value.trim();
-
-    let mobilePattern = /^[0-9]{10}$/;
-
-    if(!mobilePattern.test(mobile)){
-        alert("Please enter valid 10 digit mobile number");
-        e.preventDefault();
-        return;
-    }
-
-});
-</script>
-
    <!-- //visit form -->
 <div class="form-container">
     <div class="form-header-title">
@@ -1704,365 +1475,6 @@ document.getElementById("enquiryForm").addEventListener("submit", function(e){
         </button>
     </form>
 </div>
-
-
-
-<!-- CSS -->
-<style>
-.error {
-    color: red;
-    font-size: 13px;
-    margin-top: 4px;
-    display: block;
-}
-input.error-border {
-    border: 1px solid red;
-}
-</style>
-<script>
-document.addEventListener("DOMContentLoaded", function(){
-
-    const form = document.getElementById("visitForm");
-    const nameInput = document.getElementById("name");
-
-    // 🔥 NAME: only alphabets allow (typing time)
-    nameInput.addEventListener("keypress", function(e){
-        let char = String.fromCharCode(e.which);
-        if(!/[A-Za-z ]/.test(char)){
-            e.preventDefault();
-        }
-    });
-
-    // 🔥 fallback (paste case)
-    nameInput.addEventListener("input", function(){
-        this.value = this.value.replace(/[^A-Za-z ]/g, '');
-    });
-
-    // 🔥 FORM SUBMIT VALIDATION
-    form.addEventListener("submit", function(e){
-
-        let isValid = true;
-
-        // clear old errors
-        document.querySelectorAll(".error").forEach(el => el.innerText = "");
-        document.querySelectorAll("input").forEach(el => el.classList.remove("error-border"));
-
-        // ===== EMAIL =====
-        let email = document.getElementById("email").value.trim();
-        let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (email !== "" && !emailPattern.test(email)) {
-            document.getElementById("emailError").innerText = "Enter proper email format";
-            document.getElementById("email").classList.add("error-border");
-            isValid = false;
-        }
-
-        // ===== PHONE =====
-        let phone = document.getElementById("phone").value.trim();
-        let phonePattern = /^[0-9]{10}$/;
-
-        if (!phonePattern.test(phone)) {
-            document.getElementById("phoneError").innerText = "Enter valid 10 digit number";
-            document.getElementById("phone").classList.add("error-border");
-            isValid = false;
-        }
-
-        // ===== VISIT DATE =====
-        let dateChecked = document.querySelector('input[name="visitedate"]:checked');
-
-        if (!dateChecked) {
-            document.getElementById("dateError").innerText = "Please select visit date";
-            isValid = false;
-        }
-
-        // ===== FINAL =====
-        if (!isValid) {
-            e.preventDefault();
-        } else {
-            closeFormOverlay();
-        }
-
-    });
-
-});
-function openEnquiryModal() {
-    document.getElementById('enquiryModal').style.visibility = 'visible';
-    document.getElementById('enquiryModal').classList.add('active');
-    document.getElementById('modalBackdrop').style.display = 'block';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeEnquiryModal() {
-    document.getElementById('enquiryModal').style.visibility = 'hidden';
-    document.getElementById('enquiryModal').classList.remove('active');
-    document.getElementById('modalBackdrop').style.display = 'none';
-    document.body.style.overflow = '';
-}
-
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const nameInput = document.querySelector('#visitForm input[name="name"]');
-
-    if(nameInput){
-
-        // 🔥 typing time block
-        nameInput.addEventListener("keypress", function (e) {
-
-            let char = String.fromCharCode(e.which);
-
-            if (!/[A-Za-z ]/.test(char)) {
-                e.preventDefault();
-            }
-
-        });
-
-        // 🔥 paste / mobile fix
-        nameInput.addEventListener("input", function () {
-            this.value = this.value.replace(/[^A-Za-z ]/g, '');
-        });
-
-    }
-
-});
-</script>
-
-
-
-</main>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var lat = {{ !empty($latitude) ? $latitude : 18.5204 }};
-        var lng = {{ !empty($longitude) ? $longitude : 73.8567 }};
-        
-        if (typeof L !== 'undefined') {
-            var map = L.map('map').setView([lat, lng], 15);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-            L.marker([lat, lng]).addTo(map).bindPopup('{{ addslashes($title) }}').openPopup();
-            
-            // Fix for map not rendering correctly in some containers
-            setTimeout(function() {
-                map.invalidateSize();
-            }, 500);
-        }
-    });
-</script>
-<script>document.addEventListener('DOMContentLoaded', function () {
-
-    const images = [
-        "{{ asset($data['main_image']) }}",
-        ...@json(
-            collect($data['additional_images'])
-                ->pluck('image_url')
-                ->map(fn($img) => asset($img))
-        )
-    ];
-
-    let currentIndex = 0;
-
-    const mainImage = document.getElementById('mainImage');
-    const thumbnails = document.querySelectorAll('.thumbnail');
-
-    function updateGallery(index) {
-        currentIndex = index;
-        mainImage.src = images[currentIndex];
-
-        thumbnails.forEach((thumb, i) => {
-            thumb.classList.toggle('active', i === currentIndex);
-        });
-    }
-
-    // 👇 GLOBAL FUNCTIONS (IMPORTANT)
-    window.nextImage = function () {
-        updateGallery((currentIndex + 1) % images.length);
-    };
-
-    window.prevImage = function () {
-        updateGallery((currentIndex - 1 + images.length) % images.length);
-    };
-
-    window.setImage = function (index) {
-        updateGallery(index);
-    };
-
-});</script>
-<script>
- const images = [
-    "{{ asset($data['main_image']) }}",
-    ...@json(
-        collect($data['additional_images'])
-            ->pluck('image_url')
-            ->map(fn($img) => asset($img))
-    )
-];
-
-    let currentIndex = 0;
-
-    const mainImage = document.getElementById('mainImage');
-    const thumbnails = document.querySelectorAll('.thumbnail');
-
-    function updateGallery(index) {
-        currentIndex = index;
-        mainImage.src = images[currentIndex];
-
-        thumbnails.forEach((thumb, i) => {
-            thumb.classList.toggle('active', i === currentIndex);
-        });
-    }
-
-    function nextImage() {
-        updateGallery((currentIndex + 1) % images.length);
-    }
-
-    function prevImage() {
-        updateGallery(
-            (currentIndex - 1 + images.length) % images.length
-        );
-    }
-
-    function setImage(index) {
-        updateGallery(index);
-    }
-</script>
-
-
-<script>
-    $(document).ready(function () {
-        $('#consult-form').on('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
-
-            $.ajax({
-                url: "{{ route('enquiry.store') }}", // The route for submission
-                method: "POST",
-                data: $(this).serialize(), // Serialize form data
-                success: function (response) {
-                    if(response.status){
-                        $('#popup').css('visibility', 'visible');
-                        $('#popupOverlay').fadeIn();
-                        document.getElementById("mainwrapper").classList.add("blur");
-
-                    }
-                    // Show the thank-you message and clear the form
-                    // $('#thank-you-message').fadeIn();
-                    $('#consult-form')[0].reset();
-
-                    // Hide the thank-you message after 5 seconds (optional)
-                    setTimeout(function () {
-                        // $('#thank-you-message').fadeOut();
-                    }, 5000);
-                },
-                error: function (xhr) {
-                    // Handle errors (optional)
-                    alert('Something went wrong. Please try again.');
-                }
-            });
-        });
-    });
-</script>
-<script>
-
-
-$(document).ready(function () {
-
-const brochureUrl = "{{ $boucher }}";
-
-        $('#enquiryForm').on('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
-
-            $.ajax({
-                url: "{{ route('enquiry.store') }}", // The route for submission
-                method: "POST",
-                data: $(this).serialize(), // Serialize form data
-                success: function (response) {
-                    if(response.status){
-                        /* $('#popup').css('visibility', 'visible');
-                        $('#popupOverlay').fadeIn();
-                        document.getElementById("mainwrapper").classList.add("blur"); */
-                        console.log('Brochure download initiated.');
-                        document.getElementById('enquiryModal').style.visibility = 'hidden';
-                        document.getElementById('modalBackdrop').style.display = 'none';
-                        const link = document.createElement('a');
-                        link.href = brochureUrl;
-                        link.download = '';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
-                    // Show the thank-you message and clear the form
-                    /* // $('#thank-you-message').fadeIn(); */
-                    $('#enquiryForm')[0].reset();
-
-                    // Hide the thank-you message after 5 seconds (optional)
-                    /* setTimeout(function () {
-                        // $('#thank-you-message').fadeOut();
-                    }, 5000); */
-                },
-                error: function (xhr) {
-                    // Handle errors (optional)
-                    alert('Something went wrong. Please try again.');
-                }
-            });
-        });
-    });
-</script>
-
-<script>
-$(document).ready(function () {
-
-    $('#visitForm').on('submit', function (e) {
-        e.preventDefault();
-
-        // $('#submitBtn').prop('disabled', true);
-        // $('#formError').hide().html('');
-        // $('#formSuccess').hide().html('');
-
-        $.ajax({
-            url: "{{ route('visit.enquiry.submit') }}",
-            type: "POST",
-            data: $(this).serialize(),
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-                if(response.status){
-                        $('#popup').css('visibility', 'visible');
-                        $('#popupOverlay').fadeIn();
-                        document.getElementById("mainwrapper").classList.add("blur");
-                    }
-                // $('#formSuccess')
-                //     .show()
-                //     .html('Visit enquiry submitted successfully!');
-
-                $('#visitForm')[0].reset();
-            },
-            error: function (xhr) {
-                $('#submitBtn').prop('disabled', false);
-
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let errorMsg = '';
-
-                    $.each(errors, function (key, value) {
-                        errorMsg += value[0] + '<br>';
-                    });
-
-                    $('#formError').show().html(errorMsg);
-                } else {
-                    $('#formError').show().html('Something went wrong. Please try again.');
-                }
-            }
-        });
-    });
-
-});
-</script>
-
-
 <script>
     function closePopup(){
         document.getElementById("popup").style.visibility = "hidden";
@@ -2089,6 +1501,668 @@ $(document).ready(function () {
         document.getElementById("mainwrapper").classList.remove("blur");
 
     }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const loanSlider = document.getElementById('emi-loan-amount');
+    const loanDisplay = document.getElementById('emi-loan-display');
+
+    const interestSlider = document.getElementById('emi-interest-rate');
+    const interestDisplay = document.getElementById('emi-interest-display');
+
+    const tenureSlider = document.getElementById('emi-tenure');
+    const tenureDisplay = document.getElementById('emi-tenure-display');
+
+    if (
+        !loanSlider || !loanDisplay ||
+        !interestSlider || !interestDisplay ||
+        !tenureSlider || !tenureDisplay
+    ) {
+        return;
+    }
+
+    const formatIndian = function (value) {
+        return Math.round(value).toLocaleString('en-IN');
+    };
+
+    const formatRupees = function (value) {
+        return '₹ ' + formatIndian(value);
+    };
+
+    function calculateEMI() {
+
+        const principal = Number(loanSlider.value);
+        const annualRate = Number(interestSlider.value);
+        const years = Number(tenureSlider.value);
+
+        const months = years * 12;
+        const monthlyRate = annualRate / 1200;
+
+        let monthlyEMI;
+
+        if (monthlyRate === 0) {
+            monthlyEMI = principal / months;
+        } else {
+            const factor = Math.pow(1 + monthlyRate, months);
+
+            monthlyEMI =
+                principal * monthlyRate * factor / (factor - 1);
+        }
+
+        const totalPayment = monthlyEMI * months;
+        const totalInterest = Math.max(0, totalPayment - principal);
+
+        const principalPercent =
+            totalPayment > 0 ? principal / totalPayment * 100 : 100;
+
+        const interestPercent =
+            totalPayment > 0 ? totalInterest / totalPayment * 100 : 0;
+
+        loanDisplay.value = formatIndian(principal);
+        interestDisplay.value = annualRate;
+        tenureDisplay.value = years;
+
+        document.getElementById('emi-monthly-result').textContent =
+            formatRupees(monthlyEMI);
+
+        document.getElementById('emi-principal-result').textContent =
+            formatRupees(principal);
+
+        document.getElementById('emi-interest-result').textContent =
+            formatRupees(totalInterest);
+
+        document.getElementById('emi-principal-percent').textContent =
+            '(' + principalPercent.toFixed(0) + '%)';
+
+        document.getElementById('emi-interest-percent').textContent =
+            '(' + interestPercent.toFixed(0) + '%)';
+
+        document.getElementById('emi-principal-bar').style.width =
+            principalPercent + '%';
+
+        document.getElementById('emi-interest-bar').style.width =
+            interestPercent + '%';
+    }
+
+    // Update EMI when a slider changes.
+
+    loanSlider.addEventListener('input', calculateEMI);
+    interestSlider.addEventListener('input', calculateEMI);
+    tenureSlider.addEventListener('input', calculateEMI);
+
+    // Update loan amount from direct input.
+
+    loanDisplay.addEventListener('change', function () {
+
+        let value = Number(this.value.replace(/[^0-9]/g, ''));
+
+        if (!Number.isFinite(value)) {
+            value = 250000;
+        }
+
+        value = Math.max(50000, Math.min(5000000, value));
+
+        loanSlider.value = value;
+        calculateEMI();
+    });
+
+    // Update interest rate from direct input.
+
+    interestDisplay.addEventListener('change', function () {
+
+        let value = parseFloat(this.value);
+
+        if (!Number.isFinite(value)) {
+            value = 12;
+        }
+
+        value = Math.max(5, Math.min(50, value));
+
+        interestSlider.value = value;
+        calculateEMI();
+    });
+
+    // Update tenure from direct input.
+
+    tenureDisplay.addEventListener('change', function () {
+
+        let value = parseInt(this.value, 10);
+
+        if (!Number.isFinite(value)) {
+            value = 10;
+        }
+
+        value = Math.max(5, Math.min(30, value));
+
+        tenureSlider.value = value;
+        calculateEMI();
+    });
+
+    // Initial calculation.
+
+    calculateEMI();
+
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const form = document.getElementById('consult-form');
+    const thankYouMessage = document.getElementById('thank-you-message');
+
+    if (!form) return;
+
+    form.addEventListener('submit', async function (event) {
+
+        event.preventDefault();
+
+        const submitButton = form.querySelector('[type="submit"]');
+
+        if (form.dataset.submitting === 'true') return;
+
+        form.dataset.submitting = 'true';
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+        }
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            });
+
+            const contentType = response.headers.get('content-type') || '';
+
+            if (!contentType.includes('application/json')) {
+                throw new Error(
+                    'The server did not return JSON. Please check the enquiry route.'
+                );
+            }
+
+            const data = await response.json();
+
+            if (!response.ok || data.status !== true) {
+                throw new Error(
+                    data.message || 'Unable to submit your enquiry. Please try again.'
+                );
+            }
+
+            // Show the existing success message.
+            if (thankYouMessage) {
+                thankYouMessage.textContent =
+                    data.message || 'Thank you! Your message has been submitted.';
+
+                thankYouMessage.style.display = 'block';
+            }
+
+            // Show success popup.
+            const popup = document.getElementById('enquiry-success-popup');
+            const popupText = document.getElementById('enquiry-success-text');
+
+            if (popup && popupText) {
+                popupText.textContent =
+                    data.message || 'Thank you for your enquiry!';
+
+                popup.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Clear submitted fields.
+            form.reset();
+
+        } catch (error) {
+
+            alert(error.message || 'Something went wrong. Please try again.');
+
+        } finally {
+
+            form.dataset.submitting = 'false';
+
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Send Message';
+            }
+
+        }
+
+    });
+
+    // Close the success popup.
+    const closeButton = document.getElementById('close-enquiry-popup');
+    const popup = document.getElementById('enquiry-success-popup');
+
+    function closePopup() {
+        if (popup) {
+            popup.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+
+    if (closeButton) {
+        closeButton.addEventListener('click', closePopup);
+    }
+
+    if (popup) {
+        popup.addEventListener('click', function (event) {
+            if (event.target === popup) {
+                closePopup();
+            }
+        });
+    }
+
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('enquiryModal');
+    const backdrop = document.getElementById('modalBackdrop');
+    const form = document.getElementById('enquiryForm');
+    const submitButton = document.getElementById('brochureSubmitBtn');
+    const successBox = document.getElementById('brochureSuccess');
+    const errorBox = document.getElementById('brochureError');
+
+    if (!modal || !backdrop || !form || !submitButton) {
+        return;
+    }
+
+    // Existing dynamic brochure URL from your Blade file.
+    const brochureUrl = @json($boucher);
+
+    // Open modal.
+    window.openEnquiryModal = function () {
+        successBox.style.display = 'none';
+        errorBox.style.display = 'none';
+
+        modal.style.visibility = 'visible';
+        modal.classList.add('active');
+        backdrop.style.display = 'block';
+        document.body.classList.add('brochure-modal-open');
+    };
+
+    // Close modal and restore scrolling.
+    window.closeEnquiryModal = function () {
+        modal.classList.remove('active');
+        modal.style.visibility = 'hidden';
+        backdrop.style.display = 'none';
+        document.body.classList.remove('brochure-modal-open');
+    };
+
+    // Close with Escape key.
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal.classList.contains('active')) {
+            window.closeEnquiryModal();
+        }
+    });
+
+    // Submit enquiry and download brochure after success.
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        successBox.style.display = 'none';
+        errorBox.style.display = 'none';
+
+        const mobile = document.getElementById('brochure_phone').value.trim();
+
+        if (!/^[0-9]{10}$/.test(mobile)) {
+            errorBox.textContent = 'Please enter a valid 10-digit mobile number.';
+            errorBox.style.display = 'block';
+            return;
+        }
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        if (!brochureUrl || brochureUrl.trim() === '') {
+            errorBox.textContent = 'The brochure is not available right now. Please contact us.';
+            errorBox.style.display = 'block';
+            return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Please wait...';
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || data.status !== true) {
+                let message = data.message || 'Unable to submit your enquiry. Please try again.';
+
+                if (data.errors) {
+                    message = Object.values(data.errors).flat().join('\n');
+                }
+
+                throw new Error(message);
+            }
+
+            successBox.style.display = 'block';
+            successBox.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+
+            form.reset();
+
+            // Trigger the dynamic brochure download.
+            const link = document.createElement('a');
+            link.href = brochureUrl;
+            link.setAttribute('download', '');
+            link.style.display = 'none';
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            // Close the modal after a short delay.
+            setTimeout(function () {
+                window.closeEnquiryModal();
+            }, 1800);
+
+        } catch (error) {
+            errorBox.textContent =
+                error.message || 'Something went wrong. Please try again.';
+
+            errorBox.style.display = 'block';
+
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML =
+                '<i class="fas fa-download"></i> Download Brochure Now';
+        }
+    });
+});
+</script>
+<script>
+function openFormOverlay() {
+    const form = document.querySelector('.form-container');
+    const wrapper = document.getElementById('mainwrapper');
+
+    if (!form) {
+        console.error('Book a Visit form not found: .form-container');
+        return;
+    }
+
+    form.style.setProperty('display', 'block', 'important');
+    form.style.setProperty('visibility', 'visible', 'important');
+    form.style.setProperty('opacity', '1', 'important');
+    form.style.setProperty('z-index', '10002', 'important');
+
+    if (wrapper) {
+        wrapper.classList.add('blur');
+    }
+
+    document.body.style.overflow = 'hidden';
+}
+
+function closeFormOverlay() {
+    const form = document.querySelector('.form-container');
+    const wrapper = document.getElementById('mainwrapper');
+
+    if (form) {
+        form.style.setProperty('display', 'none', 'important');
+        form.style.setProperty('visibility', 'hidden', 'important');
+        form.style.setProperty('opacity', '0', 'important');
+    }
+
+    if (wrapper) {
+        // wrapper.classList.remove('blur');
+    }
+
+    document.body.style.overflow = '';
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const visitForm = document.getElementById('visitForm');
+
+    if (!visitForm) return;
+
+    visitForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        if (!visitForm.checkValidity()) {
+            visitForm.reportValidity();
+            return;
+        }
+
+        const submitButton = visitForm.querySelector(
+            'button[type="submit"], input[type="submit"]'
+        );
+
+        const originalText = submitButton
+            ? submitButton.innerHTML
+            : '';
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Please wait...';
+        }
+
+        try {
+            const response = await fetch(visitForm.action, {
+                method: 'POST',
+                body: new FormData(visitForm),
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || data.status !== 'success') {
+                throw new Error(
+                    data.message || 'Unable to submit your visit enquiry.'
+                );
+            }
+
+            // Close the Book a Visit form.
+            if (typeof closeFormOverlay === 'function') {
+                closeFormOverlay();
+            }
+
+            // Show the success popup without leaving the page.
+           Swal.fire({
+    icon: 'success',
+    title: 'Thank You!',
+    text: data.message || 'Visit enquiry submitted successfully.',
+    confirmButtonText: 'OK',
+    confirmButtonColor: '#295cab',
+    allowOutsideClick: false
+});
+
+            visitForm.reset();
+
+        } catch (error) {
+            alert(error.message || 'Something went wrong. Please try again.');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            }
+        }
+    });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const images = [
+        @json(asset($data['main_image'])),
+        ...@json(
+            collect($data['additional_images'])
+                ->filter(fn($img) => $img->image_url != $data['main_image'])
+                ->values()
+                ->map(fn($img) => asset($img->image_url))
+                ->all()
+        )
+    ];
+
+    const mainImage = document.getElementById('mainImage');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+
+    let currentIndex = 0;
+
+    function updateGallery(index) {
+        if (!mainImage || images.length === 0) return;
+
+        // Keep index within the valid range.
+        currentIndex = (index + images.length) % images.length;
+
+        mainImage.src = images[currentIndex];
+
+        thumbnails.forEach((thumbnail, i) => {
+            thumbnail.classList.toggle('active', i === currentIndex);
+        });
+    }
+
+    window.setImage = function (index) {
+        updateGallery(index);
+    };
+
+    window.nextImage = function () {
+        updateGallery(currentIndex + 1);
+    };
+
+    window.prevImage = function () {
+        updateGallery(currentIndex - 1);
+    };
+
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mapElement = document.getElementById('map');
+
+    if (!mapElement) {
+        console.error('Map container #map was not found.');
+        return;
+    }
+
+    if (typeof L === 'undefined') {
+        console.error('Leaflet library did not load.');
+        return;
+    }
+
+    const lat = Number(@json($latitude ?? 18.5204));
+    const lng = Number(@json($longitude ?? 73.8567));
+
+    if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng) ||
+        lat < -90 || lat > 90 ||
+        lng < -180 || lng > 180
+    ) {
+        console.error('Invalid latitude or longitude:', lat, lng);
+        return;
+    }
+
+    const map = L.map(mapElement).setView([lat, lng], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup(@json($title ?? 'Property location'))
+        .openPopup();
+
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 500);
+});
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mapElement = document.getElementById('map');
+
+    if (!mapElement) {
+        console.error('Map container #map was not found.');
+        return;
+    }
+
+    if (typeof L === 'undefined') {
+        console.error('Leaflet JavaScript failed to load.');
+        return;
+    }
+
+    // Use the selected property's actual coordinates.
+    const rawLat = @json($latitude ?? null);
+    const rawLng = @json($longitude ?? null);
+
+    const lat = Number(rawLat);
+    const lng = Number(rawLng);
+
+    if (
+        rawLat === null || rawLat === '' ||
+        rawLng === null || rawLng === '' ||
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng) ||
+        lat < -90 || lat > 90 ||
+        lng < -180 || lng > 180
+    ) {
+        mapElement.innerHTML =
+            '<p style="padding:20px;">Property location coordinates are missing or invalid.</p>';
+
+        console.error('Check latitude and longitude in your properties table.');
+        return;
+    }
+
+    const map = L.map(mapElement).setView([lat, lng], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng])
+        .addTo(map)
+        .bindPopup(@json($title ?? 'Property location'))
+        .openPopup();
+
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 300);
+});
 </script>
 
 

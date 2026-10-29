@@ -1,0 +1,36 @@
+# Jfinserv
+
+> Financial services site in Pune offering loan products and related financial solutions for individuals and businesses.
+
+## Main
+
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/): Homepage with overview of services and loan offers
+
+## Services
+
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/services): Overview of services offered in Pune
+
+## Company
+
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/about): Company information and background
+
+## More
+
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/project-loan): Project loan information page
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/overdraft-facility): Overdraft facility information page
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/terms-and-conditions): Terms and conditions for services
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/lease-rental-discounting): Lease, rental, and discounting services
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/privacy-policy): Privacy policy details
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/referearn): Refer and earn program information
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/loan-against-property): Loan against property details
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/home-loan): Home loan information and options
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/msme-loan): MSME loan information
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/eligibility-calculator): Eligibility calculator tool
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/properties): Properties related information
+- [Property Login](https://jfinserv.com/property/login): Property login portal
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/property/pristine-02-world): Pristine-02 World property page
+- [Login](https://jfinserv.com/authv3/login): Login page for users
+
+## Optional
+
+- [Jfinserv | Financial Services in Pune | Lowest Loan Interest](https://jfinserv.com/contact): Contact details and inquiry form

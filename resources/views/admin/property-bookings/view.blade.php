@@ -438,12 +438,15 @@ h2{
 </style>
 
 @php
-    // Lock everything once customer interaction starts
     $isLocked = in_array($booking->status, [
-        'waiting_customer_confirmation',
+        'offer_sent',
+        'pending_customer',
+        'customer_pending',
         'customer_confirmed',
-        'completed'
-    ]);
+        'completed',
+    ], true);
+
+    $hasOffer = !empty($booking->offers);
 @endphp
 <div class="container">
 <h2 class="title">Property Booking Review</h2>
@@ -516,15 +519,7 @@ value="{{ ($booking->tds_percentage == '0.00' || $booking->tds_percentage == 0) 
 value="{{ ($booking->gst_percentage == '0.00' || $booking->gst_percentage == 0) ? '' : $booking->gst_percentage }}"
 {{ $isLocked ? 'readonly' : 'required' }} required>
         </div>
-        <div class="form-group">
-            <label>MLM Amount (₹)</label>
-            <!-- <input type="number" id="mlm_amount" name="mlm_amount"
-                   value="{{ $booking->mlm_amount }}"
-                   {{ $isLocked ? 'readonly' : 'required' }}> -->
-                    <input type="number" id="mlm_amount" name="mlm_amount"
-value="{{ ($booking->mlm_amount == '0.00' || $booking->mlm_amount == 0) ? '' : $booking->mlm_amount }}"
-{{ $isLocked ? 'readonly' : 'required' }} required>
-        </div>
+       
     </div>
 </div>
 
@@ -563,6 +558,84 @@ value="{{ ($booking->mlm_amount == '0.00' || $booking->mlm_amount == 0) ? '' : $
         </div>
     </div>
 </div>
+<style>/* Dropdown Icon */
+.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: middle;
+    content: "";
+    border-top: 5px solid currentColor;
+    border-right: 4px solid transparent;
+    border-bottom: 0;
+    border-left: 4px solid transparent;
+}
+
+/* Remove default icon if using a custom icon */
+.dropdown-toggle.no-arrow::after {
+    display: none;
+}
+
+#mlm_type {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 16px !important;
+    padding-right: 35px !important;
+    appearance: none;
+    -webkit-appearance: none;
+}</style>
+{{-- MLM CALCULATION --}}
+<div class="form-group">
+    <label>MLM Calculation Type</label>
+
+    <select id="mlm_type"
+            name="mlm_type"
+            class="form-control"
+            style="width:100%; padding:10px 12px; border:2px solid #e2e8f0; border-radius:8px;"
+            {{ $isLocked ? 'disabled' : '' }}>
+
+        <option value="amount"
+            {{ old('mlm_type', $booking->mlm_type ?? 'amount') == 'amount' ? 'selected' : '' }}>
+            Fixed Amount (₹)
+        </option>
+
+        <option value="percent"
+            {{ old('mlm_type', $booking->mlm_type ?? 'amount') == 'percent' ? 'selected' : '' }}>
+            Percentage (%)
+        </option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label id="mlm_input_label">
+        {{ ($booking->mlm_type ?? 'amount') == 'percent' ? 'MLM Percentage (%)' : 'MLM Amount (₹)' }}
+    </label>
+
+    <input type="number"
+           id="mlm_value"
+           name="mlm_value"
+           step="0.01"
+           min="0"
+           value="{{ old('mlm_value', $booking->mlm_value ?? 0) }}"
+           placeholder="Enter MLM amount"
+           {{ $isLocked ? 'readonly' : '' }}>
+</div>
+
+<div class="form-group">
+    <label>Calculated MLM Deduction (₹)</label>
+
+    <input type="text"
+           id="mlm_calculated"
+           value="₹ {{ number_format($booking->mlm_amount ?? 0, 2) }}"
+           readonly
+           style="background:#f0fdf4; color:#15803d; font-weight:700;">
+</div>
+
+<input type="hidden"
+       id="mlm_amount"
+       name="mlm_amount"
+       value="{{ old('mlm_amount', $booking->mlm_amount ?? 0) }}">
+
 
 {{-- ===========================
    OFFERS (DYNAMIC)
@@ -586,9 +659,12 @@ value="{{ ($booking->mlm_amount == '0.00' || $booking->mlm_amount == 0) ? '' : $
 
 <div class="section" id="offers_box" style="margin-top:10px; {{ $booking->offers ? '' : 'display:none;' }}">
     <div class="selected-offer">
-        <p class="offer-amt"><strong>Offer Amount:</strong>
-            ₹ {{ number_format($booking->offer_pool ?? 0,2) }}
-        </p>
+       <p class="offer-amt">
+    <strong>Offer Amount:</strong>
+    <span id="offer_amount_display">
+        ₹ {{ number_format($booking->offer_pool ?? 0, 2) }}
+    </span>
+</p>
     </div>
     <table class="offer-table">
     <thead>
@@ -664,22 +740,24 @@ value="{{ ($booking->mlm_amount == '0.00' || $booking->mlm_amount == 0) ? '' : $
         @endforeach
     @endif
 
-    </tbody>
-</table>
-
-@if(!$isLocked)
-<button type="button" class="btn-add-offer" onclick="addMainOffer()">
-    ➕ Add Main Offer
-</button>
+  </tbody>
+    </table>
+@if(!$isLocked && !$hasOffer)
+    <button
+        type="button"
+        class="btn-add-offer"
+        onclick="addMainOffer()">
+        ➕ Add Main Offer
+    </button>
 @endif
 
-
+</div>{{-- ✅ close #offers_box here --}}
 <div class="submit-btn">
-@if(!$isLocked)
-    
-    <button class="btn btn-primary" type="submit">Submit & Proceed</button>
-    
-@endif
+    @if(!$isLocked && !$hasOffer)
+        <button class="btn btn-primary" type="submit">
+            Submit & Proceed
+        </button>
+    @endif
 </div>
 </form>
 
@@ -771,36 +849,93 @@ let offerIndex = {{ $booking->offers ? count(json_decode($booking->offers,true))
    CALCULATION
 ========================= */
 function recalc() {
+    const cost = Number(document.getElementById('agreement_cost').value) || 0;
+    const percent = Number(document.getElementById('commission_percentage').value) || 0;
+    const tds = Number(document.getElementById('tds_percentage').value) || 0;
+    const gst = Number(document.getElementById('gst_percentage').value) || 0;
 
-    let cost = +agreement_cost.value || 0;
-    let percent = +commission_percentage.value || 0;
-    let tds = +tds_percentage.value || 0;
-    let gst = +gst_percentage.value || 0;
-    let mlm = +mlm_amount.value || 0;
+    const mlmType = document.getElementById('mlm_type').value;
+    const mlmValue = Math.max(
+        0,
+        Number(document.getElementById('mlm_value').value) || 0
+    );
 
-    let actual = cost * percent / 100;
-    let tdsAmt = actual * tds / 100;
-    let gstAmt = actual * gst / 100;
-    let net = actual - tdsAmt - gstAmt;
+    // Commission calculation
+    const actual = cost * percent / 100;
+    const tdsAmt = actual * tds / 100;
+    const gstAmt = actual * gst / 100;
+    const net = actual - tdsAmt - gstAmt;
 
-    let offerPool = net / 2;
-    let companyShare = net / 2;
+    // Split commission
+    const offerPool = Math.max(0, net / 2);
+    const companyShare = Math.max(0, net / 2);
 
-    let finalOfferPool = offerPool - mlm;
-    if (finalOfferPool < 0) finalOfferPool = 0;
+    // Calculate MLM deduction
+    let mlm = 0;
 
-    actual_commission.innerText = actual.toFixed(2);
-    tds_amount.innerText = tdsAmt.toFixed(2);
-    gst_amount.innerText = gstAmt.toFixed(2);
-    net_commission.innerText = net.toFixed(2);
-    offer_pool.innerText = finalOfferPool.toFixed(2);
-    final_commission.innerText = companyShare.toFixed(2);
+    if (mlmType === 'percent') {
+        mlm = offerPool * Math.min(mlmValue, 100) / 100;
+    } else {
+        mlm = Math.min(mlmValue, offerPool);
+    }
+
+    // Remaining Offer Pool
+    const finalOfferPool = Math.max(0, offerPool - mlm);
+
+    // Update summary
+    document.getElementById('actual_commission').innerText =
+        '₹ ' + actual.toFixed(2);
+
+    document.getElementById('tds_amount').innerText =
+        '₹ ' + tdsAmt.toFixed(2);
+
+    document.getElementById('gst_amount').innerText =
+        '₹ ' + gstAmt.toFixed(2);
+
+    document.getElementById('net_commission').innerText =
+        '₹ ' + net.toFixed(2);
+
+    document.getElementById('offer_pool').innerText =
+        '₹ ' + finalOfferPool.toFixed(2);
+
+    document.getElementById('final_commission').innerText =
+        '₹ ' + companyShare.toFixed(2);
+
+    // Update MLM label
+    document.getElementById('mlm_input_label').innerText =
+        mlmType === 'percent'
+            ? 'MLM Percentage (%)'
+            : 'MLM Amount (₹)';
+
+    // Show calculated MLM in rupees
+    document.getElementById('mlm_calculated').value =
+        '₹ ' + mlm.toFixed(2);
+
+    // Send calculated amount with form
+    document.getElementById('mlm_amount').value =
+        mlm.toFixed(2);
+
+    // Update Offer Amount display
+    const offerDisplay = document.getElementById('offer_amount_display');
+
+    if (offerDisplay) {
+        offerDisplay.innerText = '₹ ' + finalOfferPool.toFixed(2);
+    }
 
     window.finalOfferPoolAmount = finalOfferPool;
 }
+[
+    'agreement_cost',
+    'commission_percentage',
+    'tds_percentage',
+    'gst_percentage',
+    'mlm_value'
+].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', recalc);
+});
 
-['agreement_cost','commission_percentage','tds_percentage','gst_percentage','mlm_amount']
-.forEach(id => document.getElementById(id)?.addEventListener('input', recalc));
+document.getElementById('mlm_type')
+    ?.addEventListener('change', recalc);
 
 function toggleOffers() {
 
@@ -1111,8 +1246,3 @@ window.checkReferral = function () {
 };
 </script>
 @endsection
-
-
-
-
-  

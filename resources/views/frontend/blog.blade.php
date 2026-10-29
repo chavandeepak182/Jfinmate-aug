@@ -1,23 +1,103 @@
 
-@include('dhara-jfin.layout.header')
-
-@section('title', 'Blogs')
-@section('description', '')
-@section('keywords', '')
+{{-- SEO META DATA FOR BLOGS PAGE --}}
+@section('title', 'Financial Services & Loan Blog | Finance & Property Tips | JFinserve')
+@section('description', 'Explore JFinserve financial services blog for loan tips, home loan guidance, business finance, property investment insights, loan eligibility and financial planning tips.')
+@section('keywords', 'Financial Services, Financial Blog, Loan Blog, Finance Blog, Home Loan Guidance, Business Finance, Property Investment, Loan Eligibility, Financial Planning')
 
 @section('content')
+@push('schema')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://jfinserv.com/blogs#webpage",
+      "url": "https://jfinserv.com/blogs",
+      "name": "Financial Blogs and Loan Guides | JF Finserve",
+      "description": "Explore financial insights, home loan guides, loan interest rate information, property financing tips and business finance articles from JF Finserve to help individuals and businesses make informed financial decisions.",
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://jfinserv.com/#website",
+        "url": "https://jfinserv.com/",
+        "name": "JF Finserve"
+      },
+      "about": {
+        "@type": "Organization",
+        "@id": "https://jfinserv.com/#organization",
+        "name": "JF Finserve",
+        "url": "https://jfinserv.com/"
+      },
+      "mainEntity": {
+        "@id": "https://jfinserv.com/blogs#article-list"
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "@id": "https://jfinserv.com/blogs#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://jfinserv.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blogs",
+            "item": "https://jfinserv.com/blogs"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://jfinserv.com/blogs#article-list",
+      "name": "JF Finserve Financial Articles",
+      "description": "Articles and guides covering home loans, interest rates and financial services.",
+      "itemListOrder": "https://schema.org/ItemListOrderDescending",
+      "numberOfItems": 1,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "BlogPosting",
+            "@id": "https://jfinserv.com/blogs/Compare-Interest#blogposting",
+            "headline": "Compare Interest Rates: Best Home Loan Offers in Pune Today",
+            "url": "https://jfinserv.com/blogs/Compare-Interest",
+            "mainEntityOfPage": "https://jfinserv.com/blogs/Compare-Interest",
+            "publisher": {
+              "@type": "Organization",
+              "@id": "https://jfinserv.com/#organization",
+              "name": "JF Finserve"
+            },
+            "inLanguage": "en-IN"
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+@endpush
+@include('dhara-jfin.layout.header')
 
 <!-- =========================================================
      BLOG HERO BANNER
 ========================================================= -->
-<section class="blog-page-banner">
-    <div class="blog-page-banner-overlay"></div>
-
-    <div class="blog-page-banner-content">
-        <!-- Optional title -->
-        <!-- <h1>Blogs</h1> -->
+        <!-- <section class="video-hero">
+        <video id="videobcg" preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
+        <source src="{{ asset('theme/dhara-jfin/videos/about_us_banner.mp4') }}" type="video/mp4">
+        </video>
+    <div class="video-banner-overlay">
+        <div class="video-overlay-content">
+            <h1>Insights to Help You Make <span>Better Financial Decisions</span></h1>
+            
+        </div>
     </div>
-</section>
+</section> -->
 
 
 <!-- =========================================================
@@ -37,23 +117,139 @@
        HERO BANNER
     ===================================================== */
 
+   /* =========================================================
+   BLOG BANNER - FINAL RESPONSIVE FIX
+========================================================= */
+
+.blog-page-banner {
+    position: relative;
+    width: 100%;
+
+    height: 420px;
+    min-height: 420px;
+
+    background-image: url('{{ asset('theme/frontend/img/blog.jpg') }}');
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
     .blog-page-banner {
-        position: relative;
         width: 100%;
-        height: 420px;
-        min-height: 420px;
 
-        background-image: url('{{ asset('theme/frontend/img/blog.jpg') }}');
+        height: 350px;
+        min-height: 350px;
+
         background-position: center center;
-        background-repeat: no-repeat;
         background-size: cover;
+    }
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .blog-page-banner {
+        width: 100%;
+
+        height: 250px;
+        min-height: 250px;
+
+        background-position: center center;
+        background-size: cover;
 
         overflow: hidden;
     }
+
+    .blog-page-banner-overlay {
+        position: absolute;
+        inset: 0;
+
+        background: rgba(0, 0, 0, 0.20);
+    }
+
+    .blog-page-banner-content {
+        width: 100%;
+
+        padding: 0 15px;
+
+        box-sizing: border-box;
+    }
+
+    .blog-page-banner-content h1 {
+        font-size: 30px;
+        line-height: 1.2;
+
+        text-align: center;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .blog-page-banner {
+        width: 100%;
+
+        height: 220px;
+        min-height: 220px;
+
+        background-position: center center;
+        background-size: cover;
+    }
+
+    .blog-page-banner-content {
+        padding: 0 12px;
+    }
+
+    .blog-page-banner-content h1 {
+        font-size: 26px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .blog-page-banner {
+        height: 200px;
+        min-height: 200px;
+
+        background-position: center center;
+        background-size: cover;
+    }
+
+    .blog-page-banner-content h1 {
+        font-size: 23px;
+    }
+
+}
 
     .blog-page-banner-overlay {
         position: absolute;
@@ -932,7 +1128,7 @@
 <!-- =========================================================
      BLOG MAIN SECTION
 ========================================================= -->
-<section class="blog-main-section">
+<section class="blog-main-section" style="margin-top:40px;">
 
     <div class="blog-container">
 

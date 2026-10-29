@@ -14,7 +14,8 @@
         <!-- <h1 class="page-banner-title">About Jfinserv</h1> -->
     </div>
 </section>
-<style>/* ================= DESKTOP (UNCHANGED) ================= */
+<style>
+/* ================= DESKTOP (UNCHANGED) ================= */
 .page-banner {
     position: relative;
     width: 100%;
@@ -42,7 +43,7 @@
 }
 </style>
 <!-- Header End -->
-    <div class="container-fluid bg-light about py-5">
+    <div class="container-fluid bg-light about py-4">
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s">

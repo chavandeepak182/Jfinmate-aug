@@ -94,9 +94,15 @@ class FrontendController extends Controller
 
 
     
- public function blog(Request $request)
+public function blog(Request $request)
 {
     $query = DB::table('blog')
+        ->leftJoin(
+            'blog_category',
+            'blog.category_id',
+            '=',
+            'blog_category.pid'
+        )
         ->select(
             'blog.id',
             'blog.image',
@@ -116,31 +122,92 @@ class FrontendController extends Controller
             'blog.category_id',
             'blog_category.category_name'
         )
-        ->leftJoin('blog_category', 'blog.category_id', '=', 'blog_category.pid')
-        ->where('blog.status', 'active'); // Only active blogs
+        ->where('blog.status', 'active');
 
-    // 🔍 Search filter
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
+
     if ($request->filled('search')) {
-        $query->where(function ($q) use ($request) {
-            $q->where('blog.blog_name', 'LIKE', '%' . $request->search . '%')
-              ->orWhere('blog.description', 'LIKE', '%' . $request->search . '%')
-              ->orWhere('blog_category.category_name', 'LIKE', '%' . $request->search . '%');
+
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'blog.blog_name',
+                'LIKE',
+                '%' . $search . '%'
+            )
+
+            ->orWhere(
+                'blog.description',
+                'LIKE',
+                '%' . $search . '%'
+            )
+
+            ->orWhere(
+                'blog_category.category_name',
+                'LIKE',
+                '%' . $search . '%'
+            );
+
         });
     }
 
-    // 🏷 Category filter
+
+    /*
+    |--------------------------------------------------------------------------
+    | CATEGORY FILTER
+    |--------------------------------------------------------------------------
+    */
+
     if ($request->filled('category')) {
-        $query->where('blog.category_id', $request->category);
+
+        $query->where(
+            'blog.category_id',
+            $request->category
+        );
     }
 
-    $data['allIndustries'] = $query->paginate(12)->appends($request->all());
 
-    // Fetch categories
-    $data['categories'] = DB::table('blog_category')
-        ->select('pid', 'category_name')
+    /*
+    |--------------------------------------------------------------------------
+    | BLOG LIST
+    |--------------------------------------------------------------------------
+    */
+
+    $allIndustries = $query
+        ->orderBy('blog.created_at', 'desc')
+        ->paginate(12)
+        ->appends($request->all());
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CATEGORIES
+    |--------------------------------------------------------------------------
+    */
+
+    $categories = DB::table('blog_category')
+        ->select(
+            'pid',
+            'category_name'
+        )
+        ->orderBy('category_name')
         ->get();
 
-    return view('frontend.blog', $data);
+
+    return view(
+        'frontend.blog',
+        compact(
+            'allIndustries',
+            'categories'
+        )
+    );
 }
 
 
@@ -157,43 +224,137 @@ class FrontendController extends Controller
 
 public function showBlog($slug)
 {
-    // Main blog
+    /*
+    |--------------------------------------------------------------------------
+    | MAIN BLOG
+    |--------------------------------------------------------------------------
+    */
+
     $blog = DB::table('blog')
-        ->join('blog_category', 'blog.category_id', '=', 'blog_category.pid')
-        ->select('blog.*', 'blog_category.category_name as category_name')
-        ->where('blog.slug', $slug)
+        ->leftJoin(
+            'blog_category',
+            'blog.category_id',
+            '=',
+            'blog_category.pid'
+        )
+        ->select(
+            'blog.*',
+            'blog_category.category_name'
+        )
+        ->where(
+            'blog.slug',
+            $slug
+        )
+        ->where(
+            'blog.status',
+            'active'
+        )
         ->first();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BLOG NOT FOUND
+    |--------------------------------------------------------------------------
+    */
 
     if (!$blog) {
         abort(404);
     }
 
-    // Related blogs
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATED BLOGS
+    |--------------------------------------------------------------------------
+    */
+
     $relatedBlogs = DB::table('blog')
-        ->select('id','blog_name','slug','image','description','created_at','category_id')
-        ->where('slug', '!=', $slug)
-        ->where('category_id', $blog->category_id)
-        ->latest()
+        ->leftJoin(
+            'blog_category',
+            'blog.category_id',
+            '=',
+            'blog_category.pid'
+        )
+        ->select(
+            'blog.id',
+            'blog.blog_name',
+            'blog.slug',
+            'blog.image',
+            'blog.description',
+            'blog.created_at',
+            'blog.category_id',
+            'blog_category.category_name'
+        )
+        ->where(
+            'blog.slug',
+            '!=',
+            $slug
+        )
+        ->where(
+            'blog.category_id',
+            $blog->category_id
+        )
+        ->where(
+            'blog.status',
+            'active'
+        )
+        ->orderBy(
+            'blog.created_at',
+            'desc'
+        )
         ->take(3)
-        ->get()
-        ->map(function($item) {
-            $item->slug = (string) $item->slug; // ✅ Cast slug as string
-            return $item;
-        });
+        ->get();
 
-    // Latest blogs
+
+    /*
+    |--------------------------------------------------------------------------
+    | LATEST BLOGS
+    |--------------------------------------------------------------------------
+    */
+
     $latestBlogs = DB::table('blog')
-        ->select('id','blog_name','slug','image','description','created_at','category_id')
-        ->where('slug', '!=', $slug)
-        ->latest()
+        ->leftJoin(
+            'blog_category',
+            'blog.category_id',
+            '=',
+            'blog_category.pid'
+        )
+        ->select(
+            'blog.id',
+            'blog.blog_name',
+            'blog.slug',
+            'blog.image',
+            'blog.description',
+            'blog.created_at',
+            'blog.category_id',
+            'blog_category.category_name'
+        )
+        ->where(
+            'blog.slug',
+            '!=',
+            $slug
+        )
+        ->where(
+            'blog.status',
+            'active'
+        )
+        ->orderBy(
+            'blog.created_at',
+            'desc'
+        )
         ->take(3)
-        ->get()
-        ->map(function($item) {
-            $item->slug = (string) $item->slug; // ✅ Cast slug as string
-            return $item;
-        });
+        ->get();
 
-    return view('frontend.blog-details', compact('blog', 'relatedBlogs', 'latestBlogs'));
+
+    return view(
+        'frontend.blog-details',
+        compact(
+            'blog',
+            'relatedBlogs',
+            'latestBlogs'
+        )
+    );
 }
 
 

@@ -27,6 +27,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\States;
 use App\Models\Cities;
 
+use Illuminate\Support\Facades\Storage;
+
+
 class AgentController extends Controller
 {
     public function addAgent()
@@ -1073,6 +1076,61 @@ public function getCities($state_id)
 
         return view('agent.mis', compact('data'));
     }
+    public function deleteDocument($id)
+{
+    try {
+
+        // Find document
+        $document = Document::where('document_id', $id)->first();
+
+        if (!$document) {
+
+            return response()->json([
+                'status' => false,
+                'msg' => 'Document not found.'
+            ], 404);
+        }
+
+
+        // Delete physical file
+        if (
+            !empty($document->file_path) &&
+            Storage::disk('public')->exists($document->file_path)
+        ) {
+
+            Storage::disk('public')->delete(
+                $document->file_path
+            );
+        }
+
+
+        // Delete database record
+        $document->delete();
+
+
+        return response()->json([
+            'status' => true,
+            'msg' => 'Document deleted successfully.'
+        ]);
+
+
+    } catch (\Exception $e) {
+
+        \Log::error('Document delete error', [
+
+            'document_id' => $id,
+
+            'error' => $e->getMessage()
+
+        ]);
+
+
+        return response()->json([
+            'status' => false,
+            'msg' => 'Unable to delete document.'
+        ], 500);
+    }
+}
     //view MIS
     public function viewMis($id)
     {
