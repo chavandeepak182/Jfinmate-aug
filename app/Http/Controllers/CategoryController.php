@@ -46,6 +46,36 @@ class CategoryController extends Controller
 // }
 
 
+// private function buildTree($categories, $parentId = null)
+// {
+//     $tree = [];
+
+//     foreach ($categories as $category) {
+//         if ($category->parent_id == $parentId) {
+
+//             // 🔹 Fetch user details
+//             $user = DB::table('users')
+//                 ->where('id', $category->user_id)
+//                 ->select('id', 'email_id', 'mobile_no')
+//                 ->first();
+
+//             $children = $this->buildTree($categories, $category->user_id);
+
+//             $tree[] = [
+//                 'id' => $category->id,
+//                 'name' => $category->name,
+//                 'user_id' => $category->user_id,
+//                 'email' => $user->email_id ?? '',
+//                 'mobile' => $user->mobile_no ?? '',
+//                 'children' => $children,
+//             ];
+//         }
+//     }
+
+//     return $tree;
+// }
+
+
 private function buildTree($categories, $parentId = null)
 {
     $tree = [];
@@ -56,7 +86,7 @@ private function buildTree($categories, $parentId = null)
             // 🔹 Fetch user details
             $user = DB::table('users')
                 ->where('id', $category->user_id)
-                ->select('id', 'email_id', 'mobile_no')
+                ->select('id', 'email_id', 'mobile_no', 'referral_code') // ✅ added referral_code
                 ->first();
 
             $children = $this->buildTree($categories, $category->user_id);
@@ -67,6 +97,7 @@ private function buildTree($categories, $parentId = null)
                 'user_id' => $category->user_id,
                 'email' => $user->email_id ?? '',
                 'mobile' => $user->mobile_no ?? '',
+                'referral_code' => $user->referral_code ?? '', // ✅ added
                 'children' => $children,
             ];
         }
@@ -74,6 +105,8 @@ private function buildTree($categories, $parentId = null)
 
     return $tree;
 }
+
+
     public function store(Request $request)
 {
     $parentUserId = $request->input('parent_user_id'); // Parent's user_id (optional)

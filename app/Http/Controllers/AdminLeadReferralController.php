@@ -290,29 +290,32 @@ public function loadList(Request $request)
 public function changeLeadStatus(Request $request)
 {
     $request->validate([
-        'id' => 'required|integer',
-
+        'id'     => 'required|integer',
         'status' => 'required|in:New,In Progress,Approved,Rejected,Closed',
-
         'approved_loan_amount' => 'nullable|numeric|min:0',
     ]);
 
+    $data = [
+        'status'     => $request->status,
+        'updated_at' => now(),
+    ];
+
+    if ($request->status === 'Closed') {
+        // Only set if provided — otherwise leave existing value intact
+        if ($request->filled('approved_loan_amount')) {
+            $data['approved_loan_amount'] = $request->approved_loan_amount;
+        }
+    } else {
+        $data['approved_loan_amount'] = null;
+    }
+
     DB::table('lead_referral')
         ->where('id', $request->id)
-        ->update([
-            'status' => $request->status,
-
-            'approved_loan_amount' =>
-                $request->status === 'Closed'
-                    ? $request->approved_loan_amount
-                    : null,
-
-            'updated_at' => now(),
-        ]);
+        ->update($data);
 
     return response()->json([
-        'status' => 1,
-        'message' => 'Lead status updated successfully.'
+        'status'  => 1,
+        'message' => 'Lead status updated successfully.',
     ]);
 }
 public function approvedLoanAmount(Request $request)
@@ -322,16 +325,36 @@ public function approvedLoanAmount(Request $request)
         'approved_loan_amount' => 'required|numeric|min:0',
     ]);
 
+    $lead = DB::table('lead_referral')
+        ->where('id', $request->id)
+        ->first();
+
+    if (!$lead) {
+        return response()->json([
+            'status'  => 0,
+            'message' => 'Lead not found.',
+        ], 404);
+    }
+
+    // ✅ Approved amount must NOT be greater than loan amount
+    if ((float) $request->approved_loan_amount > (float) $lead->loan_amount) {
+        return response()->json([
+            'status'  => 0,
+            'message' => 'Approved loan amount cannot be greater than the loan amount (₹'
+                        . number_format($lead->loan_amount) . ').',
+        ], 422);
+    }
+
     DB::table('lead_referral')
         ->where('id', $request->id)
         ->update([
             'approved_loan_amount' => $request->approved_loan_amount,
-            'updated_at' => now(),
+            'updated_at'           => now(),
         ]);
 
     return response()->json([
-        'status' => 1,
-        'message' => 'Approved loan amount saved successfully.'
+        'status'  => 1,
+        'message' => 'Approved loan amount saved successfully.',
     ]);
 }
 public function changeStatus(Request $request)

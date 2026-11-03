@@ -30,9 +30,12 @@
             </td>
 
             {{-- LOAN AMOUNT --}}
-            <td>
-                ₹ {{ number_format($row->loan_amount ?? 0) }}
-            </td>
+           {{-- LOAN AMOUNT --}}
+<td>
+    <span class="loan-amount" data-amount="{{ $row->loan_amount ?? 0 }}">
+        ₹ {{ number_format($row->loan_amount ?? 0) }}
+    </span>
+</td>
 
             {{-- STATUS --}}
           {{-- STATUS --}}

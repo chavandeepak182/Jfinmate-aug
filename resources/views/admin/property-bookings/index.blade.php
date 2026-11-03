@@ -432,41 +432,64 @@
                     </td>
 
 
-                    {{-- ACTION --}}
-                    <td>
+                   {{-- ACTION --}}
+<td>
+    <div class="action-buttons">
 
-                        <div class="action-buttons">
+        {{-- CP / PARTNER DASHBOARD --}}
+        @if(auth()->user()->role_id == config('constants.roles.partner'))
 
-                            {{-- VIEW --}}
-                            <a href="{{ route('admin.property.booking.view', $booking->id) }}"
-                               class="action-btn btn-view">
+            @if($booking->cp_status == 'accepted')
 
-                                Manage
+                <a href="{{ route('admin.property.booking.view', $booking->id) }}"
+                   class="action-btn btn-view">
+                    Manage
+                </a>
 
-                            </a>
+                @if(!in_array($booking->status, ['customer_confirmed', 'completed']))
+                    <a href="{{ route('admin.booking.edit', $booking->id) }}"
+                       class="action-btn btn-manage">
+                        Edit
+                    </a>
+                @else
+                    <span class="btn-locked">🔒 Locked</span>
+                @endif
 
+            @elseif($booking->cp_status == 'pending')
 
-                            {{-- MANAGE --}}
-                            @if(!in_array($booking->status, ['customer_confirmed', 'completed']))
+                <span class="status-badge status-pending">
+                    Waiting for Acceptance
+                </span>
 
-                                <a href="{{ route('admin.booking.edit', $booking->id) }}"
-                                   class="action-btn btn-manage">
+            @elseif($booking->cp_status == 'rejected')
 
-                                    edit
+                <span class="status-badge status-rejected">
+                    Rejected
+                </span>
 
-                                </a>
+            @endif
 
-                            @else
+        {{-- ADMIN DASHBOARD: EXISTING BEHAVIOUR --}}
+        @else
 
-                                <span class="btn-locked">
-                                    🔒 Locked
-                                </span>
+            <a href="{{ route('admin.property.booking.view', $booking->id) }}"
+               class="action-btn btn-view">
+                Manage
+            </a>
 
-                            @endif
+            @if(!in_array($booking->status, ['customer_confirmed', 'completed']))
+                <a href="{{ route('admin.booking.edit', $booking->id) }}"
+                   class="action-btn btn-manage">
+                    Edit
+                </a>
+            @else
+                <span class="btn-locked">🔒 Locked</span>
+            @endif
 
-                        </div>
+        @endif
 
-                    </td>
+    </div>
+</td>
 
                 </tr>
 
