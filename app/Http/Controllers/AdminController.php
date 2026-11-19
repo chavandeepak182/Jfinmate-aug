@@ -319,25 +319,28 @@ class AdminController extends Controller
         'customerGrowthCount'
     ));
 }
-    public function fetchRecentLoans($limit = 5)
-    {
-        $recentLoans = DB::table('loans')
-            ->join('users', 'loans.user_id', '=', 'users.id')
-            ->join('loan_category', 'loans.loan_category_id', '=', 'loan_category.loan_category_id')
-            ->select(
-                'loans.loan_reference_id',
-                'loans.amount',
-                'users.name as user_name',
-                'loan_category.category_name as loan_category_name',
-                'loans.status'
-            )
-            ->whereNotNull('loans.loan_reference_id') // Only fetch loans where loan_reference_id is not null
-            ->latest('loans.created_at')
-            ->take($limit)
-            ->get();
-
-        return $recentLoans;
-    }
+   public function fetchRecentLoans()
+{
+    return DB::table('loans')
+        ->leftJoin('users', 'loans.user_id', '=', 'users.id')
+        ->leftJoin('loan_category', 'loans.loan_category_id', '=', 'loan_category.loan_category_id')
+        ->leftJoin('loan_bank_details', 'loans.bank_id', '=', 'loan_bank_details.bank_id')
+        ->whereNull('loans.deleted_at')
+        ->select(
+            'loans.loan_id',
+            'loans.loan_reference_id',
+            'loans.amount',
+            'loans.amount_approved',
+            'loans.status',
+            'loans.cibil_score',
+            'loans.created_at',
+            'users.name as user_name',
+            'loan_category.category_name as loan_category_name',
+            'loan_bank_details.bank_name as bank_name'
+        )
+        ->orderByDesc('loans.created_at')
+        ->get();
+}
     public function adminDashboard()
     {
         if (!empty(Session::get('role_id'))) {
@@ -973,6 +976,64 @@ public function updatePassword(Request $request)
 
     return back()->with('success', 'Password changed successfully');
 }
+
+ private function buildChartData(int $year): array
+    {
+        // ---- Loan performance: month-wise count + amount ----
+        $rows = DB::table('loans')
+            ->selectRaw('MONTH(created_at) as m, COUNT(*) as total_loans, COALESCE(SUM(amount), 0) as total_amount')
+            ->whereYear('created_at', $year)
+            // ->where('status', 'disbursed')   // <- fakt disbursed pahije asel tar uncomment kara
+            ->groupBy('m')
+            ->get()
+            ->keyBy('m');
+ 
+        $names   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        $monthly = [];
+        foreach ($names as $i => $name) {
+            $r = $rows->get($i + 1);
+            $monthly[] = [
+                'month'        => $name,
+                'total_loans'  => $r ? (int) $r->total_loans : 0,
+                'total_amount' => $r ? (float) $r->total_amount : 0,
+            ];
+        }
+ 
+        // ---- Loan status: status-wise count ----
+        $statuses = DB::table('loans')
+            ->select('status', DB::raw('COUNT(*) as c'))
+            ->whereYear('created_at', $year)
+            ->groupBy('status')
+            ->pluck('c', 'status')
+            ->mapWithKeys(fn ($count, $status) => [ucfirst($status) => (int) $count])
+            ->toArray();
+ 
+        return ['monthly' => $monthly, 'statuses' => $statuses];
+    }
+ 
+    /**
+     * AJAX endpoint: year change zalyavar chart refresh
+     */
+    public function chartData(Request $request)
+    {
+        $year = (int) $request->get('year', now()->year);
+        return response()->json($this->buildChartData($year));
+    }
+ 
+    /**
+     * Tumchya existing dashboard() / index() method madhe fakt he 2 variables
+     * pass kara (jar already ahet tar he replace karaychi garaj nahi):
+     */
+    public function index()
+    {
+        $chart = $this->buildChartData(now()->year);
+ 
+        return view('admin.dashboard', [
+            // ... tumche existing variables (totalLoans, totalCustomers, leads, totalOfficers, recentLoans)
+            'monthlyDisbursedData' => $chart['monthly'],
+            'loanStatuses'         => $chart['statuses'],
+        ]);
+    }
 
   
 }

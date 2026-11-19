@@ -31,6 +31,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AuthV3\AuthV3Controller;
 use App\Http\Controllers\EstimatedFileController;
 use App\Http\Controllers\MonthlyPLController;
+use App\Http\Controllers\EmploymentApplicationController;
+
 use Illuminate\View\ViewException;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\TicketController;
@@ -788,6 +790,42 @@ Route::delete('/admin/document/{id}', [LoanApplicationController::class, 'delete
     [AgentController::class, 'deleteDocument']
 )->name('agent.deleteDocument');
 
+
+
+
+// qr code scan form
+
+
+
+Route::prefix('qr-apply')->name('employment.')->group(function () {
+
+    Route::get('/', [EmploymentApplicationController::class, 'index'])
+        ->name('index');
+
+    Route::get('/documents/{type}', [EmploymentApplicationController::class, 'documents'])
+        ->name('documents');
+
+    Route::get('/apply/{type}', [EmploymentApplicationController::class, 'create'])
+        ->name('create');
+
+    Route::post('/store', [EmploymentApplicationController::class, 'store'])
+        ->name('store');
+
+});
+
+// admin qr list
+Route::get('/admin/employment-applications', function () {
+
+    $applications = \App\Models\EmploymentApplication::latest()
+        ->paginate(20);
+
+    return view(
+        'admin.employment-applications',
+        compact('applications')
+    );
+
+})->name('admin.employment-applications');
+
 //loan
 // Route::get('/applyNow', [LoanApplicationController::class, 'applyNow'])->name('applyNow');
 // Apply Now
@@ -798,6 +836,8 @@ Route::get('/start_loan/{id}', [LoanApplicationController::class, 'start_loan'])
 Route::middleware(['isUserOrAdmin'])->group(function () {
    
     Route::get('/loan-application', [LoanApplicationController::class, 'showForm'])->name('loan.form');
+    Route::get('/loan/view-form/{id}', [UsersController::class, 'viewLoanForm'])
+    ->name('loan.view.form');
     Route::post('/fetch-credit-report', [LoanApplicationController::class, 'fetchReport']);
     Route::post('/loan-application/step', [LoanApplicationController::class, 'handleStep'])->name('loan.handle_step');
     Route::get('/thank-you', [LoanApplicationController::class, 'thankYou'])->name('loan.thankyou');
@@ -828,7 +868,8 @@ Route::middleware(['isUserOrAdmin'])->group(function () {
     Route::post('/educational/update', [UsersController::class, 'updateUserEducational'])->name('user.educational.update');
     Route::get('agent/approved-loans', [LoanApplicationController::class, 'agentApproved'])->name('agent.approved.loans');
     Route::get('customer/loans', [UsersController::class, 'customerLoans'])->name('customer.loans');
-
+Route::get('/dashboard/chart-data', [AdminController::class, 'chartData'])
+    ->name('admin.dashboard.chart-data');
     //wallet
     Route::get('user/walletbalance', [ReferralController::class, 'userWalletbalance'])->name('user.walletbalance');
 
