@@ -21,9 +21,12 @@
                             <th>Name</th>
                             <th>Mobile Number</th>
                             <th>Email</th>
-                            <th>Message</th>
+                            <!-- <th>Message</th> -->
                             <th>Employment Type</th>
                             <th>Date</th>
+                            <th>Status</th>
+                             <th>Remark</th>
+                             <th>Action</th>
                         </tr>
                     </thead>
 
@@ -40,7 +43,7 @@
 
                                 <td>{{ $application->email ?? '-' }}</td>
 
-                                <td>{{ $application->message ?? '-' }}</td>
+                                <!-- <td>{{ $application->message ?? '-' }}</td> -->
 
                                 <td>
                                     @if($application->employment_type == 'salaried')
@@ -57,6 +60,21 @@
                                 <td>
                                     {{ $application->created_at->format('d-m-Y') }}
                                 </td>
+                                <td>
+    @if($application->status == 'Pending')
+        <span class="badge bg-warning text-dark">Pending</span>
+    @else
+        <span class="badge bg-success">Contacted</span>
+    @endif
+</td>
+
+<td>{{ $application->remark ?? '-' }}</td>
+<td>
+    <a href="{{ route('admin.employment-applications.edit', $application->id) }}"
+       class="btn btn-sm btn-primary">
+        <i class="fas fa-edit"></i> Edit
+    </a>
+</td>
                             </tr>
 
                         @empty

@@ -156,6 +156,89 @@
             padding: 25px 20px;
         }
     }
+
+/* Form Groups */
+#loan-application-page .form-group {
+    margin-bottom: 22px;
+}
+
+/* Labels */
+#loan-application-page .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 9px;
+}
+
+/* Required Star */
+#loan-application-page .form-label span:not(.optional-text) {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+/* Optional Text */
+#loan-application-page .optional-text {
+    color: #888;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+/* Input Fields */
+#loan-application-page .form-control {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 7px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+#loan-application-page textarea.form-control {
+    min-height: 110px;
+    resize: vertical;
+}
+
+/* Focus */
+#loan-application-page .form-control:focus {
+    border-color: #006AF5;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0,106,245,.10);
+}
+
+/* Submit Button */
+#loan-application-page .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #2D9DFF, #006AF5);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Mobile */
+@media(max-width: 576px) {
+    #loan-application-page .form-group {
+        margin-bottom: 18px;
+    }
+
+    #loan-application-page .form-control {
+        min-height: 46px;
+    }
+
+    #loan-application-page .submit-btn {
+        padding: 14px;
+    }
+}
+
 </style>
 
 <div id="loan-application-page">
@@ -188,40 +271,100 @@
             </div>
         @endif
 
-        <form action="{{ route('employment.store') }}" method="POST">
-            @csrf
-            <input type="hidden" name="employment_type" value="{{ $type }}">
+       
+<form action="{{ route('employment.store') }}" method="POST">
 
-            <!-- Full Name -->
-            <div class="form-group">
-                <label class="form-label">Full Name <span>*</span></label>
-                <input type="text" name="name" class="form-control" placeholder="Enter name" value="{{ old('name') }}" required>
-            </div>
+    @csrf
 
-            <!-- Mobile Number -->
-            <div class="form-group">
-                <label class="form-label">Mobile Number <span>*</span></label>
-                <input type="tel" name="mobile_number" class="form-control" placeholder="Enter mobile number" value="{{ old('mobile_number') }}" maxlength="20" required>
-            </div>
+    <input type="hidden"
+           name="employment_type"
+           value="{{ $type }}">
 
-            <!-- Email -->
-            <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" placeholder="Enter email address" value="{{ old('email') }}">
-            </div>
+    <!-- Validation Errors -->
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            <!-- Message -->
-            <div class="form-group">
-                <label class="form-label">Email</label> <!-- Note: Kept as 'Email' to match your screenshot, but name is message -->
-                <textarea name="message" class="form-control" placeholder="Enter your message">{{ old('message') }}</textarea>
-            </div>
+    <!-- Full Name -->
+    <div class="form-group">
 
-            <!-- Submit Button -->
-            <button type="submit" class="submit-btn">
-                Apply Now <i class="fa-solid fa-arrow-right"></i>
-            </button>
+        <label class="form-label">
+            Full Name <span>*</span>
+        </label>
 
-        </form>
+        <input type="text"
+               name="name"
+               class="form-control"
+               placeholder="Enter your full name"
+               value="{{ old('name') }}"
+               maxlength="255"
+               required>
+
+    </div>
+
+    <!-- Mobile Number -->
+    <div class="form-group">
+
+        <label class="form-label">
+            Mobile Number <span>*</span>
+        </label>
+
+        <input type="tel"
+               name="mobile_number"
+               class="form-control"
+               placeholder="Enter mobile number"
+               value="{{ old('mobile_number') }}"
+               maxlength="20"
+               required>
+
+    </div>
+
+    <!-- Email Address -->
+    <div class="form-group">
+
+        <label class="form-label">
+            Email Id (Optional)
+        </label>
+
+        <input type="email"
+               name="email"
+               class="form-control"
+               placeholder="Enter email address"
+               value="{{ old('email') }}">
+
+    </div>
+
+    <!-- Message -->
+    <div class="form-group">
+
+        <label class="form-label">
+            Message (Optional)
+        </label>
+
+        <textarea name="message"
+                  class="form-control"
+                  placeholder="Enter your message"
+                  rows="4">{{ old('message') }}</textarea>
+
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="submit-btn">
+
+        Apply Now
+
+        <i class="fa-solid fa-arrow-right"></i>
+
+    </button>
+
+</form>
+
 
     </div>
 </div>
