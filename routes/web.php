@@ -826,6 +826,20 @@ Route::get('/admin/employment-applications', function () {
 
 })->name('admin.employment-applications');
 
+
+Route::get('/admin/employment-applications',
+    [EmploymentApplicationController::class, 'adminIndex']
+)->name('admin.employment-applications');
+
+Route::get('/admin/employment-applications/{id}/edit',
+    [EmploymentApplicationController::class, 'edit']
+)->name('admin.employment-applications.edit');
+
+Route::put('/admin/employment-applications/{id}',
+    [EmploymentApplicationController::class, 'update']
+)->name('admin.employment-applications.update');
+
+
 //loan
 // Route::get('/applyNow', [LoanApplicationController::class, 'applyNow'])->name('applyNow');
 // Apply Now
