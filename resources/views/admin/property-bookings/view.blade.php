@@ -480,7 +480,7 @@ h2{
 </div>
 
 
-<form method="POST" action="{{ url('admin/booking/offer/'.$booking->id) }}">
+<form id="offerForm"  method="POST" action="{{ url('admin/booking/offer/'.$booking->id) }}">
 @csrf
 
 {{-- ===========================
@@ -1100,30 +1100,6 @@ function removeOfferGroup(index) {
 /* =========================
    VALIDATE TOTAL SPLIT
 ========================= */
-document.querySelector("form").addEventListener("submit", function(e){
-
-    if (!enable_offers.checked) return;
-
-    let finalOfferPool = window.finalOfferPoolAmount || 0;
-
-    let allSubInputs = document.querySelectorAll('[name*="[items]"][name$="[amount]"]');
-
-    let total = 0;
-
-    allSubInputs.forEach(function(input){
-        total += parseFloat(input.value) || 0;
-    });
-
-    if (Math.round(total) !== Math.round(finalOfferPool)) {
-
-        alert(
-            "Sub items total must equal Offer Pool amount (₹ " +
-            finalOfferPool.toFixed(2) + ")"
-        );
-
-        e.preventDefault();
-    }
-});
 
 recalc();
 toggleOffers();
@@ -1245,4 +1221,97 @@ window.checkReferral = function () {
     });
 };
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    function enableDecimalAmounts() {
+        document.querySelectorAll('input[type="number"]').forEach(function (input) {
+            input.setAttribute('step', '0.01');
+        });
+    }
+
+    // Apply to all existing number inputs
+    enableDecimalAmounts();
+
+    // Apply to dynamically added offer and sub-item inputs
+    const observer = new MutationObserver(function () {
+        enableDecimalAmounts();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+});
+</script>
+<script>
+    // =====================================
+// VALIDATE REMAINING OFFER AMOUNT
+// =====================================
+
+document.getElementById('offerForm').addEventListener('submit', function(e) {
+
+    let remainingErrors = [];
+
+    document.querySelectorAll('.offer-main').forEach(function(mainRow) {
+
+        let parentIndex = mainRow.dataset.offer;
+
+        let mainAmountInput = mainRow.querySelector(
+            'input[name$="[amount]"]'
+        );
+
+        let mainAmount = parseFloat(mainAmountInput?.value) || 0;
+
+        let subInputs = document.querySelectorAll(
+            'tr.sub-item[data-parent="' + parentIndex + '"] .sub-amount'
+        );
+
+        let subTotal = 0;
+
+        subInputs.forEach(function(input) {
+            subTotal += parseFloat(input.value) || 0;
+        });
+
+        // Check only when sub-items are added
+        if (subInputs.length > 0) {
+
+            let remaining = mainAmount - subTotal;
+
+            if (remaining > 0.009) {
+
+                let mainName = mainRow.querySelector(
+                    'input[name$="[label]"]'
+                )?.value || 'Main Offer';
+
+                remainingErrors.push(
+                    mainName + ': ₹' + remaining.toFixed(2) + ' remaining'
+                );
+            }
+
+            if (remaining < -0.009) {
+
+                remainingErrors.push(
+                    'Sub-item amount exceeds ' + mainName
+                );
+            }
+        }
+
+    });
+
+    if (remainingErrors.length > 0) {
+
+        e.preventDefault();
+
+        alert(
+            'Please complete the offer amount before submitting:\n\n' +
+            remainingErrors.join('\n')
+        );
+
+        return false;
+    }
+
+});
+    </script>
 @endsection

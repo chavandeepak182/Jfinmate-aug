@@ -62966,5 +62966,4 @@ document.querySelectorAll('.service-btn').forEach(btn => {
             });
         });
 </script>
-<script src="{{ asset('theme/dhara-jfin/js/chatbot.js') }}"></script>
 

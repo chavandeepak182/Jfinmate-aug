@@ -9,6 +9,7 @@
             <th>Loan Type</th>
             <th>Amount</th>
             <th>Status</th>
+            <th>Assigned Agent</th>   {{-- ✅ added --}}
             <th>Bank</th>
             <th>Location</th>
             <th>Action</th>
@@ -25,7 +26,15 @@
             <td>{{ optional($loan->loanCategory)->category_name ?? '-' }}</td>
             <td>₹ {{ number_format($loan->amount) }}</td>
             <td>{{ ucfirst($loan->status) }}</td>
-
+{{-- ✅ added: Assigned Agent --}}
+<td>
+    @if ($loan->agent)
+        <span class="badge bg-info text-dark">{{ $loan->agent->name }}</span>
+        <small class="text-muted d-block">{{ ucfirst($loan->agent_action ?? 'pending') }}</small>
+    @else
+        <span class="text-muted">Not Assigned</span>
+    @endif
+</td>
             <td>{{ optional($loan->bankDetails)->bank_name ?? '-' }}</td>
 
             {{-- Deep relation safe --}}

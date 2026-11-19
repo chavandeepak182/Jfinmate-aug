@@ -783,70 +783,78 @@ function loadLeadReferral(search = '', type = currentType) {
 });
 </script>
 <script>
-    $(document)
-    .off('change.approvedAmount', '.approved-loan-amount')
-    .on('change.approvedAmount', '.approved-loan-amount', function () {
+$(document)
+    .off('change', '.approved-loan-amount') // Remove old bindings
+    .on('change', '.approved-loan-amount', function () { // Only use 'change'
 
-        let input = $(this);
-
+        let input  = $(this);
         let leadId = input.data('id');
-
         let amount = input.val();
 
+        if (amount === '' || amount === null) {
+            return;
+        }
+
+        if (isNaN(amount) || Number(amount) < 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid amount',
+                text: 'Please enter a valid positive number.'
+            });
+            return;
+        }
+
+        // Find the loan amount in the same row
+        let loanAmount = parseFloat(input.closest('tr').find('.loan-amount').data('amount') || 0);
+
+        // Check if approved amount > loan amount
+        if (Number(amount) > loanAmount) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Amount',
+                text: 'Approved loan amount cannot be greater than the loan amount (₹'
+                      + loanAmount.toLocaleString('en-IN') + ').'
+            });
+            input.val(''); // clear the bad value
+            return;        // stop — no AJAX
+        }
+
+        // If it passes, send via AJAX
         $.ajax({
-
             url: "{{ route('admin.lead-referral.approved-amount') }}",
-
             type: "POST",
-
             data: {
                 _token: "{{ csrf_token() }}",
                 id: leadId,
                 approved_loan_amount: amount
             },
-
             success: function (response) {
-
                 if (response.status == 1) {
-
-                    console.log(
-                        'Approved amount saved.'
-                    );
-
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Saved',
+                        text: response.message,
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
                 } else {
-
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: response.message
                     });
-
                 }
-
             },
-
             error: function (xhr) {
-
                 console.log(xhr.responseText);
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Unable to save approved loan amount.'
-                });
-
+                let msg = 'Unable to save approved loan amount.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                Swal.fire({ icon: 'error', title: 'Error', text: msg });
             }
-
         });
-
     });
-
-    $('#pan_no').on('input', function () {
-    this.value = this.value
-        .toUpperCase()
-        .replace(/[^A-Z0-9]/g, '')
-        .substring(0, 10);
-});
 </script>
 
 

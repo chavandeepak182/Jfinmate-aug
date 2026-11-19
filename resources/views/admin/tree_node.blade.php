@@ -7,7 +7,10 @@
         <div class="hover-box">
             <!-- <p><strong>User ID:</strong> {{ $node['user_id'] }}</p> -->
             <p><strong>Mobile:</strong> {{ $node['mobile'] }}</p>
+            
             <p><strong>Email:</strong> {{ $node['email'] }}</p>
+            <!-- ✅ added -->
+    <p><strong>Referral Code:</strong> {{ $node['referral_code'] ?: '-' }}</p>
         </div>
     </a>
 

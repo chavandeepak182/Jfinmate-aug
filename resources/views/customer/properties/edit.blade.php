@@ -840,6 +840,31 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+<script>
+(function () {
+
+    function enableDecimalAmounts() {
+        document.querySelectorAll('input[type="number"]').forEach(function (input) {
+            input.setAttribute('step', '0.01');
+            input.setAttribute('min', '0');
+        });
+    }
+
+    // Apply to existing fields
+    enableDecimalAmounts();
+
+    // Apply to dynamically added fields
+    const observer = new MutationObserver(function () {
+        enableDecimalAmounts();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+})();
+</script>
 @endif
 
 @endsection
