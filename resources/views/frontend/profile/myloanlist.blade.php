@@ -38,7 +38,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th class="d-none d-xl-table-cell">Loan Reference ID</th>
-                                    <th class="d-none d-xl-table-cell">Applied Amount</th>
+                                    <!-- <th class="d-none d-xl-table-cell">Applied Amount</th> -->
+                                     <th class="d-none d-xl-table-cell">Loan Type</th>
                                     <th class="d-none d-xl-table-cell">Disbursed Amount</th>
                                     <th>Status</th>
                                     <th class="d-none d-md-table-cell">Created At</th>
@@ -53,10 +54,10 @@
         <td>{{ $loan->loan_reference_id }}</td>
 
         {{-- Applied Amount --}}
-        <td>
+        <!-- <td>
             ₹ {{ number_format($loan->amount, 2) }}
-        </td>
-
+        </td> -->
+<td>{{ $loan->category_name ?? '-' }}</td>
         {{-- Disbursed Amount --}}
         <td>
             @if($loan->status === 'disbursed' && !empty($loan->amount_approved))
@@ -73,32 +74,40 @@
         </td>
 
 <td>
-    {{-- Edit button (ONLY for In Process & Approved) --}}
-@php
-    $editableStatuses = ['in process', 'approved'];
-@endphp
-
-@if (in_array(trim(strtolower($loan->status ?? '')), $editableStatuses, true))
-    <a href="{{ url('loanedit/'.$loan->loan_id) }}" class="btn btn-sm btn-warning">
-        Edit
+    {{-- View Submitted Loan Form --}}
+    <a href="{{ route('loan.view.form', $loan->loan_id) }}"
+       class="btn btn-sm btn-info text-white mb-1">
+        View Form
     </a>
-@endif
 
+    {{-- Edit Button (ONLY for In Process & Approved) --}}
+    @php
+        $status = trim(strtolower($loan->status ?? ''));
+        $editableStatuses = ['in process', 'approved'];
+    @endphp
+
+    @if (in_array($status, $editableStatuses, true))
+        <a href="{{ url('loanedit/'.$loan->loan_id) }}"
+           class="btn btn-sm btn-warning mb-1">
+            Edit
+        </a>
+    @endif
 
     {{-- View Sanction Letter (Approved OR Disbursed) --}}
     @if (
         !empty($loan->sanction_letter) &&
-        in_array(strtolower($loan->status ?? ''), ['approved', 'disbursed'])
+        in_array($status, ['approved', 'disbursed'], true)
     )
         <a href="{{ asset('storage/' . $loan->sanction_letter) }}"
-           class="btn btn-sm btn-primary"
-           target="_blank">
-            View
+           class="btn btn-sm btn-primary mb-1"
+           target="_blank"
+           rel="noopener noreferrer">
+            View Sanction Letter
         </a>
     @endif
 
     {{-- Rejected --}}
-    @if (strtolower($loan->status ?? '') === 'rejected')
+    @if ($status === 'rejected')
         <span class="text-muted">N/A</span>
     @endif
 </td>

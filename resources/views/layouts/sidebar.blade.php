@@ -296,6 +296,18 @@
             </a>
         @endif
 
+{{-- QR Employment Applications --}}
+@if($role_id == 4)
+    <a href="{{ route('admin.employment-applications') }}"
+       class="nav-item {{ request()->routeIs('admin.employment-applications') ? 'active' : '' }}">
+
+        <i class="fas fa-file-alt"></i>
+        <span>QR Applications</span>
+
+    </a>
+@endif
+
+
         {{-- ================= TOOLS (ADDED) ================= --}}
         @if($role_id == 4)
             <a href="{{ route('admin.bank') }}" class="nav-item">

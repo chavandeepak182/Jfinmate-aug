@@ -4,194 +4,335 @@
 @section('content')
 
 <style>
-.profile-card {
-    transition: all 0.25s ease;
-    border-radius: 14px;
+/* Page background and main profile container */
+.profile-page {
+    background: #f5f7fb;
+    min-height: 100vh;
+    padding: 25px 20px;
 }
 
-.profile-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+.profile-main-card {
+    background: #fff;
+    border: 0;
+    border-radius: 12px;
+    padding: 20px 22px;
+    box-shadow: none;
 }
 
-.icon-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+.profile-section {
+    padding: 0 0 28px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.profile-section:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.profile-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.profile-section-title {
+    color: #444;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.profile-edit-btn {
+    border: 0;
+    background: transparent;
+    color: #444444;
+    font-size: 18px;
+    padding: 2px 4px;
+    line-height: 1;
+}
+
+.profile-edit-btn:hover {
+    color: #1684ff;
+}
+
+.profile-field {
+    margin-bottom: 12px;
+}
+
+.profile-field label {
+    display: block;
+    color: #444;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.profile-value {
     display: flex;
     align-items: center;
-    justify-content: center;
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 12px;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+    background: #fff;
+    color: #888;
+    font-size: 16px;
+    overflow-wrap: anywhere;
 }
 
-.section-value {
+.profile-save-btn {
+    background: #1684ff;
+    color: #fff;
+    border: 1px solid #1684ff;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 13px;
+}
+
+.profile-save-btn:hover {
+    background: #006fe6;
+    color: #fff;
+}
+
+/* Popup forms use the same clean field UI as the profile page */
+.profile-modal .modal-content {
+    border: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .12);
+}
+
+.profile-modal .modal-header {
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 18px 22px;
+}
+
+.profile-modal .modal-title {
+    color: #444;
+    font-size: 18px;
     font-weight: 600;
-    color: #1e293b;
+}
+
+.profile-modal .modal-body {
+    background: #fff;
+    padding: 22px;
+}
+
+.profile-modal .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+}
+
+.profile-modal .form-control,
+.profile-modal .form-select {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #777;
+    font-size: 15px;
+    padding: 9px 12px;
+    box-shadow: none;
+}
+
+.profile-modal .form-control:focus,
+.profile-modal .form-select:focus {
+    border-color: #1684ff;
+    box-shadow: 0 0 0 2px rgba(22, 132, 255, .10);
+}
+
+.profile-modal .modal-footer {
+    background: #fff;
+    border-top: 1px solid #f0f0f0;
+    padding: 14px 22px;
+}
+
+.profile-modal .modal-footer .btn {
+    min-width: 95px;
+    border-radius: 6px;
+    font-size: 13px;
+    padding: 8px 18px;
+}
+
+.profile-modal .modal-footer .btn-primary {
+    background: #1684ff;
+    border-color: #1684ff;
+}
+
+.profile-modal .modal-footer .btn-primary:hover {
+    background: #006fe6;
+    border-color: #006fe6;
+}
+
+.profile-modal .invalid-feedback {
+    font-size: 12px;
+}
+
+@media (max-width: 767px) {
+    .profile-modal .modal-dialog {
+        margin: 10px;
+    }
+
+    .profile-modal .modal-body {
+        padding: 16px;
+    }
+
+    .profile-modal .modal-header,
+    .profile-modal .modal-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+@media (max-width: 767px) {
+    .profile-page { padding: 14px 8px; }
+    .profile-main-card { padding: 16px 12px; }
+    .profile-section { margin-bottom: 24px; padding-bottom: 22px; }
+    .profile-section-title { font-size: 15px; }
 }
 </style>
 
-<div class="container-fluid p-0">
-
-    {{-- ================= PAGE HEADER ================= --}}
-    <div class="mb-4">
-        <h3 class="fw-bold mb-1 text-dark">Profile & Settings</h3>
-        <p class="text-muted mb-0">
-            View and manage your personal and professional information
-        </p>
-    </div>
-
-    <div class="row g-4">
+<div class="container-fluid profile-page">
+    <div class="profile-main-card">
 
         {{-- ================= PERSONAL DETAILS ================= --}}
-        <div class="col-xl-6">
-            <div class="card shadow-sm border-0 h-100 profile-card">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="icon-circle bg-primary bg-opacity-10">
-                            <i class="fas fa-user text-primary"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold">Personal Details</h5>
-                            <small class="text-muted">Basic personal information</small>
-                        </div>
-                    </div>
-
-                    @if($profile)
-                        <button class="btn btn-sm btn-outline-primary rounded-pill"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editProfileModal">
-                            <i class="far fa-edit me-1"></i> Edit
-                        </button>
-                    @endif
-                </div>
-
-                <div class="card-body">
-                    @if($profile)
-
-                   <div class="d-flex gap-4 align-items-center mt-2">
-                        <h6 class="fw-bold mb-0">
-                            <span class="text-muted fw-semibold">Name:</span>
-                            <span class="text-dark">{{ $user->name ?? '—' }}</span>
-                        </h6>
-
-                        <p class="mb-0" style="margin-left:100px">
-                            <span class="text-muted fw-semibold">Email:</span>
-                            <!-- <span class="text-dark">{{ $user->email_id ?? '—' }}</span> -->
-                            <div class="section-value">{{ $user->email_id ?? '—' }}</div>
-                        </p>
-                    </div>
-
-
-
-                        <div class="row g-3 mt-2">
-                            <div class="col-sm-6 ">
-                                <small class="text-muted">Mobile</small>
-                                <div class="section-value">{{ $profile->mobile_no ?? '—' }}</div>
-                            </div>
-
-                           <div class="col-sm-6">
-                                <small class="text-muted">Gender</small>
-                                <div class="section-value">
-                                    {{ $profile->gender ? ucfirst($profile->gender) : '—' }}
-                                </div>
-                            </div>
-
-
-                            <div class="col-sm-6 mt-3">
-                                <small class="text-muted">Date of Birth</small>
-                                <div class="section-value">{{ $profile->dob ?? '—' }}</div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <small class="text-muted">Marital Status</small>
-                                <div class="section-value">{{ $profile->marital_status ?? '—' }}</div>
-                            </div>
-
-                            <div class="col-12 mt-3">
-                                <small class="text-muted">Residential Address</small>
-                                <div class="section-value">
-                                   {{ $profile->residence_address ?? '—' }},
-                                    {{ $profile->city_name ?? '—' }},
-                                    {{ $profile->state_name ?? '—' }} - {{ $profile->pincode ?? '—' }}
-
-                                </div>
-                            </div>
-                        </div>
-
-                    @else
-                        <div class="alert alert-info mb-0">
-                            No personal information available.
-                        </div>
-                    @endif
-                </div>
+        <section class="profile-section">
+            <div class="profile-section-header">
+                <h5 class="profile-section-title">Personal Details</h5>
+                @if($profile)
+                    <button type="button" class="profile-edit-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal" aria-label="Edit Personal Details">
+                        <i class="far fa-edit"></i>
+                    </button>
+                @endif
             </div>
-        </div>
+
+            @if($profile)
+                <div class="row">
+                    <div class="col-md-6 profile-field">
+                        <label>Name</label>
+                        <div class="profile-value">{{ $user->name ?? '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Email</label>
+                        <div class="profile-value">{{ $user->email_id ?? '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Mobile Number</label>
+                        <div class="profile-value">{{ $profile->mobile_no ?? '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Gender</label>
+                        <div class="profile-value">{{ $profile->gender ? ucfirst($profile->gender) : '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Date of Birth</label>
+                        <div class="profile-value">{{ $profile->dob ?? '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Marital Status</label>
+                        <div class="profile-value">{{ $profile->marital_status ?? '—' }}</div>
+                    </div>
+                    <div class="col-12 profile-field">
+                        <label>Residential Address</label>
+                        <div class="profile-value">
+                            {{ $profile->residence_address ?? '—' }}, {{ $profile->city_name ?? '—' }}, {{ $profile->state_name ?? '—' }} - {{ $profile->pincode ?? '—' }}
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-info mb-0">No personal information available.</div>
+            @endif
+        </section>
 
         {{-- ================= PROFESSIONAL DETAILS ================= --}}
-        <div class="col-xl-6">
-            <div class="card shadow-sm border-0 h-100 profile-card">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="icon-circle bg-primary bg-opacity-10">
-							<i class="fas fa-briefcase text-primary"></i>
-						</div>
-                        <div>
-                            <h5 class="mb-0 fw-bold">Professional Details</h5>
-                            <small class="text-muted">Employment & work information</small>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-sm btn-outline-primary rounded-pill"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editProfessionalModal">
-                        <i class="far fa-edit me-1"></i> Edit
-                    </button>
-                </div>
-
-                <div class="card-body">
-                    @if($professionalDetails)
-
-                        <div class="row g-3">
-                            <div class="col-sm-6">
-                                <small class="text-muted">Designation</small>
-                                <div class="section-value">{{ $professionalDetails->designation ?? '—' }}</div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <small class="text-muted">Company</small>
-                                <div class="section-value">{{ $professionalDetails->company_name ?? '—' }}</div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <small class="text-muted">Experience</small>
-                                <div class="section-value">
-                                    {{ $professionalDetails->experience_year ? $professionalDetails->experience_year.' yrs' : '—' }}
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <small class="text-muted">Industry</small>
-                                <div class="section-value">{{ $professionalDetails->industry ?? '—' }}</div>
-                            </div>
-
-                            <div class="col-12">
-                                <small class="text-muted">Company Address</small>
-                                <div class="section-value">{{ $professionalDetails->company_address ?? '—' }}</div>
-                            </div>
-                        </div>
-
-                    @else
-                        <div class="alert alert-info mb-0">
-                            No professional details added yet.
-                        </div>
-                    @endif
-                </div>
+        <section class="profile-section">
+            <div class="profile-section-header">
+                <h5 class="profile-section-title">Professional Details</h5>
+                <button type="button" class="profile-edit-btn" data-bs-toggle="modal" data-bs-target="#editProfessionalModal" aria-label="Edit Professional Details">
+                    <i class="far fa-edit"></i>
+                </button>
             </div>
-        </div>
+
+            @if($professionalDetails)
+                <div class="row">
+                    <div class="col-md-6 profile-field">
+                        <label>Designation</label>
+                        <div class="profile-value">{{ $professionalDetails->designation ?? '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Company</label>
+                        <div class="profile-value">{{ $professionalDetails->company_name ?? '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Experience</label>
+                        <div class="profile-value">{{ $professionalDetails->experience_year ? $professionalDetails->experience_year.' yrs' : '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Industry</label>
+                        <div class="profile-value">{{ $professionalDetails->industry ?? '—' }}</div>
+                    </div>
+                    <div class="col-12 profile-field">
+                        <label>Residential Address</label>
+                        <div class="profile-value">{{ $professionalDetails->company_address ?? '—' }}</div>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-info mb-0">No professional details added yet.</div>
+            @endif
+        </section>
+
+        {{-- ================= BANK DETAILS ================= --}}
+        <section class="profile-section">
+            <div class="profile-section-header">
+                <h5 class="profile-section-title">Bank Details</h5>
+                <button type="button" class="profile-edit-btn" data-bs-toggle="modal" data-bs-target="#bankDetailsModal" aria-label="Edit Bank Details">
+                    <i class="far fa-edit"></i>
+                </button>
+            </div>
+
+            @if($bankDetails)
+                <div class="row">
+                    <div class="col-md-6 profile-field">
+                        <label>Bank Name</label>
+                        <div class="profile-value">{{ $bankDetails->bank_name ?? '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Account Number</label>
+                        <div class="profile-value">{{ $bankDetails->account_no ? '****'.substr($bankDetails->account_no, -4) : '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>IFSC Code</label>
+                        <div class="profile-value">{{ $bankDetails->ifsc_code ?? '—' }}</div>
+                    </div>
+                    <div class="col-md-6 profile-field">
+                        <label>Branch Name</label>
+                        <div class="profile-value">{{ $bankDetails->branch_name ?? '—' }}</div>
+                    </div>
+                    <div class="col-12 profile-field">
+                        <label>UPI ID</label>
+                        <div class="profile-value">{{ $bankDetails->upi_id ?? '—' }}</div>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-warning mb-0">Bank details not added yet.</div>
+            @endif
+        </section>
 
     </div>
+</div>
+
 
     <!-- ================= EDIT PERSONAL DETAILS MODAL ================= -->
-		<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+		<div class="modal fade profile-modal" id="editProfileModal" tabindex="-1" aria-hidden="true">
 			<div class="modal-dialog modal-lg modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -320,8 +461,9 @@
 				</div>
 			</div>
 		</div>
+
 		<!-- ================= EDIT PROFESSIONAL DETAILS MODAL ================= -->
-		<div class="modal fade" id="editProfessionalModal" tabindex="-1" aria-hidden="true">
+		<div class="modal fade profile-modal" id="editProfessionalModal" tabindex="-1" aria-hidden="true">
 			<div class="modal-dialog modal-lg modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -390,109 +532,26 @@
 			</div>
 		</div>
 
-        <script>
-document.querySelector("form").addEventListener("submit", function(e) {
-
-    let exp = document.getElementById("experience_year").value;
-
-    if (exp !== "" && (exp < 0 || exp > 99)) {
-        alert("Experience must be between 0 to 99 years");
-        e.preventDefault();
-        return;
-    }
-
-});
-</script>
 <script>
-document.querySelector("form").addEventListener("submit", function(e) {
+document.addEventListener('DOMContentLoaded', function () {
+    const professionalForm = document.querySelector('#editProfessionalModal form');
+    const experienceInput = document.getElementById('experience_year');
 
-    let phone = document.getElementById("phone").value.trim();
+    if (professionalForm && experienceInput) {
+        professionalForm.addEventListener('submit', function (e) {
+            const experience = experienceInput.value;
 
-    // Phone empty check
-    if (phone === "") {
-        alert("Phone number is required");
-        e.preventDefault();
-        return;
+            if (experience !== '' && (Number(experience) < 0 || Number(experience) > 99)) {
+                alert('Experience must be between 0 to 99 years');
+                e.preventDefault();
+            }
+        });
     }
-
-    // Only digits + 10 length (India standard)
-    let phonePattern = /^[0-9]{10}$/;
-
-    if (!phonePattern.test(phone)) {
-        alert("Enter valid 10 digit phone number");
-        e.preventDefault();
-        return;
-    }
-
 });
 </script>
-
-{{-- ================= BANK DETAILS ================= --}}
-<div class="col-xl-6">
-    <div class="card shadow-sm border-0 h-100 profile-card">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-3">
-                <div class="icon-circle bg-primary bg-opacity-10">
-                    <i class="fas fa-university text-primary"></i>
-                </div>
-                <div>
-                    <h5 class="mb-0 fw-bold">Bank Details</h5>
-                    <small class="text-muted">Withdrawal account information</small>
-                </div>
-            </div>
-
-            <button class="btn btn-sm btn-outline-primary rounded-pill"
-                    data-bs-toggle="modal"
-                    data-bs-target="#bankDetailsModal">
-                <i class="far fa-edit me-1"></i>
-                {{ $bankDetails ? 'Edit' : 'Add' }}
-            </button>
-        </div>
-
-        <div class="card-body">
-            @if($bankDetails)
-                <div class="row g-3">
-
-                    <div class="col-sm-6">
-                        <small class="text-muted">Bank Name</small>
-                        <div class="section-value">{{ $bankDetails->bank_name }}</div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <small class="text-muted">Account Number</small>
-                        <div class="section-value">
-                            ****{{ substr($bankDetails->account_no, -4) }}
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <small class="text-muted">IFSC Code</small>
-                        <div class="section-value">{{ $bankDetails->ifsc_code }}</div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <small class="text-muted">Branch Name</small>
-                        <div class="section-value">{{ $bankDetails->branch_name }}</div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <small class="text-muted">UPI ID</small>
-                        <div class="section-value">{{ $bankDetails->upi_id ?? '—' }}</div>
-                    </div>
-
-                </div>
-            @else
-                <div class="alert alert-warning mb-0">
-                    Bank details not added yet.
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
-
 
 <!-- ================= BANK DETAILS MODAL ================= -->
-<div class="modal fade" id="bankDetailsModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade profile-modal" id="bankDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
 
@@ -598,9 +657,6 @@ document.querySelector("form").addEventListener("submit", function(e) {
     </div>
 </div>
 
-
-
-</div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 

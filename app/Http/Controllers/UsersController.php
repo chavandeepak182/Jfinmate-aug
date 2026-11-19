@@ -2867,37 +2867,41 @@ public function updateUserProfile(Request $request)
         return view('frontend.profile.all-loans', compact('user', 'loans'));
     }
 
-    public function myLoanList(Request $request)
-    {
-        $userId = session('user_id'); // Retrieve the user ID from the session
+    // public function myLoanList(Request $request)
+    // {
+    //     $userId = session('user_id'); // Retrieve the user ID from the session
 
-        if (!$userId) {
-            return redirect()->route('login')->withErrors('User session expired. Please log in again.');
-        }
+    //     if (!$userId) {
+    //         return redirect()->route('login')->withErrors('User session expired. Please log in again.');
+    //     }
 
-        // Get the loan status filter from the query string, if any
-        $statusFilter = $request->query('status', ''); // Default to empty string if no filter is applied
+    //     // Get the loan status filter from the query string, if any
+    //     $statusFilter = $request->query('status', ''); // Default to empty string if no filter is applied
 
-        // Define available loan statuses for the filter dropdown
-        $statuses = ['approved', 'rejected', 'disbursed', 'pending'];
+    //     // Define available loan statuses for the filter dropdown
+    //     $statuses = ['approved', 'rejected', 'disbursed', 'pending'];
 
-        // Fetch loans for the logged-in customer with optional status filter
-        $query = DB::table('loans')->where('user_id', $userId);
+    //     // Fetch loans for the logged-in customer with optional status filter
+    //     $query = DB::table('loans')->where('user_id', $userId);
 
 
-        // Apply the status filter if provided and valid
-        if ($statusFilter && in_array($statusFilter, $statuses)) {
-            $query->where('status', $statusFilter);
-        }
+    //     // Apply the status filter if provided and valid
+    //     if ($statusFilter && in_array($statusFilter, $statuses)) {
+    //         $query->where('status', $statusFilter);
+    //     }
 
-        $hasActiveLoan = Loan::where('user_id', $userId)
-            ->where('status', '!=', 'disbursed')
-            ->exists();
+    //     $hasActiveLoan = Loan::where('user_id', $userId)
+    //         ->where('status', '!=', 'disbursed')
+    //         ->exists();
 
-        // Optionally, paginate results (for example, 10 loans per page)
-        $loans = $query->paginate(10); // Use paginate() for better performance with large datasets
-        return view('frontend.profile.myloanlist', compact('loans', 'statuses', 'statusFilter', 'hasActiveLoan'));
-    }
+    //     // Optionally, paginate results (for example, 10 loans per page)
+    //     $loans = $query->paginate(10); // Use paginate() for better performance with large datasets
+    //     return view('frontend.profile.myloanlist', compact('loans', 'statuses', 'statusFilter', 'hasActiveLoan'));
+    // }
+
+
+
+
 //    public function mydetails(Request $request)
 // {
 //     $section = $request->query('section', 'personal');
@@ -2964,7 +2968,122 @@ public function updateUserProfile(Request $request)
 
     // customer bank
 
-public function mydetails(Request $request)
+
+public function myLoanList(Request $request)
+{
+    $userId = session('user_id');
+
+    if (!$userId) {
+        return redirect()->route('login')
+            ->withErrors('User session expired. Please log in again.');
+    }
+
+    // Status filter
+    $statusFilter = $request->query('status', '');
+
+    $statuses = ['approved', 'rejected', 'disbursed', 'pending'];
+
+    // Fetch loans with loan category
+    $query = DB::table('loans')
+        ->leftJoin(
+            'loan_category',
+            'loans.loan_category_id',
+            '=',
+            'loan_category.loan_category_id'
+        )
+        ->where('loans.user_id', $userId)
+        ->select(
+            'loans.*',
+            'loan_category.category_name as category_name'
+        );
+
+    // Apply existing status filter
+    if ($statusFilter && in_array($statusFilter, $statuses)) {
+        $query->where('loans.status', $statusFilter);
+    }
+
+    // Existing active loan logic
+    $hasActiveLoan = Loan::where('user_id', $userId)
+        ->where('status', '!=', 'disbursed')
+        ->exists();
+
+    // Pagination
+    $loans = $query->orderBy('loans.created_at', 'desc')
+        ->paginate(10);
+
+    return view(
+        'frontend.profile.myloanlist',
+        compact('loans', 'statuses', 'statusFilter', 'hasActiveLoan')
+    );
+}
+
+
+
+public function viewLoanForm($id)
+{
+    $userId = session('user_id');
+
+    if (!$userId) {
+        return redirect()->route('login')
+            ->withErrors('User session expired. Please log in again.');
+    }
+
+    // Fetch only the logged-in customer's loan
+    $loan = DB::table('loans')
+        ->leftJoin(
+            'loan_category',
+            'loans.loan_category_id',
+            '=',
+            'loan_category.loan_category_id'
+        )
+        ->where('loans.loan_id', $id)
+        ->where('loans.user_id', $userId)
+        ->select(
+            'loans.*',
+            'loan_category.category_name'
+        )
+        ->first();
+
+    if (!$loan) {
+        abort(404, 'Loan application not found.');
+    }
+
+    // Personal Information
+    $profile = DB::table('profile')
+        ->leftJoin('cities', 'profile.city', '=', 'cities.id')
+        ->leftJoin('states', 'profile.state', '=', 'states.id')
+        ->where('profile.user_id', $userId)
+        ->select(
+            'profile.*',
+            'cities.city as city_name',
+            'states.name as state_name'
+        )
+        ->first();
+
+    // Professional Information
+    $professional = DB::table('professional_details')
+        ->where('user_id', $userId)
+        ->first();
+
+    // Uploaded Documents
+    $documents = DB::table('documents')
+        ->where('user_id', $userId)
+        ->get();
+
+    // Customer Name
+    $applyingUser = DB::table('users')
+        ->where('id', $userId)
+        ->first();
+
+    return view('frontend.profile.view-form', compact(
+        'loan',
+        'profile',
+        'professional',
+        'documents',
+        'applyingUser'
+    ));
+}
+    public function mydetails(Request $request)
 {
     $userId = session('user_id');
 

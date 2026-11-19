@@ -88,7 +88,7 @@
     <!-- =====================================================
          PAGE BANNER
     ====================================================== -->
-```html
+
 <section class="jfinHero contactHero" id="home">
 
     <div class="jfinHeroSlider">
